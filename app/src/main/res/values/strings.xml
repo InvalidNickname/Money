@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Money</string>
+    <string name="example_title">One Hundred Trillion Dollars</string>
+    <string name="image">image</string>
+    <string name="example_country">Zimbabwe</string>
+    <string name="example_value">100.000.000.000.000</string>
+    <string name="example_circulation_time">2009-2009</string>
+    <string name="country">Country</string>
+    <string name="add_new_country">Add new country</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="add_flag">Add flag</string>
+</resources>
