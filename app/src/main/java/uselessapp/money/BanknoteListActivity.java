@@ -12,9 +12,9 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MoneyListActivity extends AppCompatActivity {
+public class BanknoteListActivity extends AppCompatActivity {
 
-    private List<MoneyCard> moneyCardList = new ArrayList<>();
+    private List<Banknote> banknoteList = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,14 +30,14 @@ public class MoneyListActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        moneyCardList.add(new MoneyCard("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
-        moneyCardList.add(new MoneyCard("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
-        moneyCardList.add(new MoneyCard("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
-        moneyCardList.add(new MoneyCard("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
-        moneyCardList.add(new MoneyCard("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
+        banknoteList.add(new Banknote("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
+        banknoteList.add(new Banknote("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
+        banknoteList.add(new Banknote("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
+        banknoteList.add(new Banknote("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
+        banknoteList.add(new Banknote("Azerbaijan", "10000 dollars", "2000BC-2019", R.drawable.example_image));
 
-        MoneyRVAdapter moneyRvAdapter = new MoneyRVAdapter(moneyCardList);
-        mainView.setAdapter(moneyRvAdapter);
+        BanknoteRVAdapter banknoteRvAdapter = new BanknoteRVAdapter(banknoteList);
+        mainView.setAdapter(banknoteRvAdapter);
     }
 
     @Override

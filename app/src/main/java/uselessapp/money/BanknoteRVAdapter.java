@@ -11,12 +11,12 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class MoneyRVAdapter extends RecyclerView.Adapter<MoneyRVAdapter.CardViewHolder> {
+public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
 
-    private List<MoneyCard> moneyCardList;
+    private List<Banknote> banknoteList;
 
-    MoneyRVAdapter(List<MoneyCard> moneyCardList) {
-        this.moneyCardList = moneyCardList;
+    BanknoteRVAdapter(List<Banknote> banknoteList) {
+        this.banknoteList = banknoteList;
     }
 
     @NonNull
@@ -28,9 +28,9 @@ public class MoneyRVAdapter extends RecyclerView.Adapter<MoneyRVAdapter.CardView
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, int i) {
-        cardViewHolder.circulationTime.setText(moneyCardList.get(i).circulationTime);
-        cardViewHolder.country.setText(moneyCardList.get(i).country);
-        cardViewHolder.image.setImageResource(moneyCardList.get(i).imageID);
+        cardViewHolder.circulationTime.setText(banknoteList.get(i).circulationTime);
+        cardViewHolder.country.setText(banknoteList.get(i).country);
+        cardViewHolder.image.setImageResource(banknoteList.get(i).imageID);
     }
 
     @Override
@@ -40,10 +40,10 @@ public class MoneyRVAdapter extends RecyclerView.Adapter<MoneyRVAdapter.CardView
 
     @Override
     public int getItemCount() {
-        return moneyCardList.size();
+        return banknoteList.size();
     }
 
-    public static class CardViewHolder extends RecyclerView.ViewHolder {
+    static class CardViewHolder extends RecyclerView.ViewHolder {
 
         CardView cardView;
         TextView circulationTime;
