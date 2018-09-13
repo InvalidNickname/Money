@@ -2,9 +2,11 @@ package uselessapp.money;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import java.util.List;
 
 public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.CardViewHolder> {
 
+    private OnDeleteListener onDeleteListener;
     private Context context;
     private List<Country> cardList;
 
@@ -31,6 +34,7 @@ public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.Card
     @Override
     public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
         View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_card_country, viewGroup, false);
+        onDeleteListener = (OnDeleteListener) context;
         return new CardViewHolder(v);
     }
 
@@ -38,13 +42,37 @@ public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.Card
     public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, @SuppressLint("RecyclerView") final int i) {
         cardViewHolder.country.setText(cardList.get(i).country);
         cardViewHolder.count.setText(String.valueOf(cardList.get(i).count));
-        Picasso.get().load(Uri.parse(cardList.get(i).flagPath)).into(cardViewHolder.flag);
+        if (!cardList.get(i).flagPath.equals("nothing"))
+            Picasso.get().load(Uri.parse(cardList.get(i).flagPath)).into(cardViewHolder.flag);
+        else
+            Picasso.get().load(R.drawable.example_flag).into(cardViewHolder.flag);
         cardViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, BanknoteListActivity.class);
                 intent.putExtra("country", cardList.get(i).country);
                 context.startActivity(intent);
+            }
+        });
+        cardViewHolder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setTitle(String.format(context.getResources().getString(R.string.delete_country), cardList.get(i).country))
+                        .setMessage(R.string.delete_country_info)
+                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                dialog.cancel();
+                            }
+                        })
+                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int id) {
+                                onDeleteListener.deleteCountry(i);
+                            }
+                        });
+                AlertDialog alert = builder.create();
+                alert.show();
+                return false;
             }
         });
     }
@@ -57,6 +85,10 @@ public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.Card
     @Override
     public int getItemCount() {
         return cardList.size();
+    }
+
+    public interface OnDeleteListener {
+        void deleteCountry(int id);
     }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {

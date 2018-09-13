@@ -120,17 +120,28 @@
         app:srcCompat="@drawable/example_flag"
         tools:ignore="ContentDescription" />
 
+    <TextView
+        android:id="@+id/mainHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="16dp"
+        android:text="@string/tap_the_image_to_change_it"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descriptionInput" />
+
 
     <TextView
         android:id="@+id/obverseHint"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/tap_to_change_obverse"
+        android:layout_marginTop="8dp"
+        android:text="@string/obverse"
         app:layout_constraintEnd_toEndOf="@+id/obverse"
         app:layout_constraintStart_toStartOf="@+id/obverse"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionInput" />
+        app:layout_constraintTop_toBottomOf="@id/mainHint" />
 
     <ImageView
         android:id="@+id/reverse"
@@ -155,10 +166,10 @@
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:text="@string/tap_to_change_reverse"
+        android:layout_marginTop="8dp"
+        android:text="@string/reverse"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="@+id/reverse"
-        app:layout_constraintTop_toBottomOf="@+id/descriptionInput" />
+        app:layout_constraintTop_toBottomOf="@id/mainHint" />
 
 </android.support.constraint.ConstraintLayout>

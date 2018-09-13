@@ -31,13 +31,14 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        selectedImage = "nothing";
         builder.setView(inflater.inflate(R.layout.dialog_add_country, null))
                 .setTitle(getResources().getString(R.string.add_new_country))
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         EditText editText = getDialog().findViewById(R.id.editText);
-                        String name = editText.getText().toString();
+                        String name = editText.getText().toString().replaceAll("\\s+", ""); // получение названия и форматирование
                         onAddListener.addNewCountry(name, selectedImage);
                     }
                 })

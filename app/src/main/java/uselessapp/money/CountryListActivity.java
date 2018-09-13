@@ -20,7 +20,7 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CountryListActivity extends AppCompatActivity implements NewCountryDialogFragment.OnAddListener {
+public class CountryListActivity extends AppCompatActivity implements NewCountryDialogFragment.OnAddListener, CountryRVAdapter.OnDeleteListener {
 
     DBHelper dbHelper;
     SQLiteDatabase database;
@@ -84,5 +84,13 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
     protected void onDestroy() {
         super.onDestroy();
         dbHelper.close();
+    }
+
+    @Override
+    public void deleteCountry(int id) {
+        database.delete("countries", "name='" + cardList.get(id).country + "'", null);
+        database.delete("banknotes", "country='" + cardList.get(id).country + "'", null);
+        cardList.remove(id);
+        updateList();
     }
 }
