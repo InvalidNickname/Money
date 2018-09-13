@@ -1,5 +1,6 @@
 package uselessapp.money;
 
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -8,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -30,7 +33,8 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
     public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, int i) {
         cardViewHolder.circulationTime.setText(banknoteList.get(i).circulationTime);
         cardViewHolder.country.setText(banknoteList.get(i).country);
-        cardViewHolder.image.setImageResource(banknoteList.get(i).imageID);
+        cardViewHolder.title.setText(banknoteList.get(i).title);
+        Picasso.get().load(Uri.parse(banknoteList.get(i).obversePath)).into(cardViewHolder.image);
     }
 
     @Override

@@ -17,8 +17,6 @@ import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 
-import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +35,6 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Picasso.get().setLoggingEnabled(true);
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         dbHelper = new DBHelper(this);
@@ -66,7 +63,7 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
     }
 
     void updateList() {
-        CountryRVAdapter countryRVAdapter = new CountryRVAdapter(cardList);
+        CountryRVAdapter countryRVAdapter = new CountryRVAdapter(cardList, this);
         RecyclerView mainView = findViewById(R.id.main);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         mainView.setLayoutManager(layoutManager);

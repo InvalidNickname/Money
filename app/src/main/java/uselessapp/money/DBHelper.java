@@ -12,8 +12,16 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+        db.execSQL("create table banknotes ("
+                + "_id integer primary key autoincrement,"
+                + "country text,"
+                + "name text,"
+                + "circulation text,"
+                + "obverse text,"
+                + "reverse text,"
+                + "description text" + ");");
         db.execSQL("create table countries ("
-                + "id integer primary key autoincrement,"
+                + "_id integer primary key autoincrement,"
                 + "name text,"
                 + "flag text" + ");");
     }

@@ -11,4 +11,10 @@
     <string name="add">Add</string>
     <string name="add_flag">Add flag</string>
     <string name="tap_to_change_flag">Tap to change flag</string>
+    <string name="name">Name</string>
+    <string name="tap_to_change_obverse">Tap to change obverse</string>
+    <string name="circulation_time">Circulation time</string>
+    <string name="add_new_banknote">Add new banknote</string>
+    <string name="tap_to_change_reverse">Tap to change reverse</string>
+    <string name="description">Description</string>
 </resources>
