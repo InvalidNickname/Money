@@ -23,4 +23,6 @@
     <string name="delete_country">%s will be deleted</string>
     <string name="ok">OK</string>
     <string name="delete_country_info">Banknotes of this country will also be deleted!</string>
+    <string name="no_description">no description</string>
+    <string name="country_name_error">Invalid name</string>
 </resources>

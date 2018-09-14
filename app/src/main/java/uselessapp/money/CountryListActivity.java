@@ -24,7 +24,7 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
 
     DBHelper dbHelper;
     SQLiteDatabase database;
-    private List<Country> cardList = new ArrayList<>();
+    private List<Country> cardList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,12 +39,20 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
         setSupportActionBar(toolbar);
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cardList = new ArrayList<>();
         Cursor c = database.query("countries", null, null, null, null, null, null);
         if (c.moveToFirst()) {
             do {
                 String name = c.getString(c.getColumnIndex("name"));
                 String flagPath = c.getString(c.getColumnIndex("flag"));
-                cardList.add(new Country(name, flagPath, 0));
+                Cursor c2 = database.query("banknotes", null, "country = '" + name + "'", null, null, null, null);
+                cardList.add(new Country(name, flagPath, c2.getCount()));
+                c2.close();
             } while (c.moveToNext());
         }
         c.close();

@@ -34,7 +34,10 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
         cardViewHolder.circulationTime.setText(banknoteList.get(i).circulationTime);
         cardViewHolder.country.setText(banknoteList.get(i).country);
         cardViewHolder.title.setText(banknoteList.get(i).title);
-        Picasso.get().load(Uri.parse(banknoteList.get(i).obversePath)).into(cardViewHolder.image);
+        if (!banknoteList.get(i).obversePath.equals("nothing"))
+            Picasso.get().load(Uri.parse(banknoteList.get(i).obversePath)).into(cardViewHolder.image);
+        else
+            Picasso.get().load(R.drawable.example_banknote).into(cardViewHolder.image);
     }
 
     @Override

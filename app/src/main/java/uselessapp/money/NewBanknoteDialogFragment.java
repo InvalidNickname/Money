@@ -31,6 +31,8 @@ public class NewBanknoteDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        selectedReverse = "nothing";
+        selectedObverse = "nothing";
         builder.setView(inflater.inflate(R.layout.dialog_add_banknote, null))
                 .setTitle(getResources().getString(R.string.add_new_banknote))
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
@@ -42,6 +44,8 @@ public class NewBanknoteDialogFragment extends DialogFragment {
                         String time = editTime.getText().toString();
                         EditText editDescription = getDialog().findViewById(R.id.editDescription);
                         String description = editDescription.getText().toString();
+                        if (description.equals(""))
+                            description = getString(R.string.no_description);
                         onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description);
                     }
                 })

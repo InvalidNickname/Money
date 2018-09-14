@@ -7,10 +7,12 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
@@ -34,14 +36,7 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
         selectedImage = "nothing";
         builder.setView(inflater.inflate(R.layout.dialog_add_country, null))
                 .setTitle(getResources().getString(R.string.add_new_country))
-                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        EditText editText = getDialog().findViewById(R.id.editText);
-                        String name = editText.getText().toString().replaceAll("\\s+", ""); // получение названия и форматирование
-                        onAddListener.addNewCountry(name, selectedImage);
-                    }
-                })
+                .setPositiveButton(R.string.add, null)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         NewCountryDialogFragment.this.getDialog().cancel();
@@ -54,6 +49,29 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
     public void onAttach(Context context) {
         super.onAttach(context);
         onAddListener = (OnAddListener) context;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        final AlertDialog d = (AlertDialog) getDialog();
+        if (d != null) {
+            Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
+            positiveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EditText editText = getDialog().findViewById(R.id.editText);
+                    String name = editText.getText().toString().replaceAll("\\s+", ""); // получение названия и форматирование
+                    if (!name.equals("")) {
+                        onAddListener.addNewCountry(name, selectedImage);
+                        d.dismiss();
+                    } else {
+                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
+                        textInputLayout.setError(getString(R.string.country_name_error));
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -80,4 +98,5 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
     public interface OnAddListener {
         void addNewCountry(String name, String flagPath);
     }
+
 }
