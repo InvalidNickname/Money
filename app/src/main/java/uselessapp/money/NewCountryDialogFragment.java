@@ -20,7 +20,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Objects;
 
-import static android.app.Activity.RESULT_OK;
+import static android.support.v7.app.AppCompatActivity.RESULT_OK;
 
 public class NewCountryDialogFragment extends DialogFragment implements View.OnClickListener {
 
@@ -61,7 +61,7 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
                 @Override
                 public void onClick(View v) {
                     EditText editText = getDialog().findViewById(R.id.editText);
-                    String name = editText.getText().toString().replaceAll("\\s+", ""); // получение названия и форматирование
+                    String name = editText.getText().toString().trim().replaceAll("\\s+", " "); // получение названия и форматирование
                     if (!name.equals("")) {
                         onAddListener.addNewCountry(name, selectedImage);
                         d.dismiss();

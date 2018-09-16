@@ -1,7 +1,6 @@
 package uselessapp.money;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -10,7 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -21,7 +20,6 @@ public class BanknoteListActivity extends AppCompatActivity implements NewBankno
 
     DBHelper dbHelper;
     SQLiteDatabase database;
-    private List<Banknote> banknoteList = new ArrayList<>();
     private String country;
 
     @Override
@@ -30,8 +28,7 @@ public class BanknoteListActivity extends AppCompatActivity implements NewBankno
         setContentView(R.layout.activity_list);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Toolbar toolbar = findViewById(R.id.toolbar);
-        Intent i = getIntent();
-        country = i.getStringExtra("country");
+        country = getIntent().getStringExtra("country");
         toolbar.setTitle(country);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
@@ -40,39 +37,44 @@ public class BanknoteListActivity extends AppCompatActivity implements NewBankno
         }
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
-        Cursor c = database.query("banknotes", null, "country = '" + country + "'", null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                String name = c.getString(c.getColumnIndex("name"));
-                String circulationTime = c.getString(c.getColumnIndex("circulation"));
-                String obversePath = c.getString(c.getColumnIndex("obverse"));
-                String reversePath = c.getString(c.getColumnIndex("reverse"));
-                String description = c.getString(c.getColumnIndex("description"));
-                System.out.println(obversePath);
-                banknoteList.add(new Banknote(country, name, circulationTime, obversePath, reversePath, description));
-            } while (c.moveToNext());
-        }
-        c.close();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         updateList();
     }
 
     void updateList() {
-        BanknoteRVAdapter banknoteRVAdapter = new BanknoteRVAdapter(banknoteList);
+        List<Banknote> banknoteList = new ArrayList<>();
+        Cursor c = database.query("banknotes", null, "country = '" + country + "'", null, null, null, null);
+        if (c.moveToFirst()) {
+            do {
+                int id = c.getInt(c.getColumnIndex("_id"));
+                String name = c.getString(c.getColumnIndex("name"));
+                String circulationTime = c.getString(c.getColumnIndex("circulation"));
+                String obversePath = c.getString(c.getColumnIndex("obverse"));
+                String description = c.getString(c.getColumnIndex("description"));
+                banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath, description));
+            } while (c.moveToNext());
+        }
+        c.close();
         RecyclerView mainView = findViewById(R.id.main);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mainView.setLayoutManager(layoutManager);
-        mainView.setAdapter(banknoteRVAdapter);
+        mainView.setLayoutManager(new LinearLayoutManager(this));
+        mainView.setAdapter(new BanknoteRVAdapter(banknoteList, this));
+    }
+
+    public void openAddDialog(View view) {
+        DialogFragment newFragment = new NewBanknoteDialogFragment();
+        newFragment.show(getSupportFragmentManager(), "add_banknote");
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_toolbar, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    public void add(View view) {
-        DialogFragment newFragment = new NewBanknoteDialogFragment();
-        newFragment.show(getSupportFragmentManager(), "add_banknote");
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override
@@ -85,14 +87,6 @@ public class BanknoteListActivity extends AppCompatActivity implements NewBankno
         cv.put("reverse", reversePath);
         cv.put("description", description);
         database.insert("banknotes", null, cv);
-        Cursor c = database.query("banknotes", null, null, null, null, null, null);
-        if (c.moveToFirst()) {
-            do {
-                System.out.println(c.getString(c.getColumnIndex("obverse")));
-            } while (c.moveToNext());
-        }
-        c.close();
-        banknoteList.add(new Banknote(country, name, circulationTime, obversePath, reversePath, description));
         updateList();
     }
 

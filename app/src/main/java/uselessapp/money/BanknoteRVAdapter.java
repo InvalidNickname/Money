@@ -1,5 +1,8 @@
 package uselessapp.money;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -17,9 +20,11 @@ import java.util.List;
 public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
 
     private List<Banknote> banknoteList;
+    private Context context;
 
-    BanknoteRVAdapter(List<Banknote> banknoteList) {
+    BanknoteRVAdapter(List<Banknote> banknoteList, Context context) {
         this.banknoteList = banknoteList;
+        this.context = context;
     }
 
     @NonNull
@@ -30,7 +35,7 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, int i) {
+    public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, @SuppressLint("RecyclerView") final int i) {
         cardViewHolder.circulationTime.setText(banknoteList.get(i).circulationTime);
         cardViewHolder.country.setText(banknoteList.get(i).country);
         cardViewHolder.title.setText(banknoteList.get(i).title);
@@ -38,6 +43,14 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
             Picasso.get().load(Uri.parse(banknoteList.get(i).obversePath)).into(cardViewHolder.image);
         else
             Picasso.get().load(R.drawable.example_banknote).into(cardViewHolder.image);
+        cardViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context, BanknoteFullActivity.class);
+                intent.putExtra("id", banknoteList.get(i).id);
+                context.startActivity(intent);
+            }
+        });
     }
 
     @Override

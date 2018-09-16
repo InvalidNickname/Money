@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Money</string>
+    <string name="image">изображение</string>
+    <string name="country">Страна</string>
+    <string name="add_new_country">Добавить новую страну</string>
+    <string name="cancel">Отмена</string>
+    <string name="add">Добавить</string>
+    <string name="tap_to_change_flag">Нажмите чтобы изменить флаг</string>
+    <string name="name">Название</string>
+    <string name="circulation_time">Время в обращении</string>
+    <string name="add_new_banknote">Добавить новую банкноту</string>
+    <string name="description">Описание</string>
+    <string name="tap_the_image_to_change_it">Нажмите на изображение для изменения</string>
+    <string name="obverse">аверс</string>
+    <string name="reverse">реверс</string>
+    <string name="delete_country">%s будет удалена!</string>
+    <string name="delete_country_info">Банкноты этой страны также будут удалены</string>
+    <string name="no_description">нет описания</string>
+    <string name="country_name_error">Неверное название</string>
+    <string name="country_s">Страна: %s</string>
+    <string name="circulation_time_s">Время в обращении: %s</string>
+    <string name="description_s">Описание: %s</string>
+    <string name="delete">Удалить</string>
+    <string name="delete_banknote">Удалить %s?</string>
+    <string name="yes">ДА</string>
+    <string name="update_banknote">Обновить банкноту</string>
+    <string name="update">Обновить</string>
+</resources>

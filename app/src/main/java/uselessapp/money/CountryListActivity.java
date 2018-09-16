@@ -13,7 +13,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.View;
 import android.view.WindowManager;
 
@@ -30,13 +29,13 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list);
+        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
     }
@@ -59,23 +58,21 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
         updateList();
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_toolbar, menu);
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    public void add(View view) {
+    public void openAddDialog(View view) {
         DialogFragment newFragment = new NewCountryDialogFragment();
         newFragment.show(getSupportFragmentManager(), "add_country");
     }
 
     void updateList() {
-        CountryRVAdapter countryRVAdapter = new CountryRVAdapter(cardList, this);
         RecyclerView mainView = findViewById(R.id.main);
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
-        mainView.setLayoutManager(layoutManager);
-        mainView.setAdapter(countryRVAdapter);
+        mainView.setLayoutManager(new LinearLayoutManager(this));
+        mainView.setAdapter(new CountryRVAdapter(cardList, this));
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finishAffinity();
     }
 
     @Override
