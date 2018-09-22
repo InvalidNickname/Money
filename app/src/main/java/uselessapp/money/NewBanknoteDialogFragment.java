@@ -16,6 +16,7 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.Objects;
 
 import static android.support.v7.app.AppCompatActivity.RESULT_OK;
@@ -24,6 +25,7 @@ public class NewBanknoteDialogFragment extends DialogFragment {
 
     OnAddListener onAddListener;
     String selectedObverse, selectedReverse;
+    private Context context;
 
     @SuppressLint("InflateParams")
     @NonNull
@@ -60,6 +62,7 @@ public class NewBanknoteDialogFragment extends DialogFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         onAddListener = (OnAddListener) context;
     }
 
@@ -87,12 +90,14 @@ public class NewBanknoteDialogFragment extends DialogFragment {
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK & requestCode == 1) {
-            selectedObverse = Objects.requireNonNull(imageReturnedIntent.getData()).toString();
-            Picasso.get().load(selectedObverse).into(((ImageView) getDialog().findViewById(R.id.obverse)));
+            selectedObverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context);
+            File file = context.getFileStreamPath(selectedObverse);
+            Picasso.get().load(file).into(((ImageView) getDialog().findViewById(R.id.obverse)));
         }
         if (resultCode == RESULT_OK & requestCode == 2) {
-            selectedReverse = Objects.requireNonNull(imageReturnedIntent.getData()).toString();
-            Picasso.get().load(selectedReverse).into(((ImageView) getDialog().findViewById(R.id.reverse)));
+            selectedReverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context);
+            File file = context.getFileStreamPath(selectedReverse);
+            Picasso.get().load(file).into(((ImageView) getDialog().findViewById(R.id.reverse)));
         }
     }
 

@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AlertDialog;
@@ -17,6 +16,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
+
+import java.io.File;
 
 public class BanknoteFullActivity extends AppCompatActivity implements UpdateBanknoteDialogFragment.OnUpdateListener {
 
@@ -72,13 +73,15 @@ public class BanknoteFullActivity extends AppCompatActivity implements UpdateBan
         ((TextView) findViewById(R.id.countryText)).setText(String.format(getString(R.string.country_s), country));
         ((TextView) findViewById(R.id.circulationText)).setText(String.format(getString(R.string.circulation_time_s), circulationTime));
         ((TextView) findViewById(R.id.descriptionText)).setText(String.format(getString(R.string.description_s), description));
-        if (!obversePath.equals("nothing"))
-            Picasso.get().load(Uri.parse(obversePath)).into((ImageView) findViewById(R.id.obverseImage));
-        else
+        if (!obversePath.equals("nothing")) {
+            File file = getFileStreamPath(obversePath);
+            Picasso.get().load(file).into((ImageView) findViewById(R.id.obverseImage));
+        } else
             Picasso.get().load(R.drawable.example_banknote).into((ImageView) findViewById(R.id.obverseImage));
-        if (!reversePath.equals("nothing"))
-            Picasso.get().load(Uri.parse(reversePath)).into((ImageView) findViewById(R.id.reverseImage));
-        else
+        if (!reversePath.equals("nothing")) {
+            File file = getFileStreamPath(reversePath);
+            Picasso.get().load(file).into((ImageView) findViewById(R.id.reverseImage));
+        } else
             Picasso.get().load(R.drawable.example_banknote).into((ImageView) findViewById(R.id.reverseImage));
     }
 

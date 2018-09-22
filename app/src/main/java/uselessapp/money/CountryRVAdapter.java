@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.CardView;
@@ -17,6 +16,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.CardViewHolder> {
@@ -42,9 +42,10 @@ public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.Card
     public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, @SuppressLint("RecyclerView") final int i) {
         cardViewHolder.country.setText(cardList.get(i).country);
         cardViewHolder.count.setText(String.valueOf(cardList.get(i).count));
-        if (!cardList.get(i).flagPath.equals("nothing"))
-            Picasso.get().load(Uri.parse(cardList.get(i).flagPath)).into(cardViewHolder.flag);
-        else
+        if (!cardList.get(i).flagPath.equals("nothing")) {
+            File file = context.getFileStreamPath(cardList.get(i).flagPath);
+            Picasso.get().load(file).transform(new RoundCornerTransformation(12)).into(cardViewHolder.flag);
+        } else
             Picasso.get().load(R.drawable.example_flag).into(cardViewHolder.flag);
         cardViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override

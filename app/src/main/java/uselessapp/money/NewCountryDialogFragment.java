@@ -18,14 +18,17 @@ import android.widget.ImageView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.Objects;
 
 import static android.support.v7.app.AppCompatActivity.RESULT_OK;
+import static uselessapp.money.CountryListActivity.width;
 
 public class NewCountryDialogFragment extends DialogFragment implements View.OnClickListener {
 
     OnAddListener onAddListener;
     String selectedImage;
+    Context context;
 
     @SuppressLint("InflateParams")
     @NonNull
@@ -48,6 +51,7 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         onAddListener = (OnAddListener) context;
     }
 
@@ -84,8 +88,9 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK & requestCode == 1) {
-            selectedImage = Objects.requireNonNull(imageReturnedIntent.getData()).toString();
-            Picasso.get().load(selectedImage).into(((ImageView) getDialog().findViewById(R.id.flag)));
+            selectedImage = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width / 10);
+            File file = context.getFileStreamPath(selectedImage);
+            Picasso.get().load(file).into(((ImageView) getDialog().findViewById(R.id.flag)));
         }
     }
 

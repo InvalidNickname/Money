@@ -3,7 +3,6 @@ package uselessapp.money;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
@@ -15,6 +14,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
+import java.io.File;
 import java.util.List;
 
 public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
@@ -39,9 +39,10 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
         cardViewHolder.circulationTime.setText(banknoteList.get(i).circulationTime);
         cardViewHolder.country.setText(banknoteList.get(i).country);
         cardViewHolder.title.setText(banknoteList.get(i).title);
-        if (!banknoteList.get(i).obversePath.equals("nothing"))
-            Picasso.get().load(Uri.parse(banknoteList.get(i).obversePath)).into(cardViewHolder.image);
-        else
+        if (!banknoteList.get(i).obversePath.equals("nothing")) {
+            File file = context.getFileStreamPath(banknoteList.get(i).obversePath);
+            Picasso.get().load(file).transform(new RoundCornerTransformation(20)).into(cardViewHolder.image);
+        } else
             Picasso.get().load(R.drawable.example_banknote).into(cardViewHolder.image);
         cardViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
