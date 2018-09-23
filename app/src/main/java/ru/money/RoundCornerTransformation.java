@@ -1,4 +1,4 @@
-package uselessapp.money;
+package ru.money;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

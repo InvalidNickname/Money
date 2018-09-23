@@ -1,4 +1,4 @@
-package uselessapp.money;
+package ru.money;
 
 import android.content.Context;
 import android.content.Intent;

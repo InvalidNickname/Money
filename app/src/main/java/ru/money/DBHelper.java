@@ -1,4 +1,4 @@
-package uselessapp.money;
+package ru.money;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
@@ -23,7 +23,8 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("create table countries ("
                 + "_id integer primary key autoincrement,"
                 + "name text,"
-                + "flag text" + ");");
+                + "flag text,"
+                + "continent text" + ");");
     }
 
     @Override

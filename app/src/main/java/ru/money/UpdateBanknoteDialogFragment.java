@@ -1,10 +1,12 @@
-package uselessapp.money;
+package ru.money;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -13,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 
@@ -21,10 +24,13 @@ import java.util.Objects;
 
 import static android.support.v7.app.AppCompatActivity.RESULT_OK;
 
-public class NewBanknoteDialogFragment extends DialogFragment {
+public class UpdateBanknoteDialogFragment extends DialogFragment {
 
-    OnAddListener onAddListener;
+    OnUpdateListener onUpdateListener;
     String selectedObverse, selectedReverse;
+    int id;
+    String name, circulationTime, obversePath, reversePath, description;
+    private boolean isDataSet = false;
     private Context context;
 
     @SuppressLint("InflateParams")
@@ -33,11 +39,13 @@ public class NewBanknoteDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        selectedReverse = "nothing";
-        selectedObverse = "nothing";
+        Bundle args = getArguments();
+        if (args != null) {
+            id = args.getInt("id");
+        }
         builder.setView(inflater.inflate(R.layout.dialog_add_banknote, null))
-                .setTitle(getResources().getString(R.string.add_new_banknote))
-                .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
+                .setTitle(getResources().getString(R.string.update_banknote))
+                .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
                         EditText editName = getDialog().findViewById(R.id.editName);
@@ -48,28 +56,63 @@ public class NewBanknoteDialogFragment extends DialogFragment {
                         String description = editDescription.getText().toString().trim().replaceAll("\\s+", " ");
                         if (description.equals(""))
                             description = getString(R.string.no_description);
-                        onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description);
+                        System.out.println(selectedObverse);
+                        onUpdateListener.updateBanknote(name, time, selectedObverse, selectedReverse, description);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        NewBanknoteDialogFragment.this.getDialog().cancel();
+                        UpdateBanknoteDialogFragment.this.getDialog().cancel();
                     }
                 });
+        getData();
         return builder.create();
+    }
+
+    private void getData() {
+        DBHelper dbHelper = new DBHelper(getContext());
+        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        Cursor c = database.query("banknotes", null, "_id = ?", new String[]{String.valueOf(id)}, null, null, null);
+        c.moveToFirst();
+        name = c.getString(c.getColumnIndex("name"));
+        circulationTime = c.getString(c.getColumnIndex("circulation"));
+        obversePath = c.getString(c.getColumnIndex("obverse"));
+        reversePath = c.getString(c.getColumnIndex("reverse"));
+        description = c.getString(c.getColumnIndex("description"));
+        c.close();
+        dbHelper.close();
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        onAddListener = (OnAddListener) context;
+        onUpdateListener = (OnUpdateListener) context;
     }
 
     @Override
     public void onStart() {
         super.onStart();
         ImageView obverse = getDialog().findViewById(R.id.obverse);
+        ImageView reverse = getDialog().findViewById(R.id.reverse);
+        if (!isDataSet) {
+            ((TextView) getDialog().findViewById(R.id.editName)).setText(name);
+            ((TextView) getDialog().findViewById(R.id.editTime)).setText(circulationTime);
+            ((TextView) getDialog().findViewById(R.id.editDescription)).setText(description);
+            selectedObverse = obversePath;
+            selectedReverse = reversePath;
+            if (!obversePath.equals("nothing")) {
+                File file = context.getFileStreamPath(obversePath);
+                Picasso.get().load(file).into(obverse);
+            } else
+                Picasso.get().load(R.drawable.example_banknote).into(obverse);
+            if (!reversePath.equals("nothing")) {
+                File file = context.getFileStreamPath(reversePath);
+                Picasso.get().load(file).into(reverse);
+            } else
+                Picasso.get().load(R.drawable.example_banknote).into(reverse);
+            isDataSet = true;
+        }
         obverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,7 +120,6 @@ public class NewBanknoteDialogFragment extends DialogFragment {
                 startActivityForResult(pickPhoto, 1);
             }
         });
-        ImageView reverse = getDialog().findViewById(R.id.reverse);
         reverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,7 +143,7 @@ public class NewBanknoteDialogFragment extends DialogFragment {
         }
     }
 
-    public interface OnAddListener {
-        void addNewBanknote(String name, String circulationTime, String obversePath, String reversePath, String description);
+    public interface OnUpdateListener {
+        void updateBanknote(String name, String circulationTime, String obversePath, String reversePath, String description);
     }
 }

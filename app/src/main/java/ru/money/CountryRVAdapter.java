@@ -1,4 +1,4 @@
-package uselessapp.money;
+package ru.money;
 
 import android.annotation.SuppressLint;
 import android.content.Context;

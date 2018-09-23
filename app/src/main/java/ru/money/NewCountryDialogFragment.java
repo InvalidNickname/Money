@@ -1,4 +1,4 @@
-package uselessapp.money;
+package ru.money;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -22,7 +22,7 @@ import java.io.File;
 import java.util.Objects;
 
 import static android.support.v7.app.AppCompatActivity.RESULT_OK;
-import static uselessapp.money.CountryListActivity.width;
+import static ru.money.ContinentsActivity.width;
 
 public class NewCountryDialogFragment extends DialogFragment implements View.OnClickListener {
 

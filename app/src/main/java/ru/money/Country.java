@@ -1,4 +1,4 @@
-package uselessapp.money;
+package ru.money;
 
 public class Country {
 

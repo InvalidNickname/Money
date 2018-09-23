@@ -1,22 +1,19 @@
-package uselessapp.money;
+package ru.money;
 
-import android.Manifest;
 import android.content.ContentValues;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.DisplayMetrics;
-import android.view.Display;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,34 +23,49 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
     DBHelper dbHelper;
     SQLiteDatabase database;
     private List<Country> cardList;
-    static int width, height;
+    private String continent;
+    private TextView view;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.i(getPackageName(), "CountryListActivity is created");
         setContentView(R.layout.activity_list);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         Toolbar toolbar = findViewById(R.id.toolbar);
+        continent = getIntent().getStringExtra("continent");
+        toolbar.setTitle(continent);
         setSupportActionBar(toolbar);
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getRealMetrics(metrics);
-        width = metrics.widthPixels;
-        height = metrics.heightPixels;
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
+        view = findViewById(R.id.noItemsText);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        updateList();
+    }
+
+    public void openAddDialog(View view) {
+        Log.i(getPackageName(), "Opening NewCountryDialog");
+        DialogFragment newFragment = new NewCountryDialogFragment();
+        newFragment.show(getSupportFragmentManager(), "add_country");
+    }
+
+    void updateList() {
+        Log.i(getPackageName(), "Getting data from database...");
         cardList = new ArrayList<>();
-        Cursor c = database.query("countries", null, null, null, null, null, null);
-        if (c.moveToFirst()) {
+        Cursor c = database.query("countries", null, "continent = '" + continent + "'", null, null, null, null);
+        if (c.getCount() == 0) {
+            view.setText(getString(R.string.no_countries));
+            view.setVisibility(View.VISIBLE);
+        } else if (c.moveToFirst()) {
+            view.setVisibility(View.GONE);
             do {
                 String name = c.getString(c.getColumnIndex("name"));
                 String flagPath = c.getString(c.getColumnIndex("flag"));
@@ -63,47 +75,47 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
             } while (c.moveToNext());
         }
         c.close();
-        updateList();
-    }
-
-    public void openAddDialog(View view) {
-        DialogFragment newFragment = new NewCountryDialogFragment();
-        newFragment.show(getSupportFragmentManager(), "add_country");
-    }
-
-    void updateList() {
+        Log.i(getPackageName(), "Updating list...");
         RecyclerView mainView = findViewById(R.id.main);
         mainView.setLayoutManager(new LinearLayoutManager(this));
         mainView.setAdapter(new CountryRVAdapter(cardList, this));
+        Log.i(getPackageName(), "List updated");
     }
 
     @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finishAffinity();
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        if (menuItem.getItemId() == android.R.id.home) {
+            Log.i(getPackageName(), "Back button on toolbar selected, finishing");
+            finish();
+        }
+        return super.onOptionsItemSelected(menuItem);
     }
 
     @Override
     public void addNewCountry(String name, String flagPath) {
+        Log.i(getPackageName(), "Adding new country");
         ContentValues cv = new ContentValues();
         cv.put("name", name);
         cv.put("flag", flagPath);
+        cv.put("continent", continent);
         database.insert("countries", null, cv);
-        cardList.add(new Country(name, flagPath, 0));
+        Log.i(getPackageName(), "Country was added");
         updateList();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Log.i(getPackageName(), "Closing dbHelper");
         dbHelper.close();
     }
 
     @Override
     public void deleteCountry(int id) {
+        Log.i(getPackageName(), "Deleting country");
         database.delete("countries", "name='" + cardList.get(id).country + "'", null);
         database.delete("banknotes", "country='" + cardList.get(id).country + "'", null);
-        cardList.remove(id);
+        Log.i(getPackageName(), "Country was deleted");
         updateList();
     }
 }

@@ -29,4 +29,14 @@
     <string name="yes">YES</string>
     <string name="update_banknote">Update banknote</string>
     <string name="update">Update</string>
+    <string name="no_countries">There are no countries here yet\nTap the button to add some</string>
+    <string name="no_banknotes">There are no banknotes here yet\\nTap the button to add some</string>
+    <string-array name="continents">
+        <item>Europe</item>
+        <item>Northern America</item>
+        <item>Southern America</item>
+        <item>Africa</item>
+        <item>Asia</item>
+        <item>Australia and Oceania</item>
+    </string-array>
 </resources>

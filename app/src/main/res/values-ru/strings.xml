@@ -26,4 +26,14 @@
     <string name="yes">ДА</string>
     <string name="update_banknote">Обновить банкноту</string>
     <string name="update">Обновить</string>
+    <string-array name="continents">
+        <item>Европа</item>
+        <item>Северная Америка</item>
+        <item>Южная Америка</item>
+        <item>Африка</item>
+        <item>Азия</item>
+        <item>Австралия и Океания</item>
+    </string-array>
+    <string name="no_countries">Здесь пока еще нет стран\nНажмите на кнопку, чтобы добавить</string>
+    <string name="no_banknotes">Здесь пока еще нет банкнот\nНажмите на кнопку, чтобы добавить</string>
 </resources>
