@@ -22,8 +22,8 @@ import java.util.List;
 public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.CardViewHolder> {
 
     private OnDeleteListener onDeleteListener;
-    private Context context;
-    private List<Country> cardList;
+    private final Context context;
+    private final List<Country> cardList;
 
     CountryRVAdapter(List<Country> cardList, Context context) {
         this.cardList = cardList;
@@ -79,11 +79,6 @@ public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.Card
     }
 
     @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override
     public int getItemCount() {
         return cardList.size();
     }
@@ -94,10 +89,10 @@ public class CountryRVAdapter extends RecyclerView.Adapter<CountryRVAdapter.Card
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
-        TextView country;
-        ImageView flag;
-        TextView count;
-        CardView cardView;
+        final TextView country;
+        final ImageView flag;
+        final TextView count;
+        final CardView cardView;
 
         CardViewHolder(View itemView) {
             super(itemView);

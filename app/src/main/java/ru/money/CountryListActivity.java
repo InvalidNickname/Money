@@ -20,8 +20,8 @@ import java.util.List;
 
 public class CountryListActivity extends AppCompatActivity implements NewCountryDialogFragment.OnAddListener, CountryRVAdapter.OnDeleteListener {
 
-    DBHelper dbHelper;
-    SQLiteDatabase database;
+    private DBHelper dbHelper;
+    private SQLiteDatabase database;
     private List<Country> cardList;
     private String continent;
     private TextView view;
@@ -57,7 +57,7 @@ public class CountryListActivity extends AppCompatActivity implements NewCountry
         newFragment.show(getSupportFragmentManager(), "add_country");
     }
 
-    void updateList() {
+    private void updateList() {
         Log.i(getPackageName(), "Getting data from database...");
         cardList = new ArrayList<>();
         Cursor c = database.query("countries", null, "continent = '" + continent + "'", null, null, null, null);

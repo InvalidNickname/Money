@@ -12,7 +12,7 @@ import java.util.Objects;
 
 import static android.content.Context.MODE_PRIVATE;
 
-public class Utils {
+class Utils {
 
     static String saveReturnedImageInFile(Intent returnedImage, Context context, int newWidth) {
         Date date = new Date();

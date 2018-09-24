@@ -10,7 +10,7 @@ import com.squareup.picasso.Transformation;
 
 class RoundCornerTransformation implements Transformation {
 
-    private int corner;
+    private final int corner;
 
     RoundCornerTransformation(int corner) {
         this.corner = corner;

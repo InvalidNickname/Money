@@ -23,8 +23,8 @@ import static android.support.v7.app.AppCompatActivity.RESULT_OK;
 
 public class NewBanknoteDialogFragment extends DialogFragment {
 
-    OnAddListener onAddListener;
-    String selectedObverse, selectedReverse;
+    private OnAddListener onAddListener;
+    private String selectedObverse, selectedReverse;
     private Context context;
 
     @SuppressLint("InflateParams")
@@ -35,7 +35,7 @@ public class NewBanknoteDialogFragment extends DialogFragment {
         LayoutInflater inflater = getActivity().getLayoutInflater();
         selectedReverse = "nothing";
         selectedObverse = "nothing";
-        builder.setView(inflater.inflate(R.layout.dialog_add_banknote, null))
+        builder.setView(inflater.inflate(R.layout.dialog_banknote, null))
                 .setTitle(getResources().getString(R.string.add_new_banknote))
                 .setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     @Override

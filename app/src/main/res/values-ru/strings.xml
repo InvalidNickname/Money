@@ -34,6 +34,14 @@
         <item>Азия</item>
         <item>Австралия и Океания</item>
     </string-array>
+    <string-array name="settings">
+        <item>Экспорт базы данных</item>
+        <item>Импорт базы данных</item>
+    </string-array>
     <string name="no_countries">Здесь пока еще нет стран\nНажмите на кнопку, чтобы добавить</string>
     <string name="no_banknotes">Здесь пока еще нет банкнот\nНажмите на кнопку, чтобы добавить</string>
+    <string name="settings">Настройки</string>
+    <string name="db_exported">База данных была экспортирована в папку \"Exported Databases\"</string>
+    <string name="db_invalid">Файл базы данных должен иметь расширение \".db\"</string>
+    <string name="version">версия %s</string>
 </resources>

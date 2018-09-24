@@ -1,10 +1,9 @@
 package ru.money;
 
-public class Country {
+class Country {
 
-    String country;
-    int count;
-    String flagPath;
+    final String country, flagPath;
+    final int count;
 
     Country(String country, String flagPath, int count) {
         this.country = country;

@@ -20,8 +20,8 @@ import java.util.List;
 
 public class BanknoteListActivity extends AppCompatActivity implements NewBanknoteDialogFragment.OnAddListener {
 
-    DBHelper dbHelper;
-    SQLiteDatabase database;
+    private DBHelper dbHelper;
+    private SQLiteDatabase database;
     private String country;
     private TextView view;
 
@@ -50,7 +50,7 @@ public class BanknoteListActivity extends AppCompatActivity implements NewBankno
         updateList();
     }
 
-    void updateList() {
+    private void updateList() {
         Log.i(getPackageName(), "Getting data from database...");
         List<Banknote> banknoteList = new ArrayList<>();
         Cursor c = database.query("banknotes", null, "country = '" + country + "'", null, null, null, null);
@@ -64,8 +64,7 @@ public class BanknoteListActivity extends AppCompatActivity implements NewBankno
                 String name = c.getString(c.getColumnIndex("name"));
                 String circulationTime = c.getString(c.getColumnIndex("circulation"));
                 String obversePath = c.getString(c.getColumnIndex("obverse"));
-                String description = c.getString(c.getColumnIndex("description"));
-                banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath, description));
+                banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
             } while (c.moveToNext());
         }
         c.close();

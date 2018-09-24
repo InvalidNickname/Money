@@ -11,6 +11,8 @@ import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Display;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.AdapterView;
@@ -39,13 +41,38 @@ public class ContinentsActivity extends AppCompatActivity implements AdapterView
         ((ListView) findViewById(R.id.continentList)).setOnItemClickListener(this);
     }
 
-    void checkPermissions() {
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.continents_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()) {
+            case R.id.settings:
+                Log.i(getPackageName(), "Settings button clicked");
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+        }
+        return super.onOptionsItemSelected(menuItem);
+    }
+
+    private void checkPermissions() {
         int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
             Log.i(getPackageName(), "READ_EXTERNAL_STORAGE permission isn't granted, requesting");
         } else {
             Log.i(getPackageName(), "READ_EXTERNAL_STORAGE permission granted");
+        }
+        permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+            Log.i(getPackageName(), "WRITE_EXTERNAL_STORAGE permission isn't granted, requesting");
+        } else {
+            Log.i(getPackageName(), "WRITE_EXTERNAL_STORAGE permission granted");
         }
         Log.i(getPackageName(), "Permissions checked!");
     }

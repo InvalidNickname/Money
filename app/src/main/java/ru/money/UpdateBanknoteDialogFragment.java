@@ -26,10 +26,9 @@ import static android.support.v7.app.AppCompatActivity.RESULT_OK;
 
 public class UpdateBanknoteDialogFragment extends DialogFragment {
 
-    OnUpdateListener onUpdateListener;
-    String selectedObverse, selectedReverse;
-    int id;
-    String name, circulationTime, obversePath, reversePath, description;
+    private OnUpdateListener onUpdateListener;
+    private String selectedObverse, selectedReverse, name, circulationTime, obversePath, reversePath, description;
+    private int id;
     private boolean isDataSet = false;
     private Context context;
 
@@ -43,7 +42,7 @@ public class UpdateBanknoteDialogFragment extends DialogFragment {
         if (args != null) {
             id = args.getInt("id");
         }
-        builder.setView(inflater.inflate(R.layout.dialog_add_banknote, null))
+        builder.setView(inflater.inflate(R.layout.dialog_banknote, null))
                 .setTitle(getResources().getString(R.string.update_banknote))
                 .setPositiveButton(R.string.update, new DialogInterface.OnClickListener() {
                     @Override

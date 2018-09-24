@@ -62,10 +62,10 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:text="@string/example_country"
+                android:textAlignment="center"
                 android:textAppearance="@style/TextAppearance.AppCompat"
                 app:layout_constraintBottom_toTopOf="@+id/circulationTime"
                 app:layout_constraintEnd_toEndOf="parent"
-                android:textAlignment="center"
                 app:layout_constraintStart_toStartOf="@+id/guideline"
                 app:layout_constraintTop_toBottomOf="@+id/title"
                 app:layout_constraintVertical_chainStyle="packed" />

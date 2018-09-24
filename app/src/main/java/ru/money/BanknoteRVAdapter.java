@@ -19,8 +19,8 @@ import java.util.List;
 
 public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
 
-    private List<Banknote> banknoteList;
-    private Context context;
+    private final List<Banknote> banknoteList;
+    private final Context context;
 
     BanknoteRVAdapter(List<Banknote> banknoteList, Context context) {
         this.banknoteList = banknoteList;
@@ -55,22 +55,17 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
     }
 
     @Override
-    public void onAttachedToRecyclerView(@NonNull RecyclerView recyclerView) {
-        super.onAttachedToRecyclerView(recyclerView);
-    }
-
-    @Override
     public int getItemCount() {
         return banknoteList.size();
     }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
-        CardView cardView;
-        TextView circulationTime;
-        TextView title;
-        TextView country;
-        ImageView image;
+        final CardView cardView;
+        final TextView circulationTime;
+        final TextView title;
+        final TextView country;
+        final ImageView image;
 
         CardViewHolder(View itemView) {
             super(itemView);

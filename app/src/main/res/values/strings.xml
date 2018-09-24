@@ -30,7 +30,11 @@
     <string name="update_banknote">Update banknote</string>
     <string name="update">Update</string>
     <string name="no_countries">There are no countries here yet\nTap the button to add some</string>
-    <string name="no_banknotes">There are no banknotes here yet\\nTap the button to add some</string>
+    <string name="no_banknotes">There are no banknotes here yet\nTap the button to add some</string>
+    <string name="settings">Settings</string>
+    <string name="db_exported">Database was exported to \"Exported Databases\" folder</string>
+    <string name="db_invalid">Database file should have \".db\" extension</string>
+    <string name="version">version %s</string>
     <string-array name="continents">
         <item>Europe</item>
         <item>Northern America</item>
@@ -38,5 +42,9 @@
         <item>Africa</item>
         <item>Asia</item>
         <item>Australia and Oceania</item>
+    </string-array>
+    <string-array name="settings">
+        <item>Export database</item>
+        <item>Import database</item>
     </string-array>
 </resources>

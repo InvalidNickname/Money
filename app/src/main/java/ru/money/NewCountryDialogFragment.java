@@ -26,9 +26,9 @@ import static ru.money.ContinentsActivity.width;
 
 public class NewCountryDialogFragment extends DialogFragment implements View.OnClickListener {
 
-    OnAddListener onAddListener;
-    String selectedImage;
-    Context context;
+    private OnAddListener onAddListener;
+    private String selectedImage;
+    private Context context;
 
     @SuppressLint("InflateParams")
     @NonNull
@@ -37,7 +37,7 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
         selectedImage = "nothing";
-        builder.setView(inflater.inflate(R.layout.dialog_add_country, null))
+        builder.setView(inflater.inflate(R.layout.dialog_country, null))
                 .setTitle(getResources().getString(R.string.add_new_country))
                 .setPositiveButton(R.string.add, null)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
