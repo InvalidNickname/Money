@@ -6,9 +6,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -19,7 +16,11 @@ import com.squareup.picasso.Picasso;
 import java.io.File;
 import java.util.Objects;
 
-import static android.support.v7.app.AppCompatActivity.RESULT_OK;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+
+import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 
 public class NewBanknoteDialogFragment extends DialogFragment {
 
@@ -46,9 +47,11 @@ public class NewBanknoteDialogFragment extends DialogFragment {
                         String time = editTime.getText().toString().trim().replaceAll("\\s+", " ");
                         EditText editDescription = getDialog().findViewById(R.id.editDescription);
                         String description = editDescription.getText().toString().trim().replaceAll("\\s+", " ");
+                        EditText editCountry = getDialog().findViewById(R.id.editCountry);
+                        String country = editCountry.getText().toString().trim().replaceAll("\\s+", " ");
                         if (description.equals(""))
                             description = getString(R.string.no_description);
-                        onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description);
+                        onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description, country);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -102,6 +105,6 @@ public class NewBanknoteDialogFragment extends DialogFragment {
     }
 
     public interface OnAddListener {
-        void addNewBanknote(String name, String circulationTime, String obversePath, String reversePath, String description);
+        void addNewBanknote(String name, String circulationTime, String obversePath, String reversePath, String description, String country);
     }
 }

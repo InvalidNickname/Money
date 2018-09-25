@@ -6,29 +6,33 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.design.widget.TextInputLayout;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.Objects;
 
-import static android.support.v7.app.AppCompatActivity.RESULT_OK;
-import static ru.money.ContinentsActivity.width;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.DialogFragment;
 
-public class NewCountryDialogFragment extends DialogFragment implements View.OnClickListener {
+import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
+
+public class NewCategoryDialogFragment extends DialogFragment implements View.OnClickListener {
 
     private OnAddListener onAddListener;
     private String selectedImage;
     private Context context;
+    private int width;
 
     @SuppressLint("InflateParams")
     @NonNull
@@ -37,12 +41,12 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
         selectedImage = "nothing";
-        builder.setView(inflater.inflate(R.layout.dialog_country, null))
+        builder.setView(inflater.inflate(R.layout.dialog_category, null))
                 .setTitle(getResources().getString(R.string.add_new_country))
                 .setPositiveButton(R.string.add, null)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        NewCountryDialogFragment.this.getDialog().cancel();
+                        NewCategoryDialogFragment.this.getDialog().cancel();
                     }
                 });
         return builder.create();
@@ -53,6 +57,10 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
         super.onAttach(context);
         this.context = context;
         onAddListener = (OnAddListener) context;
+        Display display = ((AppCompatActivity) context).getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getRealMetrics(metrics);
+        width = metrics.widthPixels;
     }
 
     @Override
@@ -67,7 +75,7 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
                     EditText editText = getDialog().findViewById(R.id.editText);
                     String name = editText.getText().toString().trim().replaceAll("\\s+", " "); // получение названия и форматирование
                     if (!name.equals("")) {
-                        onAddListener.addNewCountry(name, selectedImage);
+                        onAddListener.addNewCategory(name, selectedImage, "no category");
                         d.dismiss();
                     } else {
                         TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
@@ -88,7 +96,7 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK & requestCode == 1) {
-            selectedImage = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width / 10);
+            selectedImage = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width / 8);
             File file = context.getFileStreamPath(selectedImage);
             Picasso.get().load(file).into(((ImageView) getDialog().findViewById(R.id.flag)));
         }
@@ -101,7 +109,7 @@ public class NewCountryDialogFragment extends DialogFragment implements View.OnC
     }
 
     public interface OnAddListener {
-        void addNewCountry(String name, String flagPath);
+        void addNewCategory(String name, String flagPath, String category);
     }
 
 }

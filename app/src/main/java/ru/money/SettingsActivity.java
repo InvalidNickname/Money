@@ -4,9 +4,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.os.Environment;
-import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,6 +19,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Date;
+import java.util.Objects;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 public class SettingsActivity extends AppCompatActivity implements AdapterView.OnItemClickListener {
 
@@ -96,10 +98,10 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 && resultCode == RESULT_OK && data != null && data.getData() != null) {
-            if (data.getData().getPath().endsWith(".db")) {
+        if (requestCode == 0 && resultCode == RESULT_OK) {
+            if (Objects.requireNonNull(Objects.requireNonNull(data.getData()).getPath()).endsWith(".db")) {
                 Log.i(getPackageName(), "Importing database...");
-                String idArr[] = data.getData().getPath().split(":");
+                String idArr[] = Objects.requireNonNull(data.getData().getPath()).split(":");
                 File newDB = new File(idArr[1]);
                 File dataFile = Environment.getDataDirectory();
                 File oldDB = new File(dataFile, "/data/" + getPackageName() + "/databases/" + "mainDB");

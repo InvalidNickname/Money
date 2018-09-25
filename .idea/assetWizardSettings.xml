@@ -5,7 +5,54 @@
       <map>
         <entry key="imageWizard">
           <value>
-            <PersistentState />
+            <PersistentState>
+              <option name="children">
+                <map>
+                  <entry key="imageAssetPanel">
+                    <value>
+                      <PersistentState>
+                        <option name="children">
+                          <map>
+                            <entry key="launcher">
+                              <value>
+                                <PersistentState>
+                                  <option name="children">
+                                    <map>
+                                      <entry key="foregroundImage">
+                                        <value>
+                                          <PersistentState>
+                                            <option name="values">
+                                              <map>
+                                                <entry key="scalingPercent" value="92" />
+                                                <entry key="trimmed" value="true" />
+                                              </map>
+                                            </option>
+                                          </PersistentState>
+                                        </value>
+                                      </entry>
+                                    </map>
+                                  </option>
+                                  <option name="values">
+                                    <map>
+                                      <entry key="backgroundAssetType" value="COLOR" />
+                                      <entry key="backgroundColor" value="f0f0f0" />
+                                      <entry key="foregroundImage" value="D:\bydlocode\Money\app\src\main\res\drawable\ic_icon.xml" />
+                                      <entry key="legacyIconShape" value="CIRCLE" />
+                                      <entry key="showSafeZone" value="false" />
+                                      <entry key="webIconShape" value="HRECT" />
+                                    </map>
+                                  </option>
+                                </PersistentState>
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </PersistentState>
+                    </value>
+                  </entry>
+                </map>
+              </option>
+            </PersistentState>
           </value>
         </entry>
         <entry key="vectorWizard">
@@ -35,8 +82,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_settings" />
-                            <entry key="sourceFile" value="C:\Users\Alesh\Downloads\baseline-settings-20px.svg" />
+                            <entry key="outputName" value="ic_icon" />
+                            <entry key="sourceFile" value="C:\Users\Alesh\OneDrive\Desktop\вся графика\SVG\icon.svg" />
                           </map>
                         </option>
                       </PersistentState>

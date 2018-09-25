@@ -19,12 +19,14 @@ class DBHelper extends SQLiteOpenHelper {
                 + "circulation text,"
                 + "obverse text,"
                 + "reverse text,"
-                + "description text" + ");");
-        db.execSQL("create table countries ("
+                + "description text,"
+                + "parent integer" + ");");
+        db.execSQL("create table categories ("
                 + "_id integer primary key autoincrement,"
                 + "name text,"
-                + "flag text,"
-                + "continent text" + ");");
+                + "image text,"
+                + "parent integer,"
+                + "type text" + ");");
     }
 
     @Override
