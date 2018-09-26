@@ -39,4 +39,5 @@
     <string name="tap_to_change_icon">Нажмите, чтобы изменить иконку</string>
     <string name="category">Название категории</string>
     <string name="categoryName">Категория</string>
+    <string name="rw_permission_denied">Для экспорта или импорта базы данных приложению требуются права на чтение/запись файлов</string>
 </resources>

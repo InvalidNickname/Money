@@ -6,13 +6,16 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 class DBHelper extends SQLiteOpenHelper {
 
+    static final String TABLE_BANKNOTES = "banknotes";
+    static final String TABLE_CATEGORIES = "categories";
+
     DBHelper(Context context) {
         super(context, "mainDB", null, 1);
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table banknotes ("
+        db.execSQL("create table " + TABLE_BANKNOTES + " ("
                 + "_id integer primary key autoincrement,"
                 + "country text,"
                 + "name text,"
@@ -21,7 +24,7 @@ class DBHelper extends SQLiteOpenHelper {
                 + "reverse text,"
                 + "description text,"
                 + "parent integer" + ");");
-        db.execSQL("create table categories ("
+        db.execSQL("create table " + TABLE_CATEGORIES + " ("
                 + "_id integer primary key autoincrement,"
                 + "name text,"
                 + "image text,"

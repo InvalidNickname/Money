@@ -17,14 +17,14 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
 public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.CardViewHolder> {
 
-    private OnDeleteListener onDeleteListener;
     private final Context context;
     private final List<Category> cardList;
+    private OnDeleteListener onDeleteListener;
 
     CategoryRVAdapter(List<Category> cardList, Context context) {
         this.cardList = cardList;
@@ -93,11 +93,11 @@ public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.Ca
         final TextView country;
         final ImageView image;
         final TextView count;
-        final CardView cardView;
+        final ConstraintLayout cardView;
 
         CardViewHolder(View itemView) {
             super(itemView);
-            cardView = itemView.findViewById(R.id.cardView);
+            cardView = itemView.findViewById(R.id.categoryCard);
             country = itemView.findViewById(R.id.categoryName);
             image = itemView.findViewById(R.id.baseImage);
             count = itemView.findViewById(R.id.count);

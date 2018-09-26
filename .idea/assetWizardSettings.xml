@@ -23,8 +23,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="92" />
-                                                <entry key="trimmed" value="true" />
+                                                <entry key="scalingPercent" value="90" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -36,9 +35,9 @@
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="f0f0f0" />
-                                      <entry key="foregroundImage" value="D:\bydlocode\Money\app\src\main\res\drawable\ic_icon.xml" />
+                                      <entry key="foregroundImage" value="D:\bydlocode\Money\app\src\main\res\drawable-xxxhdpi\icon.png" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
-                                      <entry key="showSafeZone" value="false" />
+                                      <entry key="previewDensity" value="XXXHIGH" />
                                       <entry key="webIconShape" value="HRECT" />
                                     </map>
                                   </option>

@@ -2,6 +2,7 @@ package ru.money;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
@@ -22,6 +23,9 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static ru.money.DBHelper.TABLE_BANKNOTES;
+import static ru.money.DBHelper.TABLE_CATEGORIES;
+
 public class ListActivity extends AppCompatActivity implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, NewBanknoteDialogFragment.OnAddListener {
 
     private DBHelper dbHelper;
@@ -39,12 +43,13 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         currID = getIntent().getIntExtra("parent", 1);
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
-        Cursor c = database.query("categories", null, "_id = ?", new String[]{String.valueOf(currID)}, null, null, null);
+        createID1();
+        Cursor c = database.query(TABLE_CATEGORIES, null, "_id = ?", new String[]{String.valueOf(currID)}, null, null, null);
         String parentName = "NaN";
         if (c.moveToFirst()) {
             type = c.getString(c.getColumnIndex("type"));
             int parentID = c.getInt(c.getColumnIndex("parent"));
-            Cursor c2 = database.query("categories", null, "_id = ?", new String[]{String.valueOf(parentID)}, null, null, null);
+            Cursor c2 = database.query(TABLE_CATEGORIES, null, "_id = ?", new String[]{String.valueOf(parentID)}, null, null, null);
             if (c2.moveToFirst()) {
                 parentName = c.getString(c.getColumnIndex("name"));
             }
@@ -63,16 +68,6 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
             Toolbar toolbar = findViewById(R.id.toolbar);
             setSupportActionBar(toolbar);
         }
-        c = database.query("categories", null, "_id = ?", new String[]{String.valueOf(1)}, null, null, null);
-        if (c.getCount() == 0) {
-            ContentValues cv = new ContentValues();
-            cv.put("name", "main");
-            cv.put("image", "nothing");
-            cv.put("type", "no category");
-            cv.put("parent", 0);
-            database.insert("categories", null, cv);
-        }
-        c.close();
         view = findViewById(R.id.noItemsText);
     }
 
@@ -82,11 +77,23 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         return true;
     }
 
-
     @Override
     protected void onResume() {
         super.onResume();
         updateList();
+    }
+
+    private void createID1() {
+        Cursor c = database.query(TABLE_CATEGORIES, null, "_id = ?", new String[]{String.valueOf(1)}, null, null, null);
+        if (c.getCount() == 0) {
+            ContentValues cv = new ContentValues();
+            cv.put("name", "main");
+            cv.put("image", "nothing");
+            cv.put("type", "no category");
+            cv.put("parent", 0);
+            database.insert("categories", null, cv);
+        }
+        c.close();
     }
 
     public void openAddDialog(View view) {
@@ -134,7 +141,7 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         switch (type) {
             case "category":
                 List<Category> categoryList = new ArrayList<>();
-                c = database.query("categories", null, "parent = '" + currID + "'", null, null, null, null);
+                c = database.query(TABLE_CATEGORIES, null, "parent = '" + currID + "'", null, null, null, "name");
                 if (c.getCount() == 0) {
                     view.setText(getString(R.string.no_items));
                     view.setVisibility(View.VISIBLE);
@@ -155,7 +162,7 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
                 break;
             case "banknotes":
                 List<Banknote> banknoteList = new ArrayList<>();
-                c = database.query("banknotes", null, "parent = '" + currID + "'", null, null, null, null);
+                c = database.query(TABLE_BANKNOTES, null, "parent = '" + currID + "'", null, null, null, null);
                 if (c.getCount() == 0) {
                     view.setText(getString(R.string.no_items));
                     view.setVisibility(View.VISIBLE);
@@ -187,14 +194,21 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         ContentValues cv = new ContentValues();
         cv.put("type", "no category");
         type = "no category";
-        database.update("categories", cv, "_id = ?", new String[]{String.valueOf(currID)});
+        database.update(TABLE_CATEGORIES, cv, "_id = ?", new String[]{String.valueOf(currID)});
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem menuItem) {
-        if (menuItem.getItemId() == android.R.id.home) {
-            Log.i(getPackageName(), "Back button on toolbar selected, finishing");
-            finish();
+        switch (menuItem.getItemId()) {
+            case R.id.settings:
+                Log.i(getPackageName(), "Settings button clicked");
+                Intent intent = new Intent(this, SettingsActivity.class);
+                startActivity(intent);
+                break;
+            case android.R.id.home:
+                Log.i(getPackageName(), "Back button on toolbar selected, finishing");
+                finish();
+                break;
         }
         return super.onOptionsItemSelected(menuItem);
     }
@@ -207,12 +221,12 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         cv.put("image", flagPath);
         cv.put("type", type);
         cv.put("parent", currID);
-        database.insert("categories", null, cv);
+        database.insert(TABLE_CATEGORIES, null, cv);
         Log.i(getPackageName(), "Category was added");
         cv = new ContentValues();
         cv.put("type", "category");
         this.type = "category";
-        database.update("categories", cv, "_id = ?", new String[]{String.valueOf(currID)});
+        database.update(TABLE_CATEGORIES, cv, "_id = ?", new String[]{String.valueOf(currID)});
         updateList();
     }
 
@@ -227,12 +241,12 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         cv.put("reverse", reversePath);
         cv.put("description", description);
         cv.put("parent", currID);
-        database.insert("banknotes", null, cv);
+        database.insert(TABLE_BANKNOTES, null, cv);
         Log.i(getPackageName(), "Banknote added");
         cv = new ContentValues();
         cv.put("type", "banknotes");
         type = "banknotes";
-        database.update("categories", cv, "_id = ?", new String[]{String.valueOf(currID)});
+        database.update(TABLE_CATEGORIES, cv, "_id = ?", new String[]{String.valueOf(currID)});
         updateList();
     }
 
@@ -246,8 +260,8 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
     @Override
     public void deleteCategory(int id) {
         Log.i(getPackageName(), "Deleting category");
-        database.delete("categories", "_id = '" + id + "'", null);
-        database.delete("banknotes", "parent = '" + id + "'", null);
+        database.delete(TABLE_CATEGORIES, "_id = '" + id + "'", null);
+        database.delete(TABLE_BANKNOTES, "parent = '" + id + "'", null);
         Log.i(getPackageName(), "Category was deleted");
         updateList();
     }

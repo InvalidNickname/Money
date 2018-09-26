@@ -39,4 +39,5 @@
     </string-array>
     <string name="country">Country</string>
     <string name="categoryName">Category</string>
+    <string name="rw_permission_denied">To export or import databases, enable read/write permissions!</string>
 </resources>
