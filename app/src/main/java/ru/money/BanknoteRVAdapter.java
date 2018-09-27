@@ -55,6 +55,10 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
         });
     }
 
+    List<Banknote> getCardList() {
+        return banknoteList;
+    }
+
     @Override
     public int getItemCount() {
         return banknoteList.size();

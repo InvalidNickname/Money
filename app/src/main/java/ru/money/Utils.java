@@ -5,8 +5,11 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.provider.MediaStore;
 
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.Objects;
 
@@ -41,5 +44,33 @@ class Utils {
             e.printStackTrace();
         }
         return filename;
+    }
+
+    static void copyFileToDirectory(File source, File destination) {
+        try {
+            FileChannel src = new FileInputStream(source).getChannel();
+            FileChannel dst = new FileOutputStream(destination).getChannel();
+            dst.transferFrom(src, 0, src.size());
+            src.close();
+            dst.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    static void copyFolderToDirectory(File source, File destination) {
+        File[] listOfFiles = source.listFiles();
+        if (listOfFiles != null)
+            for (File file : listOfFiles) {
+                try {
+                    FileChannel src = new FileInputStream(file.getPath()).getChannel();
+                    FileChannel dst = new FileOutputStream(destination + "/" + file.getName()).getChannel();
+                    dst.transferFrom(src, 0, src.size());
+                    src.close();
+                    dst.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
     }
 }

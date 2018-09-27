@@ -37,6 +37,7 @@
         android:clickable="true"
         android:focusable="true"
         android:onClick="openAddDialog"
+        android:id="@+id/fab"
         app:backgroundTint="@color/colorAccent"
         app:elevation="16dp"
         app:fabSize="normal"

@@ -20,6 +20,8 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static ru.money.ListActivity.mode;
+
 public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.CardViewHolder> {
 
     private final Context context;
@@ -51,32 +53,40 @@ public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.Ca
         cardViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context, ListActivity.class);
-                intent.putExtra("parent", cardList.get(i).id);
-                context.startActivity(intent);
+                if (mode.equals("normal")) {
+                    Intent intent = new Intent(context, ListActivity.class);
+                    intent.putExtra("parent", cardList.get(i).id);
+                    context.startActivity(intent);
+                }
             }
         });
         cardViewHolder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View v) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setTitle(String.format(context.getResources().getString(R.string.delete_country), cardList.get(i).categoryName))
-                        .setMessage(R.string.delete_country_info)
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                dialog.cancel();
-                            }
-                        })
-                        .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                onDeleteListener.deleteCategory(cardList.get(i).id);
-                            }
-                        });
-                AlertDialog alert = builder.create();
-                alert.show();
+                if (mode.equals("normal")) {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                    builder.setTitle(String.format(context.getResources().getString(R.string.delete_country), cardList.get(i).categoryName))
+                            .setMessage(R.string.delete_country_info)
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    dialog.cancel();
+                                }
+                            })
+                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
+                                    onDeleteListener.deleteCategory(cardList.get(i).id);
+                                }
+                            });
+                    AlertDialog alert = builder.create();
+                    alert.show();
+                }
                 return false;
             }
         });
+    }
+
+    List<Category> getCardList() {
+        return cardList;
     }
 
     @Override

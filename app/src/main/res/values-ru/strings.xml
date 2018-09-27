@@ -29,7 +29,7 @@
         <item>Экспорт базы данных</item>
         <item>Импорт базы данных</item>
     </string-array>
-    <string name="no_items">Здесь пока еще нет стран\nНажмите на кнопку, чтобы добавить</string>
+    <string name="no_items">Здесь пока ничего нет\nНажмите на кнопку, чтобы добавить категорию/банкноту</string>
     <string name="settings">Настройки</string>
     <string name="db_exported">База данных была экспортирована в папку \"Exported Databases\"</string>
     <string name="db_invalid">Файл базы данных должен иметь расширение \".db\"</string>
@@ -40,4 +40,6 @@
     <string name="category">Название категории</string>
     <string name="categoryName">Категория</string>
     <string name="rw_permission_denied">Для экспорта или импорта базы данных приложению требуются права на чтение/запись файлов</string>
+    <string name="edit">Редактировать</string>
+    <string name="done">Готово</string>
 </resources>
