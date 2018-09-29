@@ -17,13 +17,10 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.util.Date;
-import java.util.Objects;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 
 import static ru.money.DBHelper.DATABASE_NAME;
 import static ru.money.ListActivity.LOG_TAG;
@@ -36,9 +33,7 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
         Log.i(LOG_TAG, "SettingsActivity is created");
         setContentView(R.layout.activity_settings);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        toolbar.setTitle(getString(R.string.settings));
-        setSupportActionBar(toolbar);
+        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
@@ -66,41 +61,39 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
     }
 
     private void exportDatabase() {
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-            Log.i(LOG_TAG, "WRITE_EXTERNAL_STORAGE permission isn't granted, requesting");
-        } else {
+        if (Utils.checkPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
             Log.i(LOG_TAG, "Exporting database...");
             File data = Environment.getDataDirectory();
             File externalStorage = Environment.getExternalStorageDirectory();
             if (externalStorage.canWrite()) {
                 // текущее время - уникальное название для файлов БД
-                Date date = new Date();
-                long time = date.getTime();
-                File backupDB = new File(externalStorage, "/Exported Databases/");
-                File currentDB = new File(data, "/data/" + getPackageName() + "/databases/" + DATABASE_NAME);
-                if (backupDB.mkdirs()) {
-                    backupDB = new File(backupDB, time + ".db");
-                    Utils.copyFileToDirectory(currentDB, backupDB);
+                long time = (new Date()).getTime();
+                File backupFolder = new File(externalStorage, "/Exported Databases/");
+                // создание папки /Exported Databases/, если её не существует
+                if (backupFolder.exists() || backupFolder.mkdirs()) {
+                    File backupDB = new File(backupFolder, time + ".db");
+                    File currentDB = new File(data, "/data/" + getPackageName() + "/databases/" + DATABASE_NAME);
+                    if (!backupDB.exists())
+                        Utils.copyFileToDirectory(currentDB, backupDB);
+                    Log.i(LOG_TAG, "Database exported, exporting images");
                 }
-                Log.i(LOG_TAG, "Database exported, exporting images");
                 File backupData = new File(externalStorage, "/Exported Databases/" + time);
-                File currentData = new File(data, "/data/" + getPackageName() + "/files/");
-                if (backupData.mkdirs())
+                // создание папки с уникальным названием. Если она существует - закончить экспорт
+                if (backupData.mkdirs()) {
+                    File currentData = new File(data, "/data/" + getPackageName() + "/files/");
                     Utils.copyFolderToDirectory(currentData, backupData);
-                Log.i(LOG_TAG, "Images exported");
+                    Log.i(LOG_TAG, "Images exported");
+                } else {
+                    Toast.makeText(this, R.string.db_folder_already_exists, Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 Toast.makeText(this, R.string.db_exported, Toast.LENGTH_SHORT).show();
             }
         }
     }
 
     private void importDatabase() {
-        int permissionCheck = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
-            Log.i(LOG_TAG, "READ_EXTERNAL_STORAGE permission isn't granted, requesting");
-        } else {
+        if (Utils.checkPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE)) {
             Log.i(LOG_TAG, "Opening import dialog");
             Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
             intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getPath()), "*/*");
@@ -113,7 +106,7 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
         switch (requestCode) {
             case 1: {
                 if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
-                    Toast.makeText(this, R.string.rw_permission_denied, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, R.string.rw_permission_denied, Toast.LENGTH_LONG).show();
                     break;
                 }
             }
@@ -123,22 +116,33 @@ public class SettingsActivity extends AppCompatActivity implements AdapterView.O
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == 0 && resultCode == RESULT_OK) {
-            if (Objects.requireNonNull(Objects.requireNonNull(data.getData()).getPath()).endsWith(".db")) {
-                Log.i(LOG_TAG, "Importing database...");
-                String idArr[] = Objects.requireNonNull(data.getData().getPath()).split(":");
-                File newDB = new File(idArr[idArr.length - 1]);
-                File dataFile = Environment.getDataDirectory();
-                File oldDB = new File(dataFile, "/data/" + getPackageName() + "/databases/" + DATABASE_NAME);
-                Utils.copyFileToDirectory(newDB, oldDB);
-                Log.i(LOG_TAG, "Database imported, importing images");
-                File newData = new File(newDB.getPath().replace(".db", ""));
-                File oldData = new File(dataFile, "/data/" + getPackageName() + "/files/");
-                Utils.copyFolderToDirectory(newData, oldData);
-                Log.i(LOG_TAG, "Images imported");
-            } else {
-                Log.i(LOG_TAG, "Invalid database");
-                Toast.makeText(this, R.string.db_invalid, Toast.LENGTH_SHORT).show();
+        // если файл не выбран - uri = null
+        Uri uri = data != null ? data.getData() : null;
+        if (uri != null) {
+            String path = Utils.getPath(this, uri) == null ? uri.getPath() : Utils.getPath(this, uri);
+            if (requestCode == 0 && resultCode == RESULT_OK) {
+                if (path != null && path.endsWith(".db")) {
+                    Log.i(LOG_TAG, "Importing database...");
+                    File newDB = new File(path);
+                    File dataFile = Environment.getDataDirectory();
+                    File dbFolder = new File(dataFile, "/data/" + getPackageName() + "/databases/");
+                    // создание папки /databases/, если её не существует
+                    if (dbFolder.exists() || dbFolder.mkdirs()) {
+                        File oldDB = new File(dataFile, "/data/" + getPackageName() + "/databases/" + DATABASE_NAME);
+                        Utils.copyFileToDirectory(newDB, oldDB);
+                        Log.i(LOG_TAG, "Database imported, importing images");
+                    }
+                    File oldData = new File(dataFile, "/data/" + getPackageName() + "/files/");
+                    // создание папки /files/, если её не существует
+                    if (oldData.exists() || oldData.mkdirs()) {
+                        File newData = new File(path.substring(0, path.length() - 3));
+                        Utils.copyFolderToDirectory(newData, oldData);
+                        Log.i(LOG_TAG, "Images imported");
+                    }
+                } else {
+                    Log.i(LOG_TAG, "Invalid database");
+                    Toast.makeText(this, R.string.db_invalid, Toast.LENGTH_SHORT).show();
+                }
             }
         }
     }

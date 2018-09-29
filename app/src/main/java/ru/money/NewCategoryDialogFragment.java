@@ -1,5 +1,6 @@
 package ru.money;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -104,8 +105,10 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
 
     @Override
     public void onClick(View v) {
-        Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        startActivityForResult(pickPhoto, 1);
+        if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+            Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pickPhoto, 1);
+        }
     }
 
     public interface OnAddListener {

@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import static ru.money.DBHelper.COLUMN_NAME;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 import static ru.money.ListActivity.LOG_TAG;
 
@@ -60,7 +61,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         banknoteID = getIntent().getIntExtra("id", 1);
         Cursor c = database.query(TABLE_BANKNOTES, null, "_id = ?", new String[]{String.valueOf(banknoteID)}, null, null, null);
         c.moveToFirst();
-        name = c.getString(c.getColumnIndex("name"));
+        name = c.getString(c.getColumnIndex(COLUMN_NAME));
         circulationTime = c.getString(c.getColumnIndex("circulation"));
         obversePath = c.getString(c.getColumnIndex("obverse"));
         reversePath = c.getString(c.getColumnIndex("reverse"));
@@ -142,7 +143,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         Log.i(LOG_TAG, "Updating banknote...");
         getSupportActionBar().setTitle(name);
         ContentValues cv = new ContentValues();
-        cv.put("name", name);
+        cv.put(COLUMN_NAME, name);
         cv.put("circulation", circulationTime);
         cv.put("country", country);
         cv.put("obverse", obversePath);

@@ -1,5 +1,6 @@
 package ru.money;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
@@ -25,6 +26,7 @@ import androidx.fragment.app.DialogFragment;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
+import static ru.money.DBHelper.COLUMN_NAME;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 
 public class BanknoteDialogFragment extends DialogFragment {
@@ -127,15 +129,19 @@ public class BanknoteDialogFragment extends DialogFragment {
         obverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhoto, 1);
+                if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto, 1);
+                }
             }
         });
         reverse.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                startActivityForResult(pickPhoto, 2);
+                if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(pickPhoto, 2);
+                }
             }
         });
     }
@@ -159,7 +165,7 @@ public class BanknoteDialogFragment extends DialogFragment {
         SQLiteDatabase database = dbHelper.getReadableDatabase();
         Cursor c = database.query(TABLE_BANKNOTES, null, "_id = ?", new String[]{String.valueOf(id)}, null, null, null);
         if (c.moveToFirst()) {
-            name = c.getString(c.getColumnIndex("name"));
+            name = c.getString(c.getColumnIndex(COLUMN_NAME));
             circulationTime = c.getString(c.getColumnIndex("circulation"));
             obversePath = c.getString(c.getColumnIndex("obverse"));
             reversePath = c.getString(c.getColumnIndex("reverse"));
