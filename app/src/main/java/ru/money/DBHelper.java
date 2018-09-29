@@ -19,6 +19,8 @@ class DBHelper extends SQLiteOpenHelper {
     static final String COLUMN_NAME = "name";
     static final String COLUMN_TYPE = "type";
     static final String COLUMN_PARENT = "parent";
+    static final String COLUMN_IMAGE = "image";
+    static final String COLUMN_DESCRIPTION = "description";
 
     DBHelper(Context context) {
         super(context, DATABASE_NAME, null, USES_DB_VERSION);
@@ -33,13 +35,13 @@ class DBHelper extends SQLiteOpenHelper {
                 + "circulation text,"
                 + "obverse text,"
                 + "reverse text,"
-                + "description text,"
+                + COLUMN_DESCRIPTION + " text,"
                 + COLUMN_PARENT + " integer,"
                 + COLUMN_POSITION + " integer" + ");");
         db.execSQL("create table " + TABLE_CATEGORIES + " ("
                 + COLUMN_ID + " integer primary key autoincrement,"
                 + COLUMN_NAME + " text,"
-                + "image text,"
+                + COLUMN_IMAGE + " text,"
                 + COLUMN_PARENT + " integer,"
                 + COLUMN_TYPE + " text,"
                 + COLUMN_POSITION + " integer" + ");");
@@ -51,9 +53,9 @@ class DBHelper extends SQLiteOpenHelper {
         if (c.getCount() == 0) {
             ContentValues cv = new ContentValues();
             cv.put(COLUMN_NAME, "main");
-            cv.put("image", "nothing");
+            cv.put(COLUMN_IMAGE, "nothing");
             cv.put(COLUMN_TYPE, "no category");
-            cv.put("parent", 0);
+            cv.put(COLUMN_PARENT, 0);
             database.insert(TABLE_CATEGORIES, null, cv);
         }
         c.close();

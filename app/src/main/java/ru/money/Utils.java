@@ -119,4 +119,10 @@ class Utils {
         }
         return true;
     }
+
+    static void deleteFromFiles(String name, Context context) {
+        File categoryImage = new File(Environment.getDataDirectory(), "/data/" + context.getPackageName() + "/files/" + name);
+        if (!categoryImage.delete())
+            Log.i(LOG_TAG, "Failed deleting " + name);
+    }
 }

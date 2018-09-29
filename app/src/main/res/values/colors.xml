@@ -5,4 +5,6 @@
     <color name="colorAccent">#3d5afe</color>
     <color name="colorAccentDark">#0031ca</color>
     <color name="editMode">#b71c1c</color>
+    <color name="lightGrey">#19000000</color>
+    <color name="lightGreyText">#3c000000</color>
 </resources>

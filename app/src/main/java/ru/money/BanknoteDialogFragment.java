@@ -26,6 +26,8 @@ import androidx.fragment.app.DialogFragment;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
+import static ru.money.DBHelper.COLUMN_DESCRIPTION;
+import static ru.money.DBHelper.COLUMN_ID;
 import static ru.money.DBHelper.COLUMN_NAME;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 
@@ -163,13 +165,13 @@ public class BanknoteDialogFragment extends DialogFragment {
     private void getData() {
         DBHelper dbHelper = new DBHelper(getContext());
         SQLiteDatabase database = dbHelper.getReadableDatabase();
-        Cursor c = database.query(TABLE_BANKNOTES, null, "_id = ?", new String[]{String.valueOf(id)}, null, null, null);
+        Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + id, null, null, null, null);
         if (c.moveToFirst()) {
             name = c.getString(c.getColumnIndex(COLUMN_NAME));
             circulationTime = c.getString(c.getColumnIndex("circulation"));
             obversePath = c.getString(c.getColumnIndex("obverse"));
             reversePath = c.getString(c.getColumnIndex("reverse"));
-            description = c.getString(c.getColumnIndex("description"));
+            description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
             country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
             c.close();
         }

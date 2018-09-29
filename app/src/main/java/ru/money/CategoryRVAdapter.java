@@ -4,6 +4,9 @@ import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Resources;
+import android.content.res.TypedArray;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,6 +48,17 @@ public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.Ca
     public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, @SuppressLint("RecyclerView") final int i) {
         cardViewHolder.country.setText(cardList.get(i).categoryName);
         cardViewHolder.count.setText(String.valueOf(cardList.get(i).count));
+        if (cardList.get(i).count == 0)
+            cardViewHolder.count.setTextColor(context.getResources().getColor(R.color.lightGreyText));
+        else {
+            TypedValue typedValue = new TypedValue();
+            Resources.Theme theme = context.getTheme();
+            theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
+            TypedArray arr = context.obtainStyledAttributes(typedValue.data, new int[]{android.R.attr.textColorPrimary});
+            int primaryColor = arr.getColor(0, -1);
+            arr.recycle();
+            cardViewHolder.count.setTextColor(primaryColor);
+        }
         if (!cardList.get(i).imagePath.equals("nothing")) {
             File file = context.getFileStreamPath(cardList.get(i).imagePath);
             Picasso.get().load(file).transform(new RoundCornerTransformation(12)).into(cardViewHolder.image);

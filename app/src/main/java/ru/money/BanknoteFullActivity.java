@@ -20,6 +20,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import static ru.money.DBHelper.COLUMN_COUNTRY;
+import static ru.money.DBHelper.COLUMN_DESCRIPTION;
+import static ru.money.DBHelper.COLUMN_ID;
 import static ru.money.DBHelper.COLUMN_NAME;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 import static ru.money.ListActivity.LOG_TAG;
@@ -59,14 +62,14 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
         banknoteID = getIntent().getIntExtra("id", 1);
-        Cursor c = database.query(TABLE_BANKNOTES, null, "_id = ?", new String[]{String.valueOf(banknoteID)}, null, null, null);
+        Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + banknoteID, null, null, null, null);
         c.moveToFirst();
         name = c.getString(c.getColumnIndex(COLUMN_NAME));
         circulationTime = c.getString(c.getColumnIndex("circulation"));
         obversePath = c.getString(c.getColumnIndex("obverse"));
         reversePath = c.getString(c.getColumnIndex("reverse"));
-        description = c.getString(c.getColumnIndex("description"));
-        country = c.getString(c.getColumnIndex("country"));
+        description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
+        country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
         c.close();
         Log.i(LOG_TAG, "Data is got");
     }
@@ -116,7 +119,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                         .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog, int id) {
                                 Log.i(LOG_TAG, "Deleting banknote...");
-                                database.delete(TABLE_BANKNOTES, "_id = ?", new String[]{String.valueOf(banknoteID)});
+                                database.delete(TABLE_BANKNOTES, COLUMN_ID + " = " + banknoteID, null);
                                 Log.i(LOG_TAG, "Banknote deleted, closing dialog");
                                 dialog.dismiss();
                                 finish();
@@ -145,11 +148,11 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
         cv.put("circulation", circulationTime);
-        cv.put("country", country);
+        cv.put(COLUMN_COUNTRY, country);
         cv.put("obverse", obversePath);
         cv.put("reverse", reversePath);
-        cv.put("description", description);
-        database.update(TABLE_BANKNOTES, cv, "_id=?", new String[]{String.valueOf(banknoteID)});
+        cv.put(COLUMN_DESCRIPTION, description);
+        database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + banknoteID, null);
         Log.i(LOG_TAG, "Banknote updated");
         getData();
         setData();

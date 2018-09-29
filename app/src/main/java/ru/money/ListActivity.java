@@ -31,7 +31,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static ru.money.DBHelper.COLUMN_COUNTRY;
+import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
+import static ru.money.DBHelper.COLUMN_IMAGE;
 import static ru.money.DBHelper.COLUMN_NAME;
 import static ru.money.DBHelper.COLUMN_PARENT;
 import static ru.money.DBHelper.COLUMN_POSITION;
@@ -164,9 +166,10 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
                     view.setVisibility(View.GONE);
                     do {
                         String name = c.getString(c.getColumnIndex(COLUMN_NAME));
-                        String image = c.getString(c.getColumnIndex("image"));
+                        String image = c.getString(c.getColumnIndex(COLUMN_IMAGE));
                         int id = c.getInt(c.getColumnIndex(COLUMN_ID));
-                        categoryList.add(new Category(name, image, 0, id));
+                        int count = countBanknotes(id, 0);
+                        categoryList.add(new Category(name, image, count, id));
                     } while (c.moveToNext());
                 }
                 c.close();
@@ -201,6 +204,32 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
                 view.setVisibility(View.VISIBLE);
                 break;
         }
+    }
+
+    private int countBanknotes(int id, int count) {
+        // определение типа проверяемой категории
+        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + id, null, null, null, null);
+        c.moveToFirst();
+        String type = c.getString(c.getColumnIndex(COLUMN_TYPE));
+        c.close();
+        // если тип - категории, рекурсивно проверяются следующие
+        if (type.equals("category")) {
+            Cursor query = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + id, null, null, null, null);
+            if (query.moveToFirst())
+                do {
+                    count = countBanknotes(query.getInt(query.getColumnIndex(COLUMN_ID)), count);
+                } while (query.moveToNext());
+            query.close();
+        } // если банкноты - просто подсчет
+        else if (type.equals("banknotes")) {
+            Cursor query = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + id, null, null, null, null);
+            if (query.moveToFirst())
+                do {
+                    count++;
+                } while (query.moveToNext());
+            query.close();
+        }
+        return count;
     }
 
     @Override
@@ -314,8 +343,8 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         Log.i(LOG_TAG, "Adding new category");
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
-        cv.put("image", flagPath);
-        cv.put("type", type);
+        cv.put(COLUMN_IMAGE, flagPath);
+        cv.put(COLUMN_TYPE, type);
         cv.put(COLUMN_PARENT, currID);
         Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
         cv.put(COLUMN_POSITION, c.getCount() + 1);
@@ -335,7 +364,7 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
         cv.put(COLUMN_COUNTRY, country);
         cv.put("obverse", obversePath);
         cv.put("reverse", reversePath);
-        cv.put("description", description);
+        cv.put(COLUMN_DESCRIPTION, description);
         cv.put(COLUMN_PARENT, currID);
         Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
         cv.put(COLUMN_POSITION, c.getCount() + 1);
@@ -356,10 +385,40 @@ public class ListActivity extends AppCompatActivity implements NewCategoryDialog
     @Override
     public void deleteCategory(int id) {
         Log.i(LOG_TAG, "Deleting category...");
-        database.delete(TABLE_CATEGORIES, COLUMN_ID + " = " + id, null);
-        database.delete(TABLE_CATEGORIES, COLUMN_PARENT + " = " + id, null);
-        database.delete(TABLE_BANKNOTES, COLUMN_PARENT + " = " + id, null);
+        deleteChildren(id);
         Log.i(LOG_TAG, "Category was deleted");
         updateList();
+    }
+
+    private void deleteChildren(int id) {
+        // определение типа удаляемой категории
+        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + id, null, null, null, null);
+        c.moveToFirst();
+        String type = c.getString(c.getColumnIndex(COLUMN_TYPE));
+        String image = c.getString(c.getColumnIndex(COLUMN_IMAGE));
+        c.close();
+        // удаление категории и иконки категории
+        database.delete(TABLE_CATEGORIES, COLUMN_ID + " = " + id, null);
+        Utils.deleteFromFiles(image, this);
+        // если тип - категории, рекурсивно удаляются следующие
+        if (type.equals("category")) {
+            Cursor query = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + id, null, null, null, null);
+            if (query.moveToFirst())
+                do {
+                    deleteChildren(query.getInt(query.getColumnIndex(COLUMN_ID)));
+                } while (query.moveToNext());
+            query.close();
+        } // если банкноты - просто очистка категории
+        else if (type.equals("banknotes")) {
+            Cursor query = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + id, null, null, null, null);
+            if (query.moveToFirst())
+                do {
+                    database.delete(TABLE_CATEGORIES, COLUMN_ID + " = " + query.getInt(query.getColumnIndex(COLUMN_ID)), null);
+                    // удаление изображений
+                    Utils.deleteFromFiles(query.getString(query.getColumnIndex("obverse")), this);
+                    Utils.deleteFromFiles(query.getString(query.getColumnIndex("reverse")), this);
+                } while (query.moveToNext());
+            query.close();
+        }
     }
 }
