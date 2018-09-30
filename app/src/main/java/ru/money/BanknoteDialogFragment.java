@@ -9,6 +9,8 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.DisplayMetrics;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
@@ -22,6 +24,7 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
@@ -48,7 +51,7 @@ public class BanknoteDialogFragment extends DialogFragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
         Bundle args = getArguments();
-        // получние id банкноты, которую надо обновить. если id == -1, то банкноту надо создать
+        // получение id банкноты, которую надо обновить. если id == -1, то банкноту надо создать
         if (args != null) {
             id = args.getInt("id");
             newBanknote = false;
@@ -150,13 +153,17 @@ public class BanknoteDialogFragment extends DialogFragment {
 
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
+        Display display = ((AppCompatActivity) context).getWindowManager().getDefaultDisplay();
+        DisplayMetrics metrics = new DisplayMetrics();
+        display.getRealMetrics(metrics);
+        int width = metrics.widthPixels;
         if (resultCode == RESULT_OK & requestCode == 1) {
-            selectedObverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context);
+            selectedObverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width);
             File file = context.getFileStreamPath(selectedObverse);
             Picasso.get().load(file).into(((ImageView) getDialog().findViewById(R.id.obverse)));
         }
         if (resultCode == RESULT_OK & requestCode == 2) {
-            selectedReverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context);
+            selectedReverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width);
             File file = context.getFileStreamPath(selectedReverse);
             Picasso.get().load(file).into(((ImageView) getDialog().findViewById(R.id.reverse)));
         }

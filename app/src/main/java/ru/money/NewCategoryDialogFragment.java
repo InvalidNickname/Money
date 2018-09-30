@@ -90,6 +90,8 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
     @Override
     public void onStart() {
         super.onStart();
+        // чтобы диалог нельзя было закрыть, случайно нажав вне него
+        getDialog().setCanceledOnTouchOutside(false);
         ImageView imageView = getDialog().findViewById(R.id.flag);
         imageView.setOnClickListener(this);
     }

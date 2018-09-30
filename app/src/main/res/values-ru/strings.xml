@@ -43,4 +43,5 @@
     <string name="edit">Редактировать</string>
     <string name="done">Готово</string>
     <string name="db_folder_already_exists">Папка базы данных уже существует. Попробуйте экспортировать ещё раз</string>
+    <string name="swap">Перемещение</string>
 </resources>

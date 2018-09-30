@@ -43,4 +43,5 @@
     <string name="edit">Edit</string>
     <string name="done">Done</string>
     <string name="db_folder_already_exists">Database folder already exists. Try to do export again</string>
+    <string name="swap">Swap the items</string>
 </resources>

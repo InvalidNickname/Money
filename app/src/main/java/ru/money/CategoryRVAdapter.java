@@ -99,7 +99,7 @@ public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.Ca
         });
     }
 
-    List<Category> getCardList() {
+    List<Category> getList() {
         return cardList;
     }
 

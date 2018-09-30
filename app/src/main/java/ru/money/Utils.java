@@ -30,26 +30,12 @@ class Utils {
 
     static String saveReturnedImageInFile(Intent returnedImage, Context context, int newWidth) {
         Date date = new Date();
-        String filename = date.getTime() + ".png";
+        String filename = date.getTime() + ".jpg";
         try {
             Bitmap bitmap = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(context).getContentResolver(), returnedImage.getData());
             bitmap = Bitmap.createScaledBitmap(bitmap, newWidth, newWidth * bitmap.getHeight() / bitmap.getWidth(), true);
             FileOutputStream out = context.openFileOutput(filename, MODE_PRIVATE);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
-            out.close();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return filename;
-    }
-
-    static String saveReturnedImageInFile(Intent returnedImage, Context context) {
-        Date date = new Date();
-        String filename = date.getTime() + ".png";
-        try {
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(Objects.requireNonNull(context).getContentResolver(), returnedImage.getData());
-            FileOutputStream out = context.openFileOutput(filename, MODE_PRIVATE);
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
             out.close();
         } catch (IOException e) {
             e.printStackTrace();

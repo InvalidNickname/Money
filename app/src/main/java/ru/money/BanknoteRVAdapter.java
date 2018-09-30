@@ -1,6 +1,5 @@
 package ru.money;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
@@ -36,7 +35,7 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, @SuppressLint("RecyclerView") final int i) {
+    public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, final int i) {
         cardViewHolder.circulationTime.setText(banknoteList.get(i).circulationTime);
         cardViewHolder.country.setText(banknoteList.get(i).country);
         cardViewHolder.title.setText(banknoteList.get(i).title);
@@ -55,7 +54,7 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
         });
     }
 
-    List<Banknote> getCardList() {
+    List<Banknote> getList() {
         return banknoteList;
     }
 

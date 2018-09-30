@@ -4,7 +4,11 @@ import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Typeface;
 import android.os.Bundle;
+import android.text.Spannable;
+import android.text.SpannableStringBuilder;
+import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,6 +28,8 @@ import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
 import static ru.money.DBHelper.COLUMN_NAME;
+import static ru.money.DBHelper.COLUMN_PARENT;
+import static ru.money.DBHelper.COLUMN_POSITION;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 import static ru.money.ListActivity.LOG_TAG;
 
@@ -32,7 +38,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     private DBHelper dbHelper;
     private SQLiteDatabase database;
     private String name, circulationTime, obversePath, reversePath, description, country;
-    private int banknoteID;
+    private int banknoteID, parentID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,6 +71,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + banknoteID, null, null, null, null);
         c.moveToFirst();
         name = c.getString(c.getColumnIndex(COLUMN_NAME));
+        parentID = c.getInt(c.getColumnIndex(COLUMN_PARENT));
         circulationTime = c.getString(c.getColumnIndex("circulation"));
         obversePath = c.getString(c.getColumnIndex("obverse"));
         reversePath = c.getString(c.getColumnIndex("reverse"));
@@ -83,9 +90,16 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
 
     private void setData() {
         Log.i(LOG_TAG, "Setting data");
-        ((TextView) findViewById(R.id.countryText)).setText(String.format(getString(R.string.country_s), country));
-        ((TextView) findViewById(R.id.circulationText)).setText(String.format(getString(R.string.circulation_time_s), circulationTime));
-        ((TextView) findViewById(R.id.descriptionText)).setText(String.format(getString(R.string.description_s), description));
+        // выделение жирным названия пункта списка
+        SpannableStringBuilder country = new SpannableStringBuilder(String.format(getString(R.string.country_s), this.country));
+        country.setSpan(new StyleSpan(Typeface.BOLD), 0, getString(R.string.country_s).length() - 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        ((TextView) findViewById(R.id.countryText)).setText(country);
+        SpannableStringBuilder circulation = new SpannableStringBuilder(String.format(getString(R.string.circulation_time_s), this.circulationTime));
+        circulation.setSpan(new StyleSpan(Typeface.BOLD), 0, getString(R.string.circulation_time_s).length() - 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        ((TextView) findViewById(R.id.circulationText)).setText(circulation);
+        SpannableStringBuilder description = new SpannableStringBuilder(String.format(getString(R.string.description_s), this.description));
+        description.setSpan(new StyleSpan(Typeface.BOLD), 0, getString(R.string.description_s).length() - 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+        ((TextView) findViewById(R.id.descriptionText)).setText(description);
         if (!obversePath.equals("nothing")) {
             File file = getFileStreamPath(obversePath);
             Picasso.get().load(file).into((ImageView) findViewById(R.id.obverseImage));
@@ -120,6 +134,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                             public void onClick(DialogInterface dialog, int id) {
                                 Log.i(LOG_TAG, "Deleting banknote...");
                                 database.delete(TABLE_BANKNOTES, COLUMN_ID + " = " + banknoteID, null);
+                                updateBanknotePositions();
                                 Log.i(LOG_TAG, "Banknote deleted, closing dialog");
                                 dialog.dismiss();
                                 finish();
@@ -139,6 +154,20 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    private void updateBanknotePositions() {
+        Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + parentID, null, null, null, "position");
+        if (c.moveToFirst()) {
+            int i = 1;
+            do {
+                ContentValues cv = new ContentValues();
+                cv.put(COLUMN_POSITION, i);
+                i++;
+                database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + banknoteID, null);
+            } while (c.moveToNext());
+        }
+        c.close();
     }
 
     @Override
