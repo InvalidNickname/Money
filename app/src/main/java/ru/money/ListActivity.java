@@ -60,7 +60,10 @@ public class ListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "ListActivity is created");
+        // установка выбранного размера шрифта
+        Utils.updateFontScale(this);
         setContentView(R.layout.activity_list);
+        // создание или открытие БД
         dbHelper = new DBHelper(this);
         database = dbHelper.getWritableDatabase();
         // получение ID текущей категории, если это - первая, то ID = 1

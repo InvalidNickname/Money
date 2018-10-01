@@ -3,12 +3,14 @@ package ru.money;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.util.DisplayMetrics;
 import android.util.Log;
 
 import java.io.File;
@@ -22,6 +24,7 @@ import java.util.Objects;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
 
 import static android.content.Context.MODE_PRIVATE;
 import static ru.money.ListActivity.LOG_TAG;
@@ -57,6 +60,7 @@ class Utils {
 
     static void copyFolderToDirectory(File source, File destination) {
         File[] listOfFiles = source.listFiles();
+        System.out.println(source + " " + destination);
         if (listOfFiles != null)
             for (File file : listOfFiles) {
                 copyFileToDirectory(file, new File(destination + "/" + file.getName()));
@@ -88,7 +92,6 @@ class Utils {
                     }
                 }
             } catch (Exception ignored) {
-
             }
         } else if ("file".equalsIgnoreCase(uri.getScheme())) {
             return uri.getPath();
@@ -110,5 +113,21 @@ class Utils {
         File categoryImage = new File(Environment.getDataDirectory(), "/data/" + context.getPackageName() + "/files/" + name);
         if (!categoryImage.delete())
             Log.i(LOG_TAG, "Failed deleting " + name);
+    }
+
+    static void changeFontScale(boolean isChecked, Context context) {
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.fontScale = isChecked ? 1.15f : 1;
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        metrics.scaledDensity = configuration.fontScale * metrics.density;
+        context.getResources().updateConfiguration(configuration, metrics);
+    }
+
+    static void updateFontScale(Context context) {
+        Configuration configuration = context.getResources().getConfiguration();
+        configuration.fontScale = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("text_size", false) ? 1.15f : 1;
+        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
+        metrics.scaledDensity = configuration.fontScale * metrics.density;
+        context.getResources().updateConfiguration(configuration, metrics);
     }
 }

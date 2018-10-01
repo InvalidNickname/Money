@@ -17,10 +17,12 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.List;
+import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.core.content.res.ResourcesCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static ru.money.ListActivity.mode;
@@ -93,6 +95,7 @@ public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.Ca
                             });
                     AlertDialog alert = builder.create();
                     alert.show();
+                    ((TextView) Objects.requireNonNull(alert.getWindow()).findViewById(android.R.id.message)).setTypeface(ResourcesCompat.getFont(context, R.font.abel));
                 }
                 return false;
             }

@@ -6,15 +6,6 @@
     android:layout_height="match_parent"
     tools:context=".SettingsActivity">
 
-    <ListView
-        android:id="@+id/settingsList"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:divider="@android:drawable/divider_horizontal_bright"
-        android:dividerHeight="1dp"
-        android:entries="@array/settings"
-        app:layout_constraintTop_toBottomOf="@id/toolbar" />
-
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -34,4 +25,14 @@
         android:textAppearance="@style/TextAppearance.AppCompat"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="ru.money.SettingsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>

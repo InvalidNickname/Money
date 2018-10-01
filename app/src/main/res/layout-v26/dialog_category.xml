@@ -24,9 +24,9 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/category"
+            android:importantForAutofill="no"
             android:inputType="textCapWords"
-            android:singleLine="true"
-            android:importantForAutofill="no" />
+            android:singleLine="true" />
 
     </com.google.android.material.textfield.TextInputLayout>
 

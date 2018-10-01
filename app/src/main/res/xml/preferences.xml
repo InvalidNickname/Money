@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory android:title="@string/db_cat_preference">
+
+        <Preference
+            android:key="export"
+            android:title="@string/export_db" />
+        <Preference
+            android:key="import"
+            android:title="@string/import_db" />
+    </PreferenceCategory>
+
+    <PreferenceCategory android:title="@string/interface_cat_preference">
+
+        <SwitchPreference
+            android:defaultValue="false"
+            android:key="text_size"
+            android:title="@string/enable_bigger_text" />
+    </PreferenceCategory>
+
+</PreferenceScreen>

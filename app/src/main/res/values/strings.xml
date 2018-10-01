@@ -33,10 +33,6 @@
     <string name="tap_to_change_icon">Tap to change icon</string>
     <string name="select_add">Select what to add</string>
     <string name="banknote">Banknote</string>
-    <string-array name="settings">
-        <item>Export database</item>
-        <item>Import database</item>
-    </string-array>
     <string name="country">Country</string>
     <string name="categoryName">Category</string>
     <string name="rw_permission_denied">To export/import databases and add images, enable read/write permissions!</string>
@@ -44,4 +40,9 @@
     <string name="done">Done</string>
     <string name="db_folder_already_exists">Database folder already exists. Try to do export again</string>
     <string name="swap">Swap the items</string>
+    <string name="enable_bigger_text">Bigger text size</string>
+    <string name="export_db">Export database</string>
+    <string name="import_db">Import database</string>
+    <string name="db_cat_preference">Database</string>
+    <string name="interface_cat_preference">Interface</string>
 </resources>

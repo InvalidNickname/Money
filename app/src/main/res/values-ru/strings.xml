@@ -25,10 +25,6 @@
     <string name="yes">ДА</string>
     <string name="update_banknote">Обновить банкноту</string>
     <string name="update">Обновить</string>
-    <string-array name="settings">
-        <item>Экспорт базы данных</item>
-        <item>Импорт базы данных</item>
-    </string-array>
     <string name="no_items">Здесь пока ничего нет\nНажмите на кнопку, чтобы добавить категорию/банкноту</string>
     <string name="settings">Настройки</string>
     <string name="db_exported">База данных была экспортирована в папку \"Exported Databases\"</string>
@@ -44,4 +40,9 @@
     <string name="done">Готово</string>
     <string name="db_folder_already_exists">Папка базы данных уже существует. Попробуйте экспортировать ещё раз</string>
     <string name="swap">Перемещение</string>
+    <string name="enable_bigger_text">Увеличенный размер текста</string>
+    <string name="export_db">Экспорт базы данных</string>
+    <string name="import_db">Импорт базы данных</string>
+    <string name="db_cat_preference">База данных</string>
+    <string name="interface_cat_preference">Интерфейс</string>
 </resources>

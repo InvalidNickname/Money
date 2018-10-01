@@ -19,8 +19,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/country_s"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp" />
@@ -30,8 +30,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
         android:text="@string/circulation_time_s"
         android:textColor="?android:attr/textColorPrimary"
         android:textSize="16sp" />
@@ -52,9 +52,9 @@
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
         android:layout_marginTop="24dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginStart="16dp"
         android:layout_marginBottom="16dp"
         android:scrollbars="none"
         app:layout_constraintBottom_toBottomOf="parent"
