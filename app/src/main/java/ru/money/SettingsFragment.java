@@ -28,8 +28,8 @@ import androidx.preference.PreferenceViewHolder;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static android.app.Activity.RESULT_OK;
+import static ru.money.App.LOG_TAG;
 import static ru.money.DBHelper.DATABASE_NAME;
-import static ru.money.ListActivity.LOG_TAG;
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -70,6 +70,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onStart() {
         super.onStart();
+        // слушатель нажатие на кнопку экспорта
         Preference export = findPreference("export");
         export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -77,6 +78,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return true;
             }
         });
+        // слушатель нажатия на кнопку импорта
         Preference importPref = findPreference("import");
         importPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
@@ -84,6 +86,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return true;
             }
         });
+        // запрет на overscroll, без него выдлядит лучше
+        getListView().setOverScrollMode(View.OVER_SCROLL_NEVER);
     }
 
     private void exportDatabase() {

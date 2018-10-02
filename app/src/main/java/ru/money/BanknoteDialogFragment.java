@@ -13,10 +13,12 @@ import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -62,25 +64,7 @@ public class BanknoteDialogFragment extends DialogFragment {
         }
         builder.setView(inflater.inflate(R.layout.dialog_banknote, null))
                 .setTitle(newBanknote ? getString(R.string.add_new_banknote) : getString(R.string.update_banknote))
-                .setPositiveButton(newBanknote ? R.string.add : R.string.update, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                        EditText editName = getDialog().findViewById(R.id.editName);
-                        String name = editName.getText().toString().trim().replaceAll("\\s+", " ");
-                        EditText editTime = getDialog().findViewById(R.id.editTime);
-                        String time = editTime.getText().toString().trim().replaceAll("\\s+", " ");
-                        EditText editDescription = getDialog().findViewById(R.id.editDescription);
-                        String description = editDescription.getText().toString().trim().replaceAll("\\s+", " ");
-                        EditText editCountry = getDialog().findViewById(R.id.editCountry);
-                        String country = editCountry.getText().toString().trim().replaceAll("\\s+", " ");
-                        if (description.equals(""))
-                            description = getString(R.string.no_description);
-                        if (newBanknote)
-                            onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description, country);
-                        else
-                            onUpdateListener.updateBanknote(name, time, selectedObverse, selectedReverse, description, country);
-                    }
-                })
+                .setPositiveButton(newBanknote ? R.string.add : R.string.update, null)
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         BanknoteDialogFragment.this.getDialog().cancel();
@@ -89,6 +73,52 @@ public class BanknoteDialogFragment extends DialogFragment {
         if (!newBanknote)
             getData();
         return builder.create();
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        final AlertDialog d = (AlertDialog) getDialog();
+        if (d != null) {
+            Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
+            positiveButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    EditText editName = getDialog().findViewById(R.id.editName);
+                    String name = editName.getText().toString().trim().replaceAll("\\s+", " ");
+                    EditText editTime = getDialog().findViewById(R.id.editTime);
+                    String time = editTime.getText().toString().trim().replaceAll("\\s+", " ");
+                    EditText editDescription = getDialog().findViewById(R.id.editDescription);
+                    String description = editDescription.getText().toString().trim().replaceAll("\\s+", " ");
+                    EditText editCountry = getDialog().findViewById(R.id.editCountry);
+                    String country = editCountry.getText().toString().trim().replaceAll("\\s+", " ");
+                    if (description.equals(""))
+                        description = getString(R.string.no_description);
+                    if (!name.equals("") && !country.equals("")) {
+                        if (newBanknote)
+                            onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description, country);
+                        else
+                            onUpdateListener.updateBanknote(name, time, selectedObverse, selectedReverse, description, country);
+                        d.dismiss();
+                    } else {
+                        if (name.equals("")) {
+                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
+                            textInputLayout.setError(getString(R.string.banknote_name_error));
+                        } else {
+                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
+                            textInputLayout.setError(null);
+                        }
+                        if (country.equals("")) {
+                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
+                            textInputLayout.setError(getString(R.string.country_name_error));
+                        } else {
+                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
+                            textInputLayout.setError(null);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     @Override
@@ -170,8 +200,7 @@ public class BanknoteDialogFragment extends DialogFragment {
     }
 
     private void getData() {
-        DBHelper dbHelper = new DBHelper(getContext());
-        SQLiteDatabase database = dbHelper.getReadableDatabase();
+        SQLiteDatabase database = DBHelper.getInstance(getContext()).getReadableDatabase();
         Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + id, null, null, null, null);
         if (c.moveToFirst()) {
             name = c.getString(c.getColumnIndex(COLUMN_NAME));
@@ -182,7 +211,6 @@ public class BanknoteDialogFragment extends DialogFragment {
             country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
             c.close();
         }
-        dbHelper.close();
     }
 
     public interface OnAddListener {

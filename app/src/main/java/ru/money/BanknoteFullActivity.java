@@ -24,6 +24,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import static ru.money.App.LOG_TAG;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
@@ -31,11 +32,9 @@ import static ru.money.DBHelper.COLUMN_NAME;
 import static ru.money.DBHelper.COLUMN_PARENT;
 import static ru.money.DBHelper.COLUMN_POSITION;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
-import static ru.money.ListActivity.LOG_TAG;
 
 public class BanknoteFullActivity extends AppCompatActivity implements BanknoteDialogFragment.OnUpdateListener {
 
-    private DBHelper dbHelper;
     private SQLiteDatabase database;
     private String name, circulationTime, obversePath, reversePath, description, country;
     private int banknoteID, parentID;
@@ -65,8 +64,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
 
     private void getData() {
         Log.i(LOG_TAG, "Getting data...");
-        dbHelper = new DBHelper(this);
-        database = dbHelper.getWritableDatabase();
+        database = DBHelper.getInstance(this).getWritableDatabase();
         banknoteID = getIntent().getIntExtra("id", 1);
         Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + banknoteID, null, null, null, null);
         c.moveToFirst();
@@ -85,7 +83,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     protected void onDestroy() {
         super.onDestroy();
         Log.i(LOG_TAG, "Closing dbHelper");
-        dbHelper.close();
+        DBHelper.getInstance(this).close();
     }
 
     private void setData() {

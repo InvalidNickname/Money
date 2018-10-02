@@ -29,6 +29,7 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import static ru.money.App.LOG_TAG;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
@@ -44,9 +45,7 @@ public class ListActivity extends AppCompatActivity
         implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener {
 
     static final int USES_DB_VERSION = 2;
-    static final String LOG_TAG = "ru.money";
     static String mode = "normal";
-    private DBHelper dbHelper;
     private SQLiteDatabase database;
     private int currID;
     private String type;
@@ -64,8 +63,7 @@ public class ListActivity extends AppCompatActivity
         Utils.updateFontScale(this);
         setContentView(R.layout.activity_list);
         // создание или открытие БД
-        dbHelper = new DBHelper(this);
-        database = dbHelper.getWritableDatabase();
+        database = DBHelper.getInstance(this).getWritableDatabase();
         // получение ID текущей категории, если это - первая, то ID = 1
         currID = getIntent().getIntExtra("parent", 1);
         // получение типа и названия открытой категории
@@ -152,6 +150,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     private void updateList() {
+        database = DBHelper.getInstance(this).getWritableDatabase();
         Log.i(LOG_TAG, "Getting data from database...");
         updatePositions();
         Cursor cursor = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
@@ -165,7 +164,7 @@ public class ListActivity extends AppCompatActivity
                 if (c.getCount() == 0) {
                     // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
                     noItemsText.setVisibility(View.VISIBLE);
-                    type = dbHelper.updateCategoryType(database, currID, "no category");
+                    type = DBHelper.updateCategoryType(database, currID, "no category");
                 } else if (c.moveToFirst()) {
                     noItemsText.setVisibility(View.GONE);
                     do {
@@ -178,7 +177,7 @@ public class ListActivity extends AppCompatActivity
                 }
                 c.close();
                 Log.i(LOG_TAG, "Data is loaded, updating list...");
-                main.setAdapter(new CategoryRVAdapter(categoryList, this));
+                main.setAdapter(new CategoryRVAdapter(categoryList));
                 Log.i(LOG_TAG, "List updated");
                 break;
             case "banknotes":
@@ -187,7 +186,7 @@ public class ListActivity extends AppCompatActivity
                 if (c2.getCount() == 0) {
                     // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
                     noItemsText.setVisibility(View.VISIBLE);
-                    type = dbHelper.updateCategoryType(database, currID, "no category");
+                    type = DBHelper.updateCategoryType(database, currID, "no category");
                 } else if (c2.moveToFirst()) {
                     noItemsText.setVisibility(View.GONE);
                     do {
@@ -320,20 +319,28 @@ public class ListActivity extends AppCompatActivity
             public boolean isLongPressDragEnabled() {
                 return mode.equals("edit");
             }
+
+            @Override
+            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
+                super.clearView(recyclerView, viewHolder);
+                viewHolder.itemView.findViewById(R.id.divider).setVisibility(View.VISIBLE);
+            }
         });
         itemTouchHelper.attachToRecyclerView(main);
     }
 
     private void updateCategoryPosition(int oldPos, int newPos) {
+        database = DBHelper.getInstance(this).getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_POSITION, oldPos);
-        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(newPos).id, null);
+        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(newPos).getId(), null);
         cv = new ContentValues();
         cv.put(COLUMN_POSITION, newPos);
-        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(oldPos).id, null);
+        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(oldPos).getId(), null);
     }
 
     private void updateBanknotePosition(int oldPos, int newPos) {
+        database = DBHelper.getInstance(this).getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_POSITION, oldPos);
         database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + ((BanknoteRVAdapter) main.getAdapter()).getList().get(newPos).id, null);
@@ -353,7 +360,7 @@ public class ListActivity extends AppCompatActivity
         cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
         database.insert(TABLE_CATEGORIES, null, cv);
         Log.i(LOG_TAG, "Category was added");
-        dbHelper.updateCategoryType(database, currID, "category");
+        DBHelper.updateCategoryType(database, currID, "category");
         updateList();
     }
 
@@ -371,7 +378,7 @@ public class ListActivity extends AppCompatActivity
         cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
         database.insert(TABLE_BANKNOTES, null, cv);
         Log.i(LOG_TAG, "Banknote added");
-        dbHelper.updateCategoryType(database, currID, "banknotes");
+        DBHelper.updateCategoryType(database, currID, "banknotes");
         updateList();
     }
 
@@ -379,7 +386,7 @@ public class ListActivity extends AppCompatActivity
     protected void onDestroy() {
         super.onDestroy();
         Log.i(LOG_TAG, "Closing dbHelper");
-        dbHelper.close();
+        DBHelper.getInstance(this).close();
     }
 
     @Override
@@ -397,7 +404,7 @@ public class ListActivity extends AppCompatActivity
                     for (int i = 0; i < main.getAdapter().getItemCount(); i++) {
                         ContentValues cv = new ContentValues();
                         cv.put(COLUMN_POSITION, i + 1);
-                        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(i).id, null);
+                        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(i).getId(), null);
                     }
                     break;
                 case "banknotes":
@@ -409,7 +416,6 @@ public class ListActivity extends AppCompatActivity
                     break;
             }
     }
-
 
     private void deleteChildren(int id) {
         // определение типа удаляемой категории

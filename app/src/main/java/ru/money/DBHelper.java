@@ -21,9 +21,23 @@ class DBHelper extends SQLiteOpenHelper {
     static final String COLUMN_PARENT = "parent";
     static final String COLUMN_IMAGE = "image";
     static final String COLUMN_DESCRIPTION = "description";
+    private static DBHelper instance = null;
 
-    DBHelper(Context context) {
+    private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, USES_DB_VERSION);
+    }
+
+    static synchronized DBHelper getInstance(Context context) {
+        if (instance == null)
+            instance = new DBHelper(context.getApplicationContext());
+        return instance;
+    }
+
+    static String updateCategoryType(SQLiteDatabase database, int id, String newType) {
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_TYPE, newType);
+        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + id, null);
+        return newType;
     }
 
     @Override
@@ -48,6 +62,7 @@ class DBHelper extends SQLiteOpenHelper {
         createMainCategory(db);
     }
 
+    // создание главной категории, если её ещё нет
     private void createMainCategory(SQLiteDatabase database) {
         Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = 1", null, null, null, null);
         if (c.getCount() == 0) {
@@ -59,13 +74,6 @@ class DBHelper extends SQLiteOpenHelper {
             database.insert(TABLE_CATEGORIES, null, cv);
         }
         c.close();
-    }
-
-    String updateCategoryType(SQLiteDatabase database, int id, String newType) {
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_TYPE, newType);
-        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + id, null);
-        return newType;
     }
 
     @Override

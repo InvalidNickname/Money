@@ -1,105 +1,34 @@
 package ru.money;
 
-import android.annotation.SuppressLint;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.res.Resources;
-import android.content.res.TypedArray;
-import android.util.TypedValue;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
 import java.util.List;
-import java.util.Objects;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.constraintlayout.widget.ConstraintLayout;
-import androidx.core.content.res.ResourcesCompat;
+import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
-
-import static ru.money.ListActivity.mode;
+import ru.money.databinding.LayoutCardCategoryBinding;
 
 public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.CardViewHolder> {
 
-    private final Context context;
     private final List<Category> cardList;
-    private OnDeleteListener onDeleteListener;
 
-    CategoryRVAdapter(List<Category> cardList, Context context) {
+    CategoryRVAdapter(List<Category> cardList) {
         this.cardList = cardList;
-        this.context = context;
     }
 
     @NonNull
     @Override
-    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int i) {
-        View v = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.layout_card_category, viewGroup, false);
-        onDeleteListener = (OnDeleteListener) context;
-        return new CardViewHolder(v);
+    public CardViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(parent.getContext());
+        LayoutCardCategoryBinding binding = DataBindingUtil.inflate(inflater, R.layout.layout_card_category, parent, false);
+        return new CardViewHolder(binding);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, @SuppressLint("RecyclerView") final int i) {
-        cardViewHolder.country.setText(cardList.get(i).categoryName);
-        cardViewHolder.count.setText(String.valueOf(cardList.get(i).count));
-        if (cardList.get(i).count == 0)
-            cardViewHolder.count.setTextColor(context.getResources().getColor(R.color.lightGreyText));
-        else {
-            TypedValue typedValue = new TypedValue();
-            Resources.Theme theme = context.getTheme();
-            theme.resolveAttribute(android.R.attr.textColorPrimary, typedValue, true);
-            TypedArray arr = context.obtainStyledAttributes(typedValue.data, new int[]{android.R.attr.textColorPrimary});
-            int primaryColor = arr.getColor(0, -1);
-            arr.recycle();
-            cardViewHolder.count.setTextColor(primaryColor);
-        }
-        if (!cardList.get(i).imagePath.equals("nothing")) {
-            File file = context.getFileStreamPath(cardList.get(i).imagePath);
-            Picasso.get().load(file).transform(new RoundCornerTransformation(12)).into(cardViewHolder.image);
-        } else
-            Picasso.get().load(R.drawable.example_flag).into(cardViewHolder.image);
-        cardViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (mode.equals("normal")) {
-                    Intent intent = new Intent(context, ListActivity.class);
-                    intent.putExtra("parent", cardList.get(i).id);
-                    context.startActivity(intent);
-                }
-            }
-        });
-        cardViewHolder.cardView.setOnLongClickListener(new View.OnLongClickListener() {
-            @Override
-            public boolean onLongClick(View v) {
-                if (mode.equals("normal")) {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                    builder.setTitle(String.format(context.getResources().getString(R.string.delete_country), cardList.get(i).categoryName))
-                            .setMessage(R.string.delete_country_info)
-                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            })
-                            .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    onDeleteListener.deleteCategory(cardList.get(i).id);
-                                }
-                            });
-                    AlertDialog alert = builder.create();
-                    alert.show();
-                    ((TextView) Objects.requireNonNull(alert.getWindow()).findViewById(android.R.id.message)).setTypeface(ResourcesCompat.getFont(context, R.font.abel));
-                }
-                return false;
-            }
-        });
+    public void onBindViewHolder(@NonNull CardViewHolder holder, int position) {
+        holder.bind(cardList.get(position));
     }
 
     List<Category> getList() {
@@ -117,17 +46,16 @@ public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.Ca
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
-        final TextView country;
-        final ImageView image;
-        final TextView count;
-        final ConstraintLayout cardView;
+        final LayoutCardCategoryBinding binding;
 
-        CardViewHolder(View itemView) {
-            super(itemView);
-            cardView = itemView.findViewById(R.id.categoryCard);
-            country = itemView.findViewById(R.id.categoryName);
-            image = itemView.findViewById(R.id.baseImage);
-            count = itemView.findViewById(R.id.count);
+        CardViewHolder(LayoutCardCategoryBinding binding) {
+            super(binding.getRoot());
+            this.binding = binding;
+        }
+
+        void bind(Category category) {
+            binding.setCategory(category);
+            binding.executePendingBindings();
         }
     }
 }

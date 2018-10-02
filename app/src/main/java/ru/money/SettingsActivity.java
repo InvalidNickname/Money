@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import static ru.money.ListActivity.LOG_TAG;
+import static ru.money.App.LOG_TAG;
 
 public class SettingsActivity extends AppCompatActivity {
 

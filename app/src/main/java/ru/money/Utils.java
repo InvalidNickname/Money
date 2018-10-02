@@ -27,7 +27,7 @@ import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 
 import static android.content.Context.MODE_PRIVATE;
-import static ru.money.ListActivity.LOG_TAG;
+import static ru.money.App.LOG_TAG;
 
 class Utils {
 
