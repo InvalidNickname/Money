@@ -46,4 +46,5 @@
     <string name="db_cat_preference">Database</string>
     <string name="interface_cat_preference">Interface</string>
     <string name="banknote_name_error">Invalid name</string>
+    <string name="need_icon">Add icon</string>
 </resources>

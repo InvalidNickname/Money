@@ -46,4 +46,5 @@
     <string name="db_cat_preference">База данных</string>
     <string name="interface_cat_preference">Интерфейс</string>
     <string name="banknote_name_error">Неверное название</string>
+    <string name="need_icon">Добавить иконку</string>
 </resources>

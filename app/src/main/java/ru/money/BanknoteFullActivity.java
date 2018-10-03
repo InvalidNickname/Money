@@ -43,6 +43,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "BanknoteFullActivity is created");
+        database = DBHelper.getInstance(this).getWritableDatabase();
         setContentView(R.layout.activity_banknote_full);
         this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getData();
@@ -64,7 +65,6 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
 
     private void getData() {
         Log.i(LOG_TAG, "Getting data...");
-        database = DBHelper.getInstance(this).getWritableDatabase();
         banknoteID = getIntent().getIntExtra("id", 1);
         Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + banknoteID, null, null, null, null);
         c.moveToFirst();
@@ -77,13 +77,6 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
         c.close();
         Log.i(LOG_TAG, "Data is got");
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i(LOG_TAG, "Closing dbHelper");
-        DBHelper.getInstance(this).close();
     }
 
     private void setData() {

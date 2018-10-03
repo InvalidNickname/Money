@@ -9,9 +9,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -30,6 +28,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static ru.money.App.LOG_TAG;
+import static ru.money.App.height;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
@@ -51,7 +50,6 @@ public class ListActivity extends AppCompatActivity
     private String type;
     private Menu menu;
     private float fabY;
-    private int height;
     private RecyclerView main;
     private TextView noItemsText;
 
@@ -84,11 +82,6 @@ public class ListActivity extends AppCompatActivity
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        // определение высоты
-        Display display = getWindowManager().getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getRealMetrics(metrics);
-        height = metrics.heightPixels;
         // поиск RecyclerView
         main = findViewById(R.id.main);
         main.setLayoutManager(new LinearLayoutManager(this));
@@ -150,7 +143,6 @@ public class ListActivity extends AppCompatActivity
     }
 
     private void updateList() {
-        database = DBHelper.getInstance(this).getWritableDatabase();
         Log.i(LOG_TAG, "Getting data from database...");
         updatePositions();
         Cursor cursor = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
@@ -319,18 +311,11 @@ public class ListActivity extends AppCompatActivity
             public boolean isLongPressDragEnabled() {
                 return mode.equals("edit");
             }
-
-            @Override
-            public void clearView(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
-                super.clearView(recyclerView, viewHolder);
-                viewHolder.itemView.findViewById(R.id.divider).setVisibility(View.VISIBLE);
-            }
         });
         itemTouchHelper.attachToRecyclerView(main);
     }
 
     private void updateCategoryPosition(int oldPos, int newPos) {
-        database = DBHelper.getInstance(this).getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_POSITION, oldPos);
         database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(newPos).getId(), null);
@@ -340,7 +325,6 @@ public class ListActivity extends AppCompatActivity
     }
 
     private void updateBanknotePosition(int oldPos, int newPos) {
-        database = DBHelper.getInstance(this).getWritableDatabase();
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_POSITION, oldPos);
         database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + ((BanknoteRVAdapter) main.getAdapter()).getList().get(newPos).id, null);
@@ -380,13 +364,6 @@ public class ListActivity extends AppCompatActivity
         Log.i(LOG_TAG, "Banknote added");
         DBHelper.updateCategoryType(database, currID, "banknotes");
         updateList();
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        Log.i(LOG_TAG, "Closing dbHelper");
-        DBHelper.getInstance(this).close();
     }
 
     @Override

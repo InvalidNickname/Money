@@ -13,7 +13,7 @@ import com.squareup.picasso.Picasso;
 import java.util.Objects;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BindingAdapter;
 import ru.money.CategoryRVAdapter.OnDeleteListener;
@@ -25,17 +25,23 @@ public class BindingAdapters {
     // установка иконки категории
     @BindingAdapter({"bind:iconPath"})
     public static void loadImage(ImageView view, String iconPath) {
-        if (!iconPath.equals("nothing")) {
-            Picasso.get().load(view.getContext().getFileStreamPath(iconPath)).transform(new RoundCornerTransformation(12)).into(view);
-        } else {
-            Picasso.get().load(R.drawable.example_flag).into(view);
+        switch (iconPath) {
+            case "nothing":
+                Picasso.get().load(R.drawable.example_flag).into(view);
+                break;
+            case "no icon":
+                Picasso.get().load(R.drawable.no_icon).into(view);
+                break;
+            default:
+                Picasso.get().load(view.getContext().getFileStreamPath(iconPath)).transform(new RoundCornerTransformation(12)).into(view);
+                break;
         }
     }
 
     // установка слушателей
     @SuppressLint("ClickableViewAccessibility")
     @BindingAdapter({"bind:listener"})
-    public static void setListeners(final CardView layout, final Category category) {
+    public static void setListeners(final ConstraintLayout layout, final Category category) {
         final Context context = layout.getContext();
         layout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,8 +74,6 @@ public class BindingAdapters {
                     AlertDialog alert = builder.create();
                     alert.show();
                     ((TextView) Objects.requireNonNull(alert.getWindow()).findViewById(android.R.id.message)).setTypeface(ResourcesCompat.getFont(context, R.font.abel));
-                } else if (mode.equals("edit")) {
-                    layout.findViewById(R.id.divider).setVisibility(View.GONE);
                 }
                 return false;
             }

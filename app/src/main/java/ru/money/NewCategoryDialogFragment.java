@@ -7,13 +7,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Switch;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
@@ -23,17 +23,16 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
+import static ru.money.App.width;
 
 public class NewCategoryDialogFragment extends DialogFragment implements View.OnClickListener {
 
     private OnAddListener onAddListener;
     private String selectedImage;
     private Context context;
-    private int width;
 
     @SuppressLint("InflateParams")
     @NonNull
@@ -58,10 +57,6 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         super.onAttach(context);
         this.context = context;
         onAddListener = (OnAddListener) context;
-        Display display = ((AppCompatActivity) context).getWindowManager().getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getRealMetrics(metrics);
-        width = metrics.widthPixels;
     }
 
     @Override
@@ -76,6 +71,8 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
                     EditText editText = getDialog().findViewById(R.id.editText);
                     String name = editText.getText().toString().trim().replaceAll("\\s+", " "); // получение названия и форматирование
                     if (!name.equals("")) {
+                        if (!((Switch) getDialog().findViewById(R.id.iconSwitch)).isChecked())
+                            selectedImage = "no icon";
                         onAddListener.addNewCategory(name, selectedImage, "no category");
                         d.dismiss();
                     } else {
@@ -92,8 +89,17 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         super.onStart();
         // чтобы диалог нельзя было закрыть, случайно нажав вне него
         getDialog().setCanceledOnTouchOutside(false);
+        // отслеживание нажатий по иконке
         ImageView imageView = getDialog().findViewById(R.id.flag);
         imageView.setOnClickListener(this);
+        // переключатель необходимости иконки
+        Switch iconSwitch = getDialog().findViewById(R.id.iconSwitch);
+        iconSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                getDialog().findViewById(R.id.flag).setVisibility(isChecked ? View.VISIBLE : View.GONE);
+            }
+        });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {

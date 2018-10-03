@@ -3,8 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:ignore="Autofill">
+    android:layout_height="match_parent">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/nameInput"
@@ -13,7 +12,6 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        app:errorEnabled="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -25,8 +23,10 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:hint="@string/category"
+            android:importantForAutofill="no"
             android:inputType="textCapWords"
-            android:singleLine="true" />
+            android:singleLine="true"
+            tools:ignore="UnusedAttribute" />
 
     </com.google.android.material.textfield.TextInputLayout>
 
@@ -35,39 +35,40 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent=".3" />
+        app:layout_constraintGuide_percent=".32" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guideline4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent=".7" />
+        app:layout_constraintGuide_percent=".68" />
 
     <ImageView
         android:id="@+id/flag"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:adjustViewBounds="true"
         app:layout_constraintEnd_toStartOf="@+id/guideline4"
         app:layout_constraintStart_toStartOf="@+id/guideline3"
-        app:layout_constraintTop_toBottomOf="@+id/flagHint"
+        app:layout_constraintTop_toBottomOf="@+id/iconSwitch"
         app:srcCompat="@drawable/example_flag"
         tools:ignore="ContentDescription" />
 
-    <TextView
-        android:id="@+id/flagHint"
+    <Switch
+        android:id="@+id/iconSwitch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_marginEnd="8dp"
-        android:text="@string/tap_to_change_icon"
-        app:layout_constraintEnd_toStartOf="@+id/guideline4"
-        app:layout_constraintStart_toStartOf="@+id/guideline3"
+        android:checked="true"
+        android:switchPadding="24dp"
+        android:text="@string/need_icon"
+        android:textColor="@color/textColorPrimary"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/nameInput" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
