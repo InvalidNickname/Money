@@ -23,6 +23,7 @@ import java.io.File;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import ru.money.dialog.BanknoteDialogFragment;
 
 import static ru.money.App.LOG_TAG;
 import static ru.money.DBHelper.COLUMN_COUNTRY;

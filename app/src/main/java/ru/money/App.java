@@ -3,11 +3,11 @@ package ru.money;
 import android.app.Application;
 import android.util.DisplayMetrics;
 
-class App extends Application {
+public class App extends Application {
 
     static final String LOG_TAG = "ru.money";
-    static int width;
-    static int height;
+    static public int width;
+    static public int height;
 
     @Override
     public void onCreate() {

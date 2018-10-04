@@ -29,9 +29,9 @@ import androidx.preference.PreferenceManager;
 import static android.content.Context.MODE_PRIVATE;
 import static ru.money.App.LOG_TAG;
 
-class Utils {
+public class Utils {
 
-    static String saveReturnedImageInFile(Intent returnedImage, Context context, int newWidth) {
+    public static String saveReturnedImageInFile(Intent returnedImage, Context context, int newWidth) {
         Date date = new Date();
         String filename = date.getTime() + ".jpg";
         try {
@@ -99,7 +99,7 @@ class Utils {
         return null;
     }
 
-    static boolean checkPermission(Context context, String permission) {
+    public static boolean checkPermission(Context context, String permission) {
         int permissionCheck = ContextCompat.checkSelfPermission(context, permission);
         if (permissionCheck != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions((AppCompatActivity) context, new String[]{permission}, 1);

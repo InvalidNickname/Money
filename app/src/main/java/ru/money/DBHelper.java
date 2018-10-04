@@ -8,26 +8,26 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 import static ru.money.ListActivity.USES_DB_VERSION;
 
-class DBHelper extends SQLiteOpenHelper {
+public class DBHelper extends SQLiteOpenHelper {
 
-    static final String TABLE_BANKNOTES = "banknotes";
-    static final String TABLE_CATEGORIES = "categories";
+    public static final String TABLE_BANKNOTES = "banknotes";
+    public static final String COLUMN_ID = "_id";
     static final String DATABASE_NAME = "mainDB";
-    static final String COLUMN_ID = "_id";
+    public static final String COLUMN_COUNTRY = "country";
     static final String COLUMN_POSITION = "position";
-    static final String COLUMN_COUNTRY = "country";
-    static final String COLUMN_NAME = "name";
+    public static final String COLUMN_NAME = "name";
+    public static final String COLUMN_DESCRIPTION = "description";
     static final String COLUMN_TYPE = "type";
     static final String COLUMN_PARENT = "parent";
     static final String COLUMN_IMAGE = "image";
-    static final String COLUMN_DESCRIPTION = "description";
+    static final String TABLE_CATEGORIES = "categories";
     private static DBHelper instance = null;
 
     private DBHelper(Context context) {
         super(context, DATABASE_NAME, null, USES_DB_VERSION);
     }
 
-    static synchronized DBHelper getInstance(Context context) {
+    public static synchronized DBHelper getInstance(Context context) {
         if (instance == null)
             instance = new DBHelper(context.getApplicationContext());
         return instance;

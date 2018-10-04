@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.dialog;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -28,6 +28,9 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
+import ru.money.DBHelper;
+import ru.money.R;
+import ru.money.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
@@ -127,11 +130,11 @@ public class BanknoteDialogFragment extends DialogFragment {
         this.context = context;
     }
 
-    void setOnAddListener(Context context) {
+    public void setOnAddListener(Context context) {
         onAddListener = (OnAddListener) context;
     }
 
-    void setOnUpdateListener(Context context) {
+    public void setOnUpdateListener(Context context) {
         onUpdateListener = (OnUpdateListener) context;
     }
 

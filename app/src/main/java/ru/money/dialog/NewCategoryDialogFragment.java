@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.dialog;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -24,6 +24,8 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import ru.money.R;
+import ru.money.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static ru.money.App.width;

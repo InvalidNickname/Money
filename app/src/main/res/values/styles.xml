@@ -9,6 +9,7 @@
         <item name="android:windowFullscreen">true</item>
         <item name="android:fontFamily">@font/abel</item>
         <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:colorBackground">@color/background</item>
     </style>
 
 </resources>

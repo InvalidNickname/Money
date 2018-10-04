@@ -13,11 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -26,6 +23,8 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.money.dialog.BanknoteDialogFragment;
+import ru.money.dialog.NewCategoryDialogFragment;
 
 import static ru.money.App.LOG_TAG;
 import static ru.money.App.height;
@@ -51,7 +50,6 @@ public class ListActivity extends AppCompatActivity
     private Menu menu;
     private float fabY;
     private RecyclerView main;
-    private TextView noItemsText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +66,7 @@ public class ListActivity extends AppCompatActivity
         String parentName = "NaN";
         Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
         if (c.moveToFirst()) {
+            type = c.getString(c.getColumnIndex(COLUMN_TYPE));
             int parentID = c.getInt(c.getColumnIndex(COLUMN_PARENT));
             Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + parentID, null, null, null, null);
             if (c2.moveToFirst())
@@ -85,7 +84,6 @@ public class ListActivity extends AppCompatActivity
         // поиск RecyclerView
         main = findViewById(R.id.main);
         main.setLayoutManager(new LinearLayoutManager(this));
-        noItemsText = findViewById(R.id.noItemsText);
         setDragListener();
     }
 
@@ -125,8 +123,7 @@ public class ListActivity extends AppCompatActivity
                                     switch (which) {
                                         case 0:
                                             Log.i(LOG_TAG, "Opening NewCategoryDialog");
-                                            NewCategoryDialogFragment categoryDialogFragment = new NewCategoryDialogFragment();
-                                            categoryDialogFragment.show(getSupportFragmentManager(), "add_category");
+                                            (new NewCategoryDialogFragment()).show(getSupportFragmentManager(), "add_category");
                                             break;
                                         case 1:
                                             Log.i(LOG_TAG, "Opening NewBanknoteDialog");
@@ -144,87 +141,8 @@ public class ListActivity extends AppCompatActivity
 
     private void updateList() {
         Log.i(LOG_TAG, "Getting data from database...");
-        updatePositions();
-        Cursor cursor = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
-        if (cursor.moveToFirst())
-            type = cursor.getString(cursor.getColumnIndex(COLUMN_TYPE));
-        cursor.close();
-        switch (type) {
-            case "category":
-                List<Category> categoryList = new ArrayList<>();
-                Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
-                if (c.getCount() == 0) {
-                    // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
-                    noItemsText.setVisibility(View.VISIBLE);
-                    type = DBHelper.updateCategoryType(database, currID, "no category");
-                } else if (c.moveToFirst()) {
-                    noItemsText.setVisibility(View.GONE);
-                    do {
-                        String name = c.getString(c.getColumnIndex(COLUMN_NAME));
-                        String image = c.getString(c.getColumnIndex(COLUMN_IMAGE));
-                        int id = c.getInt(c.getColumnIndex(COLUMN_ID));
-                        int count = countBanknotes(id, 0);
-                        categoryList.add(new Category(name, image, count, id));
-                    } while (c.moveToNext());
-                }
-                c.close();
-                Log.i(LOG_TAG, "Data is loaded, updating list...");
-                main.setAdapter(new CategoryRVAdapter(categoryList));
-                Log.i(LOG_TAG, "List updated");
-                break;
-            case "banknotes":
-                List<Banknote> banknoteList = new ArrayList<>();
-                Cursor c2 = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
-                if (c2.getCount() == 0) {
-                    // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
-                    noItemsText.setVisibility(View.VISIBLE);
-                    type = DBHelper.updateCategoryType(database, currID, "no category");
-                } else if (c2.moveToFirst()) {
-                    noItemsText.setVisibility(View.GONE);
-                    do {
-                        int id = c2.getInt(c2.getColumnIndex(COLUMN_ID));
-                        String name = c2.getString(c2.getColumnIndex(COLUMN_NAME));
-                        String circulationTime = c2.getString(c2.getColumnIndex("circulation"));
-                        String obversePath = c2.getString(c2.getColumnIndex("obverse"));
-                        String country = c2.getString(c2.getColumnIndex(COLUMN_COUNTRY));
-                        banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
-                    } while (c2.moveToNext());
-                }
-                c2.close();
-                Log.i(LOG_TAG, "Data is loaded, updating list...");
-                main.setAdapter(new BanknoteRVAdapter(banknoteList, this));
-                Log.i(LOG_TAG, "List updated");
-                break;
-            default:
-                noItemsText.setVisibility(View.VISIBLE);
-                break;
-        }
-    }
-
-    private int countBanknotes(int id, int count) {
-        // определение типа проверяемой категории
-        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + id, null, null, null, null);
-        c.moveToFirst();
-        String type = c.getString(c.getColumnIndex(COLUMN_TYPE));
-        c.close();
-        // если тип - категории, рекурсивно проверяются следующие
-        if (type.equals("category")) {
-            Cursor query = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + id, null, null, null, null);
-            if (query.moveToFirst())
-                do {
-                    count = countBanknotes(query.getInt(query.getColumnIndex(COLUMN_ID)), count);
-                } while (query.moveToNext());
-            query.close();
-        } // если банкноты - просто подсчет
-        else if (type.equals("banknotes")) {
-            Cursor query = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + id, null, null, null, null);
-            if (query.moveToFirst())
-                do {
-                    count++;
-                } while (query.moveToNext());
-            query.close();
-        }
-        return count;
+        ListUpdater updater = new ListUpdater(type, currID, this);
+        updater.execute();
     }
 
     @Override
@@ -344,7 +262,7 @@ public class ListActivity extends AppCompatActivity
         cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
         database.insert(TABLE_CATEGORIES, null, cv);
         Log.i(LOG_TAG, "Category was added");
-        DBHelper.updateCategoryType(database, currID, "category");
+        this.type = DBHelper.updateCategoryType(database, currID, "category");
         updateList();
     }
 
@@ -362,7 +280,7 @@ public class ListActivity extends AppCompatActivity
         cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
         database.insert(TABLE_BANKNOTES, null, cv);
         Log.i(LOG_TAG, "Banknote added");
-        DBHelper.updateCategoryType(database, currID, "banknotes");
+        type = DBHelper.updateCategoryType(database, currID, "banknotes");
         updateList();
     }
 
@@ -372,26 +290,6 @@ public class ListActivity extends AppCompatActivity
         deleteChildren(id);
         Log.i(LOG_TAG, "Category was deleted");
         updateList();
-    }
-
-    private void updatePositions() {
-        if (main.getAdapter() != null)
-            switch (type) {
-                case "category":
-                    for (int i = 0; i < main.getAdapter().getItemCount(); i++) {
-                        ContentValues cv = new ContentValues();
-                        cv.put(COLUMN_POSITION, i + 1);
-                        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(i).getId(), null);
-                    }
-                    break;
-                case "banknotes":
-                    for (int i = 0; i < main.getAdapter().getItemCount(); i++) {
-                        ContentValues cv = new ContentValues();
-                        cv.put(COLUMN_POSITION, i + 1);
-                        database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + ((BanknoteRVAdapter) main.getAdapter()).getList().get(i).id, null);
-                    }
-                    break;
-            }
     }
 
     private void deleteChildren(int id) {
