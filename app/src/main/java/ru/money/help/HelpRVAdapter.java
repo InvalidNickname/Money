@@ -40,16 +40,13 @@ public class HelpRVAdapter extends RecyclerView.Adapter<HelpRVAdapter.CardViewHo
         }
         cardViewHolder.text.setText(helpItemList.get(i).getText());
         cardViewHolder.title.setText(helpItemList.get(i).getTitle());
-        cardViewHolder.title.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (cardViewHolder.text.getMeasuredHeight() == 0) {
-                    DropDownView.expand(cardViewHolder.text);
-                    ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(null, null, context.getDrawable(R.drawable.ic_collapse), null);
-                } else {
-                    DropDownView.collapse(cardViewHolder.text);
-                    ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(null, null, context.getDrawable(R.drawable.ic_expand), null);
-                }
+        cardViewHolder.title.setOnClickListener(v -> {
+            if (cardViewHolder.text.getMeasuredHeight() == 0) {
+                DropDownView.expand(cardViewHolder.text);
+                ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(null, null, context.getDrawable(R.drawable.ic_collapse), null);
+            } else {
+                DropDownView.collapse(cardViewHolder.text);
+                ((TextView) v).setCompoundDrawablesWithIntrinsicBounds(null, null, context.getDrawable(R.drawable.ic_expand), null);
             }
         });
     }

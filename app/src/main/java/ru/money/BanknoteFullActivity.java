@@ -1,7 +1,6 @@
 package ru.money;
 
 import android.content.ContentValues;
-import android.content.DialogInterface;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -114,20 +113,16 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                 Log.i(LOG_TAG, "Opening delete dialog");
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
                 builder.setTitle(String.format(getString(R.string.delete_banknote), name))
-                        .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Log.i(LOG_TAG, "Dialog cancelled");
-                                dialog.cancel();
-                            }
+                        .setNegativeButton(R.string.cancel, (dialog, id) -> {
+                            Log.i(LOG_TAG, "Dialog cancelled");
+                            dialog.cancel();
                         })
-                        .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int id) {
-                                Log.i(LOG_TAG, "Deleting banknote...");
-                                database.delete(TABLE_BANKNOTES, COLUMN_ID + " = " + banknoteID, null);
-                                Log.i(LOG_TAG, "Banknote deleted, closing dialog");
-                                dialog.dismiss();
-                                finish();
-                            }
+                        .setPositiveButton(R.string.yes, (dialog, id) -> {
+                            Log.i(LOG_TAG, "Deleting banknote...");
+                            database.delete(TABLE_BANKNOTES, COLUMN_ID + " = " + banknoteID, null);
+                            Log.i(LOG_TAG, "Banknote deleted, closing dialog");
+                            dialog.dismiss();
+                            finish();
                         });
                 AlertDialog alert = builder.create();
                 alert.show();
@@ -135,7 +130,6 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
             case R.id.update:
                 Log.i(LOG_TAG, "Opening UpdateBanknoteDialog");
                 BanknoteDialogFragment fragment = new BanknoteDialogFragment();
-                fragment.setOnUpdateListener(this);
                 Bundle bundle = new Bundle();
                 bundle.putInt("id", banknoteID);
                 fragment.setArguments(bundle);

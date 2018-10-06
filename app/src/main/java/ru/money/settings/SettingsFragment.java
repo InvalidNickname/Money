@@ -76,28 +76,22 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         super.onStart();
         // слушатель нажатие на кнопку экспорта
         Preference export = findPreference("export");
-        export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                exportDatabase();
-                return true;
-            }
+        export.setOnPreferenceClickListener(preference -> {
+            exportDatabase();
+            return true;
         });
         // слушатель нажатия на кнопку импорта
         Preference importPref = findPreference("import");
-        importPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                importDatabase();
-                return true;
-            }
+        importPref.setOnPreferenceClickListener(preference -> {
+            importDatabase();
+            return true;
         });
         // слушатель нажатия на кнопку импорта
         Preference helpPref = findPreference("help");
-        helpPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            public boolean onPreferenceClick(Preference preference) {
-                Intent intent = new Intent(getActivity(), HelpActivity.class);
-                startActivity(intent);
-                return true;
-            }
+        helpPref.setOnPreferenceClickListener(preference -> {
+            Intent intent = new Intent(getActivity(), HelpActivity.class);
+            startActivity(intent);
+            return true;
         });
         // запрет на overscroll, без него выглядит лучше
         getListView().setOverScrollMode(View.OVER_SCROLL_NEVER);

@@ -62,7 +62,7 @@
         <item>
             To import the database, select the .db database file on the device. To import images there a folder with
             images must exist in the same folder as the database. Images folder and database file must have the same name.
-            For example, "124576.db" and "124576". When importing, the old database will be deleted!
+            For example, \"124576.db\" and \"124576\". When importing, the old database will be deleted!
         </item>
         <item>
             To delete a category, tap on it and hold until the delete dialog opens. To delete a banknote, open its full
@@ -70,7 +70,7 @@
         </item>
         <item>
             To swap the objects in the list, click the move icon. After that, click&amp;hold on the object you
-            want to move and then drag it to a new location. To save changes, click "Back" or "Done".
+            want to move and then drag it to a new location. To save changes, click \"Back\" or \"Done\".
         </item>
     </string-array>
 </resources>

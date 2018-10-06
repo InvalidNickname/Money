@@ -35,7 +35,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     private final SQLiteDatabase database;
     private final List<Banknote> banknoteList = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
-    private final OnLoadListener onLoadListener;
+    private OnLoadListener onLoadListener;
     private String type;
 
     ListUpdater(String type, int currID, AppCompatActivity activity) {
@@ -43,7 +43,6 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         this.currID = currID;
         this.activity = new WeakReference<>(activity);
         database = DBHelper.getInstance(activity).getDatabase();
-        onLoadListener = (OnLoadListener) activity;
     }
 
     @Override
@@ -150,6 +149,10 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         }
         if (c != null)
             c.close();
+    }
+
+    void setOnLoadListener(OnLoadListener onLoadListener) {
+        this.onLoadListener = onLoadListener;
     }
 
     public interface OnLoadListener {

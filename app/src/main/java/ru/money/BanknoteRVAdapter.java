@@ -44,13 +44,10 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
             Picasso.get().load(file).transform(new RoundCornerTransformation(20)).into(cardViewHolder.image);
         } else
             Picasso.get().load(R.drawable.example_banknote).into(cardViewHolder.image);
-        cardViewHolder.cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(context, BanknoteFullActivity.class);
-                intent.putExtra("id", banknoteList.get(i).getId());
-                context.startActivity(intent);
-            }
+        cardViewHolder.cardView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, BanknoteFullActivity.class);
+            intent.putExtra("id", banknoteList.get(i).getId());
+            context.startActivity(intent);
         });
     }
 

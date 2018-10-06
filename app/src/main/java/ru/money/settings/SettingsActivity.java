@@ -7,7 +7,6 @@ import android.view.MenuItem;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import ru.money.R;
 
 import static ru.money.App.LOG_TAG;
@@ -20,7 +19,7 @@ public class SettingsActivity extends AppCompatActivity {
         Log.i(LOG_TAG, "SettingsActivity is created");
         setContentView(R.layout.activity_settings);
         getSupportFragmentManager().beginTransaction().add(new SettingsFragment(), null);
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        setSupportActionBar(findViewById(R.id.toolbar));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);

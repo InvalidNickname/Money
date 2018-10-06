@@ -3,8 +3,6 @@ package ru.money;
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
 import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -47,8 +45,7 @@ import static ru.money.DBHelper.TABLE_BANKNOTES;
 import static ru.money.DBHelper.TABLE_CATEGORIES;
 
 public class ListActivity extends AppCompatActivity
-        implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener,
-        ListUpdater.OnLoadListener {
+        implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener {
 
     static String mode = "normal";
     private SQLiteDatabase database;
@@ -121,39 +118,31 @@ public class ListActivity extends AppCompatActivity
                     break;
                 case "banknotes":
                     Log.i(LOG_TAG, "Opening NewBanknoteDialog");
-                    BanknoteDialogFragment banknoteDialogFragment = new BanknoteDialogFragment();
-                    banknoteDialogFragment.setOnAddListener(this);
-                    banknoteDialogFragment.show(getSupportFragmentManager(), "add_banknote");
+                    (new BanknoteDialogFragment()).show(getSupportFragmentManager(), "add_banknote");
                     break;
                 default:
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                    final Context context = this;
                     builder.setTitle(R.string.select_add)
-                            .setItems(new CharSequence[]{getString(R.string.categoryName), getString(R.string.banknote)}, new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialog, int which) {
-                                    switch (which) {
-                                        case 0:
-                                            Log.i(LOG_TAG, "Opening NewCategoryDialog");
-                                            (new NewCategoryDialogFragment()).show(getSupportFragmentManager(), "add_category");
-                                            break;
-                                        case 1:
-                                            Log.i(LOG_TAG, "Opening NewBanknoteDialog");
-                                            BanknoteDialogFragment banknoteDialogFragment = new BanknoteDialogFragment();
-                                            banknoteDialogFragment.setOnAddListener(context);
-                                            banknoteDialogFragment.show(getSupportFragmentManager(), "add_banknote");
-                                            break;
-                                    }
+                            .setItems(new CharSequence[]{getString(R.string.categoryName), getString(R.string.banknote)}, (dialog, which) -> {
+                                switch (which) {
+                                    case 0:
+                                        Log.i(LOG_TAG, "Opening NewCategoryDialog");
+                                        (new NewCategoryDialogFragment()).show(getSupportFragmentManager(), "add_category");
+                                        break;
+                                    case 1:
+                                        Log.i(LOG_TAG, "Opening NewBanknoteDialog");
+                                        (new BanknoteDialogFragment()).show(getSupportFragmentManager(), "add_banknote");
+                                        break;
                                 }
                             });
-                    AlertDialog alert = builder.create();
-                    alert.show();
+                    builder.create().show();
             }
     }
 
     private void updateList() {
         Log.i(LOG_TAG, "Getting data from database...");
         ListUpdater updater = new ListUpdater(type, currID, this);
+        updater.setOnLoadListener(newType -> type = newType);
         updater.execute();
     }
 
@@ -162,8 +151,7 @@ public class ListActivity extends AppCompatActivity
         switch (menuItem.getItemId()) {
             case R.id.settings:
                 Log.i(LOG_TAG, "Settings button clicked");
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+                startActivity(new Intent(this, SettingsActivity.class));
                 break;
             case android.R.id.home:
                 Log.i(LOG_TAG, "Back button on toolbar selected");
@@ -220,15 +208,12 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                if (type.equals("category")) {
-                    CategoryRVAdapter adapter = (CategoryRVAdapter) main.getAdapter();
-                    Collections.swap(adapter.getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                    adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                } else if (type.equals("banknotes")) {
-                    BanknoteRVAdapter adapter = (BanknoteRVAdapter) main.getAdapter();
-                    Collections.swap(adapter.getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                    adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                }
+                RecyclerView.Adapter adapter = main.getAdapter();
+                if (type.equals("category"))
+                    Collections.swap(((CategoryRVAdapter) adapter).getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                else if (type.equals("banknotes"))
+                    Collections.swap(((BanknoteRVAdapter) adapter).getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 return true;
             }
 
@@ -315,10 +300,5 @@ public class ListActivity extends AppCompatActivity
                 } while (query.moveToNext());
             query.close();
         }
-    }
-
-    @Override
-    public void loadFinished(String type) {
-        this.type = type;
     }
 }

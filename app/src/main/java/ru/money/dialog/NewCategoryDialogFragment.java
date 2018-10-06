@@ -4,13 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
@@ -46,11 +44,7 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         builder.setView(inflater.inflate(R.layout.dialog_category, null))
                 .setTitle(getResources().getString(R.string.add_new_country))
                 .setPositiveButton(R.string.add, null)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        NewCategoryDialogFragment.this.getDialog().cancel();
-                    }
-                });
+                .setNegativeButton(R.string.cancel, (dialog, id) -> NewCategoryDialogFragment.this.getDialog().cancel());
         return builder.create();
     }
 
@@ -67,20 +61,17 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
             Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
-            positiveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    EditText editText = getDialog().findViewById(R.id.editText);
-                    String name = editText.getText().toString().trim().replaceAll("\\s+", " "); // получение названия и форматирование
-                    if (!name.equals("")) {
-                        if (!((Switch) getDialog().findViewById(R.id.iconSwitch)).isChecked())
-                            selectedImage = "no icon";
-                        onAddListener.addNewCategory(name, selectedImage, "no category");
-                        d.dismiss();
-                    } else {
-                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
-                        textInputLayout.setError(getString(R.string.country_name_error));
-                    }
+            positiveButton.setOnClickListener(v -> {
+                EditText editText = getDialog().findViewById(R.id.editText);
+                String name = editText.getText().toString().trim().replaceAll("\\s+", " "); // получение названия и форматирование
+                if (!name.equals("")) {
+                    if (!((Switch) getDialog().findViewById(R.id.iconSwitch)).isChecked())
+                        selectedImage = "no icon";
+                    onAddListener.addNewCategory(name, selectedImage, "no category");
+                    d.dismiss();
+                } else {
+                    TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
+                    textInputLayout.setError(getString(R.string.country_name_error));
                 }
             });
         }
@@ -96,12 +87,7 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         imageView.setOnClickListener(this);
         // переключатель необходимости иконки
         Switch iconSwitch = getDialog().findViewById(R.id.iconSwitch);
-        iconSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                getDialog().findViewById(R.id.flag).setVisibility(isChecked ? View.VISIBLE : View.GONE);
-            }
-        });
+        iconSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> getDialog().findViewById(R.id.flag).setVisibility(isChecked ? View.VISIBLE : View.GONE));
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {

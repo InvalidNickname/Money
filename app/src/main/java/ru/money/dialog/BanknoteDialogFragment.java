@@ -4,15 +4,11 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -26,13 +22,13 @@ import java.util.Objects;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import ru.money.DBHelper;
 import ru.money.R;
 import ru.money.utils.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
+import static ru.money.App.width;
 import static ru.money.DBHelper.COLUMN_CIRCULATION;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
@@ -71,11 +67,7 @@ public class BanknoteDialogFragment extends DialogFragment {
         builder.setView(inflater.inflate(R.layout.dialog_banknote, null))
                 .setTitle(newBanknote ? getString(R.string.add_new_banknote) : getString(R.string.update_banknote))
                 .setPositiveButton(newBanknote ? R.string.add : R.string.update, null)
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        BanknoteDialogFragment.this.getDialog().cancel();
-                    }
-                });
+                .setNegativeButton(R.string.cancel, (dialog, id) -> BanknoteDialogFragment.this.getDialog().cancel());
         if (!newBanknote)
             getData();
         return builder.create();
@@ -87,40 +79,40 @@ public class BanknoteDialogFragment extends DialogFragment {
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
             Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
-            positiveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    EditText editName = getDialog().findViewById(R.id.editName);
-                    String name = editName.getText().toString().trim().replaceAll("\\s+", " ");
-                    EditText editTime = getDialog().findViewById(R.id.editTime);
-                    String time = editTime.getText().toString().trim().replaceAll("\\s+", " ");
-                    EditText editDescription = getDialog().findViewById(R.id.editDescription);
-                    String description = editDescription.getText().toString().trim().replaceAll("\\s+", " ");
-                    EditText editCountry = getDialog().findViewById(R.id.editCountry);
-                    String country = editCountry.getText().toString().trim().replaceAll("\\s+", " ");
-                    if (description.equals(""))
-                        description = getString(R.string.no_description);
-                    if (!name.equals("") && !country.equals("")) {
-                        if (newBanknote)
-                            onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description, country);
-                        else
-                            onUpdateListener.updateBanknote(name, time, selectedObverse, selectedReverse, description, country);
-                        d.dismiss();
+            positiveButton.setOnClickListener(v -> {
+                // получение данных
+                EditText editName = getDialog().findViewById(R.id.editName);
+                String name = editName.getText().toString().trim().replaceAll("\\s+", " ");
+                EditText editTime = getDialog().findViewById(R.id.editTime);
+                String time = editTime.getText().toString().trim().replaceAll("\\s+", " ");
+                EditText editDescription = getDialog().findViewById(R.id.editDescription);
+                String description = editDescription.getText().toString().trim().replaceAll("\\s+", " ");
+                EditText editCountry = getDialog().findViewById(R.id.editCountry);
+                String country = editCountry.getText().toString().trim().replaceAll("\\s+", " ");
+                // если описание пустое, оно заменяется на "нет описания"
+                if (description.equals(""))
+                    description = getString(R.string.no_description);
+                // добавление возможно только если заполнены "название" и "страна"
+                if (!name.equals("") && !country.equals("")) {
+                    if (newBanknote)
+                        onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description, country);
+                    else
+                        onUpdateListener.updateBanknote(name, time, selectedObverse, selectedReverse, description, country);
+                    d.dismiss();
+                } else {
+                    if (name.equals("")) {
+                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
+                        textInputLayout.setError(getString(R.string.banknote_name_error));
                     } else {
-                        if (name.equals("")) {
-                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
-                            textInputLayout.setError(getString(R.string.banknote_name_error));
-                        } else {
-                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
-                            textInputLayout.setError(null);
-                        }
-                        if (country.equals("")) {
-                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
-                            textInputLayout.setError(getString(R.string.country_name_error));
-                        } else {
-                            TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
-                            textInputLayout.setError(null);
-                        }
+                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
+                        textInputLayout.setError(null);
+                    }
+                    if (country.equals("")) {
+                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
+                        textInputLayout.setError(getString(R.string.country_name_error));
+                    } else {
+                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
+                        textInputLayout.setError(null);
                     }
                 }
             });
@@ -131,14 +123,10 @@ public class BanknoteDialogFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-    }
-
-    public void setOnAddListener(Context context) {
-        onAddListener = (OnAddListener) context;
-    }
-
-    public void setOnUpdateListener(Context context) {
-        onUpdateListener = (OnUpdateListener) context;
+        if (newBanknote)
+            onAddListener = (OnAddListener) context;
+        else
+            onUpdateListener = (OnUpdateListener) context;
     }
 
     @Override
@@ -167,32 +155,22 @@ public class BanknoteDialogFragment extends DialogFragment {
                 Picasso.get().load(R.drawable.example_banknote).into(reverse);
             isDataSet = true;
         }
-        obverse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto, 1);
-                }
+        obverse.setOnClickListener(v -> {
+            if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto, 1);
             }
         });
-        reverse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-                    Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-                    startActivityForResult(pickPhoto, 2);
-                }
+        reverse.setOnClickListener(v -> {
+            if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
+                Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                startActivityForResult(pickPhoto, 2);
             }
         });
     }
 
     public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
-        Display display = ((AppCompatActivity) context).getWindowManager().getDefaultDisplay();
-        DisplayMetrics metrics = new DisplayMetrics();
-        display.getRealMetrics(metrics);
-        int width = metrics.widthPixels;
         if (resultCode == RESULT_OK & requestCode == 1) {
             selectedObverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width);
             File file = context.getFileStreamPath(selectedObverse);
