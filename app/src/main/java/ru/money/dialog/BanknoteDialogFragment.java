@@ -54,16 +54,6 @@ public class BanknoteDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
-        Bundle args = getArguments();
-        // получение id банкноты, которую надо обновить. если id == -1, то банкноту надо создать
-        if (args != null) {
-            id = args.getInt("id");
-            newBanknote = false;
-        } else {
-            newBanknote = true;
-            selectedReverse = "nothing";
-            selectedObverse = "nothing";
-        }
         builder.setView(inflater.inflate(R.layout.dialog_banknote, null))
                 .setTitle(newBanknote ? getString(R.string.add_new_banknote) : getString(R.string.update_banknote))
                 .setPositiveButton(newBanknote ? R.string.add : R.string.update, null)
@@ -123,10 +113,18 @@ public class BanknoteDialogFragment extends DialogFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        if (newBanknote)
-            onAddListener = (OnAddListener) context;
-        else
+        Bundle args = getArguments();
+        // получение id банкноты, которую надо обновить. если id == -1, то банкноту надо создать
+        if (args != null) {
+            id = args.getInt("id");
+            newBanknote = false;
             onUpdateListener = (OnUpdateListener) context;
+        } else {
+            newBanknote = true;
+            onAddListener = (OnAddListener) context;
+            selectedReverse = "nothing";
+            selectedObverse = "nothing";
+        }
     }
 
     @Override
