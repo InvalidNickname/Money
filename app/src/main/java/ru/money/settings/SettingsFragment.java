@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.settings;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -26,11 +26,15 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceViewHolder;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.money.R;
+import ru.money.help.HelpActivity;
+import ru.money.utils.Utils;
 
 import static android.app.Activity.RESULT_OK;
 import static ru.money.App.LOG_TAG;
 import static ru.money.DBHelper.DATABASE_NAME;
 
+@SuppressWarnings("WeakerAccess")
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     // добавление настроек
@@ -86,7 +90,16 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 return true;
             }
         });
-        // запрет на overscroll, без него выдлядит лучше
+        // слушатель нажатия на кнопку импорта
+        Preference helpPref = findPreference("help");
+        helpPref.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            public boolean onPreferenceClick(Preference preference) {
+                Intent intent = new Intent(getActivity(), HelpActivity.class);
+                startActivity(intent);
+                return true;
+            }
+        });
+        // запрет на overscroll, без него выглядит лучше
         getListView().setOverScrollMode(View.OVER_SCROLL_NEVER);
     }
 

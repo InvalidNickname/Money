@@ -16,15 +16,14 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.money.utils.RoundCornerTransformation;
 
 public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
 
     private final List<Banknote> banknoteList;
-    private final Context context;
 
-    BanknoteRVAdapter(List<Banknote> banknoteList, Context context) {
+    BanknoteRVAdapter(List<Banknote> banknoteList) {
         this.banknoteList = banknoteList;
-        this.context = context;
     }
 
     @NonNull
@@ -36,11 +35,12 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
 
     @Override
     public void onBindViewHolder(@NonNull CardViewHolder cardViewHolder, final int i) {
-        cardViewHolder.circulationTime.setText(banknoteList.get(i).circulationTime);
-        cardViewHolder.country.setText(banknoteList.get(i).country);
-        cardViewHolder.title.setText(banknoteList.get(i).title);
-        if (!banknoteList.get(i).obversePath.equals("nothing")) {
-            File file = context.getFileStreamPath(banknoteList.get(i).obversePath);
+        cardViewHolder.circulationTime.setText(banknoteList.get(i).getCirculationTime());
+        cardViewHolder.country.setText(banknoteList.get(i).getCountry());
+        cardViewHolder.title.setText(banknoteList.get(i).getTitle());
+        final Context context = cardViewHolder.circulationTime.getContext();
+        if (!banknoteList.get(i).getObversePath().equals("nothing")) {
+            File file = context.getFileStreamPath(banknoteList.get(i).getObversePath());
             Picasso.get().load(file).transform(new RoundCornerTransformation(20)).into(cardViewHolder.image);
         } else
             Picasso.get().load(R.drawable.example_banknote).into(cardViewHolder.image);
@@ -48,7 +48,7 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(context, BanknoteFullActivity.class);
-                intent.putExtra("id", banknoteList.get(i).id);
+                intent.putExtra("id", banknoteList.get(i).getId());
                 context.startActivity(intent);
             }
         });

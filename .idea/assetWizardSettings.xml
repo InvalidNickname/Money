@@ -23,7 +23,8 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="scalingPercent" value="90" />
+                                                <entry key="scalingPercent" value="68" />
+                                                <entry key="trimmed" value="true" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -34,8 +35,10 @@
                                   <option name="values">
                                     <map>
                                       <entry key="backgroundAssetType" value="COLOR" />
-                                      <entry key="backgroundColor" value="f0f0f0" />
-                                      <entry key="foregroundImage" value="D:\bydlocode\Money\app\src\main\res\drawable-xxxhdpi\icon.png" />
+                                      <entry key="backgroundColor" value="ffffff" />
+                                      <entry key="backgroundImage" value="D:\bydlocode\Money\app\src\main\res\drawable\ic_launcher_background.xml" />
+                                      <entry key="foregroundImage" value="D:\bydlocode\Money\app\src\main\res\drawable\icon.xml" />
+                                      <entry key="generateRoundIcon" value="false" />
                                       <entry key="legacyIconShape" value="CIRCLE" />
                                       <entry key="previewDensity" value="XXXHIGH" />
                                       <entry key="webIconShape" value="HRECT" />
@@ -81,8 +84,8 @@
                           <map>
                             <entry key="assetSourceType" value="FILE" />
                             <entry key="color" value="ffffff" />
-                            <entry key="outputName" value="ic_swap" />
-                            <entry key="sourceFile" value="C:\Users\Alesh\Downloads\baseline-swap_vert-24px.svg" />
+                            <entry key="outputName" value="icon" />
+                            <entry key="sourceFile" value="C:\Users\Alesh\OneDrive\Desktop\вся графика\SVG\icon.svg" />
                           </map>
                         </option>
                       </PersistentState>

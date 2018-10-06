@@ -17,9 +17,11 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BindingAdapter;
 import ru.money.CategoryRVAdapter.OnDeleteListener;
+import ru.money.utils.RoundCornerTransformation;
 
 import static ru.money.ListActivity.mode;
 
+@SuppressWarnings("WeakerAccess")
 public class BindingAdapters {
 
     // установка иконки категории

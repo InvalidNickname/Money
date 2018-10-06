@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;
@@ -8,11 +8,11 @@ import android.graphics.Shader;
 
 import com.squareup.picasso.Transformation;
 
-class RoundCornerTransformation implements Transformation {
+public class RoundCornerTransformation implements Transformation {
 
     private final int corner;
 
-    RoundCornerTransformation(int corner) {
+    public RoundCornerTransformation(int corner) {
         this.corner = corner;
     }
 

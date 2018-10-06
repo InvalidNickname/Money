@@ -12,7 +12,6 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -26,27 +25,27 @@ import androidx.appcompat.widget.Toolbar;
 import ru.money.dialog.BanknoteDialogFragment;
 
 import static ru.money.App.LOG_TAG;
+import static ru.money.DBHelper.COLUMN_CIRCULATION;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
 import static ru.money.DBHelper.COLUMN_NAME;
-import static ru.money.DBHelper.COLUMN_PARENT;
-import static ru.money.DBHelper.COLUMN_POSITION;
+import static ru.money.DBHelper.COLUMN_OBVERSE;
+import static ru.money.DBHelper.COLUMN_REVERSE;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 
 public class BanknoteFullActivity extends AppCompatActivity implements BanknoteDialogFragment.OnUpdateListener {
 
     private SQLiteDatabase database;
     private String name, circulationTime, obversePath, reversePath, description, country;
-    private int banknoteID, parentID;
+    private int banknoteID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "BanknoteFullActivity is created");
-        database = DBHelper.getInstance(this).getWritableDatabase();
+        database = DBHelper.getInstance(this).getDatabase();
         setContentView(R.layout.activity_banknote_full);
-        this.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         getData();
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(name);
@@ -70,10 +69,9 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + banknoteID, null, null, null, null);
         c.moveToFirst();
         name = c.getString(c.getColumnIndex(COLUMN_NAME));
-        parentID = c.getInt(c.getColumnIndex(COLUMN_PARENT));
-        circulationTime = c.getString(c.getColumnIndex("circulation"));
-        obversePath = c.getString(c.getColumnIndex("obverse"));
-        reversePath = c.getString(c.getColumnIndex("reverse"));
+        circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
+        obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
+        reversePath = c.getString(c.getColumnIndex(COLUMN_REVERSE));
         description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
         country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
         c.close();
@@ -126,7 +124,6 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                             public void onClick(DialogInterface dialog, int id) {
                                 Log.i(LOG_TAG, "Deleting banknote...");
                                 database.delete(TABLE_BANKNOTES, COLUMN_ID + " = " + banknoteID, null);
-                                updateBanknotePositions();
                                 Log.i(LOG_TAG, "Banknote deleted, closing dialog");
                                 dialog.dismiss();
                                 finish();
@@ -137,29 +134,15 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                 break;
             case R.id.update:
                 Log.i(LOG_TAG, "Opening UpdateBanknoteDialog");
-                BanknoteDialogFragment newFragment = new BanknoteDialogFragment();
-                newFragment.setOnUpdateListener(this);
+                BanknoteDialogFragment fragment = new BanknoteDialogFragment();
+                fragment.setOnUpdateListener(this);
                 Bundle bundle = new Bundle();
                 bundle.putInt("id", banknoteID);
-                newFragment.setArguments(bundle);
-                newFragment.show(getSupportFragmentManager(), "update_banknote");
+                fragment.setArguments(bundle);
+                fragment.show(getSupportFragmentManager(), "update_banknote");
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
-    }
-
-    private void updateBanknotePositions() {
-        Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + parentID, null, null, null, "position");
-        if (c.moveToFirst()) {
-            int i = 1;
-            do {
-                ContentValues cv = new ContentValues();
-                cv.put(COLUMN_POSITION, i);
-                i++;
-                database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + banknoteID, null);
-            } while (c.moveToNext());
-        }
-        c.close();
     }
 
     @Override
@@ -168,10 +151,10 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         getSupportActionBar().setTitle(name);
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
-        cv.put("circulation", circulationTime);
+        cv.put(COLUMN_CIRCULATION, circulationTime);
         cv.put(COLUMN_COUNTRY, country);
-        cv.put("obverse", obversePath);
-        cv.put("reverse", reversePath);
+        cv.put(COLUMN_OBVERSE, obversePath);
+        cv.put(COLUMN_REVERSE, reversePath);
         cv.put(COLUMN_DESCRIPTION, description);
         database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + banknoteID, null);
         Log.i(LOG_TAG, "Banknote updated");

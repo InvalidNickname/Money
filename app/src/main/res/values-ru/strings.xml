@@ -10,7 +10,6 @@
     <string name="circulation_time">Время в обращении</string>
     <string name="add_new_banknote">Добавить новую банкноту</string>
     <string name="description">Описание</string>
-    <string name="tap_the_image_to_change_it">Нажмите на изображение для изменения</string>
     <string name="obverse">аверс</string>
     <string name="reverse">реверс</string>
     <string name="delete_country">%s будет удалена!</string>
@@ -32,7 +31,6 @@
     <string name="version">версия %s</string>
     <string name="banknote">Банкнота</string>
     <string name="select_add">Выберите, что добавить</string>
-    <string name="tap_to_change_icon">Нажмите, чтобы изменить иконку</string>
     <string name="category">Название категории</string>
     <string name="categoryName">Категория</string>
     <string name="rw_permission_denied">Для экспорта/импорта базы данных и добавления изображений приложению требуются права на чтение/запись файлов</string>
@@ -47,4 +45,32 @@
     <string name="interface_cat_preference">Интерфейс</string>
     <string name="banknote_name_error">Неверное название</string>
     <string name="need_icon">Добавить иконку</string>
+    <string name="other_cat_preference">Другое</string>
+    <string name="help_title">Помощь</string>
+    <string-array name="help_titles">
+        <item>Экспорт базы данных</item>
+        <item>Импорт базы данных</item>
+        <item>Удаление категорий/банкнот</item>
+        <item>Изменение порядка в списке</item>
+    </string-array>
+    <string-array name="help_texts">
+        <item>
+            При экспорте на устройстве в папке Exported Databases создается копия текущей базы данных.
+            Вместе с файлом базы .db экспортируются и изображения, изменять их названия нельзя, т.к. в этом случае они не
+            импортируются. Файл базы и папку с изображениями можно переименовывать, главное - чтобы у них было одинаковое название.
+        </item>
+        <item>
+            Для импорта базы выберите на устройстве файл базы .db. Для импорта изображений в той же папке, что и база,
+            должна находиться папка с изображениями. Папка и файл базы должны иметь одинаковые названия. Например \"124576.db\" и
+            \"124576\". При импорте старая база данных будет удалена!
+        </item>
+        <item>
+            Для удаления категории нажмите на неё и удерживайте до открытия диалога удаления. Для удаления банкноты откройте её полный
+            вид и нажмите на значок удаления.
+        </item>
+        <item>
+            Чтобы изменить порядок объектов в списке, нажмите на иконку перемещения. После этого нажмите на объект который хотите переместить
+            и, удерживая его, перетяните на новое место. Для сохранения изменений нажмите кнопку "назад" или "готово".
+        </item>
+    </string-array>
 </resources>

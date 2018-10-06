@@ -25,7 +25,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import ru.money.R;
-import ru.money.Utils;
+import ru.money.utils.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static ru.money.App.width;

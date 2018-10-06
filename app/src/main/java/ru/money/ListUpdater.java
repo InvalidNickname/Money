@@ -16,10 +16,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import static ru.money.App.LOG_TAG;
+import static ru.money.DBHelper.COLUMN_CIRCULATION;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_ID;
 import static ru.money.DBHelper.COLUMN_IMAGE;
 import static ru.money.DBHelper.COLUMN_NAME;
+import static ru.money.DBHelper.COLUMN_OBVERSE;
 import static ru.money.DBHelper.COLUMN_PARENT;
 import static ru.money.DBHelper.COLUMN_POSITION;
 import static ru.money.DBHelper.COLUMN_TYPE;
@@ -33,13 +35,15 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     private final SQLiteDatabase database;
     private final List<Banknote> banknoteList = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
+    private final OnLoadListener onLoadListener;
     private String type;
 
     ListUpdater(String type, int currID, AppCompatActivity activity) {
         this.type = type;
         this.currID = currID;
         this.activity = new WeakReference<>(activity);
-        database = DBHelper.getInstance(this.activity.get()).getReadableDatabase();
+        database = DBHelper.getInstance(activity).getDatabase();
+        onLoadListener = (OnLoadListener) activity;
     }
 
     @Override
@@ -58,14 +62,15 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         if (type.equals("category"))
             main.setAdapter(new CategoryRVAdapter(categoryList));
         else
-            main.setAdapter(new BanknoteRVAdapter(banknoteList, activity.get()));
+            main.setAdapter(new BanknoteRVAdapter(banknoteList));
         Log.i(LOG_TAG, "List updated");
         // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
         if (main.getAdapter() == null || main.getAdapter().getItemCount() == 0) {
             noItemsText.setVisibility(View.VISIBLE);
-            type = DBHelper.updateCategoryType(database, currID, "no category");
+            type = DBHelper.updateCategoryType(currID, "no category");
         } else
             noItemsText.setVisibility(View.GONE);
+        onLoadListener.loadFinished(type);
         super.onPostExecute(object);
     }
 
@@ -110,16 +115,17 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
                     for (int i = 0; i < adapter.getItemCount(); i++) {
                         ContentValues cv = new ContentValues();
                         cv.put(COLUMN_POSITION, i + 1);
-                        database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + ((BanknoteRVAdapter) adapter).getList().get(i).id, null);
+                        database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + ((BanknoteRVAdapter) adapter).getList().get(i).getId(), null);
                     }
                     break;
             }
     }
 
     private void setData() {
+        Cursor c = null;
         switch (type) {
             case "category":
-                Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
+                c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
                 if (c.moveToFirst())
                     do {
                         String name = c.getString(c.getColumnIndex(COLUMN_NAME));
@@ -128,21 +134,25 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
                         int count = countBanknotes(id, 0);
                         categoryList.add(new Category(name, image, count, id));
                     } while (c.moveToNext());
-                c.close();
                 break;
             case "banknotes":
-                Cursor c2 = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
-                if (c2.moveToFirst())
+                c = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
+                if (c.moveToFirst())
                     do {
-                        int id = c2.getInt(c2.getColumnIndex(COLUMN_ID));
-                        String name = c2.getString(c2.getColumnIndex(COLUMN_NAME));
-                        String circulationTime = c2.getString(c2.getColumnIndex("circulation"));
-                        String obversePath = c2.getString(c2.getColumnIndex("obverse"));
-                        String country = c2.getString(c2.getColumnIndex(COLUMN_COUNTRY));
+                        int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+                        String name = c.getString(c.getColumnIndex(COLUMN_NAME));
+                        String circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
+                        String obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
+                        String country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
                         banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
-                    } while (c2.moveToNext());
-                c2.close();
+                    } while (c.moveToNext());
                 break;
         }
+        if (c != null)
+            c.close();
+    }
+
+    public interface OnLoadListener {
+        void loadFinished(String type);
     }
 }

@@ -30,13 +30,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.DialogFragment;
 import ru.money.DBHelper;
 import ru.money.R;
-import ru.money.Utils;
+import ru.money.utils.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
+import static ru.money.DBHelper.COLUMN_CIRCULATION;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
 import static ru.money.DBHelper.COLUMN_NAME;
+import static ru.money.DBHelper.COLUMN_OBVERSE;
+import static ru.money.DBHelper.COLUMN_REVERSE;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 
 public class BanknoteDialogFragment extends DialogFragment {
@@ -203,13 +206,13 @@ public class BanknoteDialogFragment extends DialogFragment {
     }
 
     private void getData() {
-        SQLiteDatabase database = DBHelper.getInstance(getContext()).getReadableDatabase();
+        SQLiteDatabase database = DBHelper.getInstance(getContext()).getDatabase();
         Cursor c = database.query(TABLE_BANKNOTES, null, COLUMN_ID + " = " + id, null, null, null, null);
         if (c.moveToFirst()) {
             name = c.getString(c.getColumnIndex(COLUMN_NAME));
-            circulationTime = c.getString(c.getColumnIndex("circulation"));
-            obversePath = c.getString(c.getColumnIndex("obverse"));
-            reversePath = c.getString(c.getColumnIndex("reverse"));
+            circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
+            obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
+            reversePath = c.getString(c.getColumnIndex(COLUMN_REVERSE));
             description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
             country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
             c.close();

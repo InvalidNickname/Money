@@ -14,6 +14,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
 import java.util.Collections;
 
 import androidx.annotation.NonNull;
@@ -25,24 +27,29 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.money.dialog.BanknoteDialogFragment;
 import ru.money.dialog.NewCategoryDialogFragment;
+import ru.money.settings.SettingsActivity;
+import ru.money.utils.Utils;
 
 import static ru.money.App.LOG_TAG;
 import static ru.money.App.height;
+import static ru.money.DBHelper.COLUMN_CIRCULATION;
 import static ru.money.DBHelper.COLUMN_COUNTRY;
 import static ru.money.DBHelper.COLUMN_DESCRIPTION;
 import static ru.money.DBHelper.COLUMN_ID;
 import static ru.money.DBHelper.COLUMN_IMAGE;
 import static ru.money.DBHelper.COLUMN_NAME;
+import static ru.money.DBHelper.COLUMN_OBVERSE;
 import static ru.money.DBHelper.COLUMN_PARENT;
 import static ru.money.DBHelper.COLUMN_POSITION;
+import static ru.money.DBHelper.COLUMN_REVERSE;
 import static ru.money.DBHelper.COLUMN_TYPE;
 import static ru.money.DBHelper.TABLE_BANKNOTES;
 import static ru.money.DBHelper.TABLE_CATEGORIES;
 
 public class ListActivity extends AppCompatActivity
-        implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener {
+        implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener,
+        ListUpdater.OnLoadListener {
 
-    static final int USES_DB_VERSION = 2;
     static String mode = "normal";
     private SQLiteDatabase database;
     private int currID;
@@ -50,6 +57,8 @@ public class ListActivity extends AppCompatActivity
     private Menu menu;
     private float fabY;
     private RecyclerView main;
+    private Toolbar toolbar;
+    private FloatingActionButton floatingActionButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,7 +68,7 @@ public class ListActivity extends AppCompatActivity
         Utils.updateFontScale(this);
         setContentView(R.layout.activity_list);
         // создание или открытие БД
-        database = DBHelper.getInstance(this).getWritableDatabase();
+        database = DBHelper.getInstance(this).getDatabase();
         // получение ID текущей категории, если это - первая, то ID = 1
         currID = getIntent().getIntExtra("parent", 1);
         // получение типа и названия открытой категории
@@ -75,7 +84,8 @@ public class ListActivity extends AppCompatActivity
         }
         c.close();
         // если это не главная категория, добавить кнопку "назад" и заголовок
-        setSupportActionBar((Toolbar) findViewById(R.id.toolbar));
+        toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
         if (currID != 1) {
             getSupportActionBar().setTitle(parentName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -85,6 +95,8 @@ public class ListActivity extends AppCompatActivity
         main = findViewById(R.id.main);
         main.setLayoutManager(new LinearLayoutManager(this));
         setDragListener();
+        // поиск FloatingActionButton
+        floatingActionButton = findViewById(R.id.fab);
     }
 
     @Override
@@ -154,7 +166,7 @@ public class ListActivity extends AppCompatActivity
                 startActivity(intent);
                 break;
             case android.R.id.home:
-                Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
+                Log.i(LOG_TAG, "Back button on toolbar selected");
                 onBackPressed();
                 break;
             case R.id.swap:
@@ -179,10 +191,10 @@ public class ListActivity extends AppCompatActivity
         mode = "normal";
         menu.clear();
         getMenuInflater().inflate(R.menu.main_menu, menu);
-        findViewById(R.id.toolbar).setBackgroundColor(getResources().getColor(R.color.colorPrimary));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
         ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.vertical_slide);
-        animator.setFloatValues(findViewById(R.id.fab).getY(), fabY);
-        animator.setTarget(findViewById(R.id.fab));
+        animator.setFloatValues(floatingActionButton.getY(), fabY);
+        animator.setTarget(floatingActionButton);
         animator.start();
         updateList();
     }
@@ -191,16 +203,16 @@ public class ListActivity extends AppCompatActivity
         mode = "edit";
         menu.clear();
         getMenuInflater().inflate(R.menu.edit_menu, menu);
-        findViewById(R.id.toolbar).setBackgroundColor(getResources().getColor(R.color.editMode));
+        toolbar.setBackgroundColor(getResources().getColor(R.color.editMode));
         ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.vertical_slide);
-        fabY = findViewById(R.id.fab).getY();
-        animator.setFloatValues(findViewById(R.id.fab).getY(), height);
-        animator.setTarget(findViewById(R.id.fab));
+        fabY = floatingActionButton.getY();
+        animator.setFloatValues(floatingActionButton.getY(), height);
+        animator.setTarget(floatingActionButton);
         animator.start();
     }
 
     private void setDragListener() {
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new ItemTouchHelper.Callback() {
+        new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
                 return makeFlag(ItemTouchHelper.ACTION_STATE_DRAG, ItemTouchHelper.UP | ItemTouchHelper.DOWN);
@@ -209,13 +221,13 @@ public class ListActivity extends AppCompatActivity
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
                 if (type.equals("category")) {
-                    updateCategoryPosition(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                    Collections.swap(((CategoryRVAdapter) main.getAdapter()).getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                    main.getAdapter().notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                    CategoryRVAdapter adapter = (CategoryRVAdapter) main.getAdapter();
+                    Collections.swap(adapter.getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                    adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 } else if (type.equals("banknotes")) {
-                    updateBanknotePosition(viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                    Collections.swap(((BanknoteRVAdapter) main.getAdapter()).getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                    main.getAdapter().notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                    BanknoteRVAdapter adapter = (BanknoteRVAdapter) main.getAdapter();
+                    Collections.swap(adapter.getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                    adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 }
                 return true;
             }
@@ -229,26 +241,7 @@ public class ListActivity extends AppCompatActivity
             public boolean isLongPressDragEnabled() {
                 return mode.equals("edit");
             }
-        });
-        itemTouchHelper.attachToRecyclerView(main);
-    }
-
-    private void updateCategoryPosition(int oldPos, int newPos) {
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_POSITION, oldPos);
-        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(newPos).getId(), null);
-        cv = new ContentValues();
-        cv.put(COLUMN_POSITION, newPos);
-        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + ((CategoryRVAdapter) main.getAdapter()).getList().get(oldPos).getId(), null);
-    }
-
-    private void updateBanknotePosition(int oldPos, int newPos) {
-        ContentValues cv = new ContentValues();
-        cv.put(COLUMN_POSITION, oldPos);
-        database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + ((BanknoteRVAdapter) main.getAdapter()).getList().get(newPos).id, null);
-        cv = new ContentValues();
-        cv.put(COLUMN_POSITION, newPos);
-        database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + ((BanknoteRVAdapter) main.getAdapter()).getList().get(oldPos).id, null);
+        }).attachToRecyclerView(main);
     }
 
     @Override
@@ -262,7 +255,7 @@ public class ListActivity extends AppCompatActivity
         cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
         database.insert(TABLE_CATEGORIES, null, cv);
         Log.i(LOG_TAG, "Category was added");
-        this.type = DBHelper.updateCategoryType(database, currID, "category");
+        this.type = DBHelper.updateCategoryType(currID, "category");
         updateList();
     }
 
@@ -271,16 +264,16 @@ public class ListActivity extends AppCompatActivity
         Log.i(LOG_TAG, "Adding new banknote");
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
-        cv.put("circulation", circulationTime);
+        cv.put(COLUMN_CIRCULATION, circulationTime);
         cv.put(COLUMN_COUNTRY, country);
-        cv.put("obverse", obversePath);
-        cv.put("reverse", reversePath);
+        cv.put(COLUMN_OBVERSE, obversePath);
+        cv.put(COLUMN_REVERSE, reversePath);
         cv.put(COLUMN_DESCRIPTION, description);
         cv.put(COLUMN_PARENT, currID);
         cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
         database.insert(TABLE_BANKNOTES, null, cv);
         Log.i(LOG_TAG, "Banknote added");
-        type = DBHelper.updateCategoryType(database, currID, "banknotes");
+        type = DBHelper.updateCategoryType(currID, "banknotes");
         updateList();
     }
 
@@ -317,10 +310,15 @@ public class ListActivity extends AppCompatActivity
                 do {
                     database.delete(TABLE_CATEGORIES, COLUMN_ID + " = " + query.getInt(query.getColumnIndex(COLUMN_ID)), null);
                     // удаление изображений
-                    Utils.deleteFromFiles(query.getString(query.getColumnIndex("obverse")), this);
-                    Utils.deleteFromFiles(query.getString(query.getColumnIndex("reverse")), this);
+                    Utils.deleteFromFiles(query.getString(query.getColumnIndex(COLUMN_OBVERSE)), this);
+                    Utils.deleteFromFiles(query.getString(query.getColumnIndex(COLUMN_REVERSE)), this);
                 } while (query.moveToNext());
             query.close();
         }
+    }
+
+    @Override
+    public void loadFinished(String type) {
+        this.type = type;
     }
 }

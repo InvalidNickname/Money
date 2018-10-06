@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.settings;
 
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import ru.money.R;
 
 import static ru.money.App.LOG_TAG;
 

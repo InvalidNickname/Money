@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.utils;
 
 import android.content.Context;
 import android.content.Intent;
@@ -46,7 +46,7 @@ public class Utils {
         return filename;
     }
 
-    static void copyFileToDirectory(File source, File destination) {
+    public static void copyFileToDirectory(File source, File destination) {
         try {
             FileChannel src = new FileInputStream(source).getChannel();
             FileChannel dst = new FileOutputStream(destination).getChannel();
@@ -58,16 +58,15 @@ public class Utils {
         }
     }
 
-    static void copyFolderToDirectory(File source, File destination) {
+    public static void copyFolderToDirectory(File source, File destination) {
         File[] listOfFiles = source.listFiles();
-        System.out.println(source + " " + destination);
         if (listOfFiles != null)
             for (File file : listOfFiles) {
                 copyFileToDirectory(file, new File(destination + "/" + file.getName()));
             }
     }
 
-    static String getPath(Context context, Uri uri) {
+    public static String getPath(Context context, Uri uri) {
         if (DocumentsContract.isDocumentUri(context, uri)) {
             if (Objects.equals(uri.getAuthority(), "com.android.externalstorage.documents")) {
                 String idArr[] = DocumentsContract.getDocumentId(uri).split(":");
@@ -109,13 +108,13 @@ public class Utils {
         return true;
     }
 
-    static void deleteFromFiles(String name, Context context) {
+    public static void deleteFromFiles(String name, Context context) {
         File categoryImage = new File(Environment.getDataDirectory(), "/data/" + context.getPackageName() + "/files/" + name);
         if (!categoryImage.delete())
             Log.i(LOG_TAG, "Failed deleting " + name);
     }
 
-    static void changeFontScale(boolean isChecked, Context context) {
+    public static void changeFontScale(boolean isChecked, Context context) {
         Configuration configuration = context.getResources().getConfiguration();
         configuration.fontScale = isChecked ? 1.15f : 1;
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -123,7 +122,7 @@ public class Utils {
         context.getResources().updateConfiguration(configuration, metrics);
     }
 
-    static void updateFontScale(Context context) {
+    public static void updateFontScale(Context context) {
         Configuration configuration = context.getResources().getConfiguration();
         configuration.fontScale = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("text_size", false) ? 1.15f : 1;
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
