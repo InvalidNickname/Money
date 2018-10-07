@@ -122,6 +122,10 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
 
     private void setData() {
         Cursor c = null;
+        Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
+        if (c2.moveToFirst())
+            type = c2.getString(c2.getColumnIndex(COLUMN_TYPE));
+        c2.close();
         switch (type) {
             case "category":
                 c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");

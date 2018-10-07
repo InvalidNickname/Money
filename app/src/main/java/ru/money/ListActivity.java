@@ -12,6 +12,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Collections;
@@ -94,6 +96,10 @@ public class ListActivity extends AppCompatActivity
         setDragListener();
         // поиск FloatingActionButton
         floatingActionButton = findViewById(R.id.fab);
+
+        AdView adView = findViewById(R.id.ad);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override
