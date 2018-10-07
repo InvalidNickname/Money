@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -19,11 +19,11 @@ public class DBHelper extends SQLiteOpenHelper {
     public static final String COLUMN_OBVERSE = "obverse";
     public static final String COLUMN_CIRCULATION = "circulation";
     public static final String DATABASE_NAME = "mainDB";
-    static final String COLUMN_POSITION = "position";
-    static final String COLUMN_TYPE = "type";
-    static final String COLUMN_PARENT = "parent";
-    static final String COLUMN_IMAGE = "image";
-    static final String TABLE_CATEGORIES = "categories";
+    public static final String COLUMN_POSITION = "position";
+    public static final String COLUMN_TYPE = "type";
+    public static final String COLUMN_PARENT = "parent";
+    public static final String COLUMN_IMAGE = "image";
+    public static final String TABLE_CATEGORIES = "categories";
     private static DBHelper instance = null;
     private static SQLiteDatabase database;
 
@@ -39,7 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
         return instance;
     }
 
-    static String updateCategoryType(int id, String newType) {
+    public static String updateCategoryType(int id, String newType) {
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_TYPE, newType);
         database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + id, null);

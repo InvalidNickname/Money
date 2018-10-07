@@ -1,6 +1,6 @@
-package ru.money;
+package ru.money.list;
 
-class Banknote {
+public class Banknote {
 
     private final String country, title, circulationTime, obversePath;
     private final int id;

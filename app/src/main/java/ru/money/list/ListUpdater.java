@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.list;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -14,19 +14,21 @@ import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.money.R;
+import ru.money.utils.DBHelper;
 
 import static ru.money.App.LOG_TAG;
-import static ru.money.DBHelper.COLUMN_CIRCULATION;
-import static ru.money.DBHelper.COLUMN_COUNTRY;
-import static ru.money.DBHelper.COLUMN_ID;
-import static ru.money.DBHelper.COLUMN_IMAGE;
-import static ru.money.DBHelper.COLUMN_NAME;
-import static ru.money.DBHelper.COLUMN_OBVERSE;
-import static ru.money.DBHelper.COLUMN_PARENT;
-import static ru.money.DBHelper.COLUMN_POSITION;
-import static ru.money.DBHelper.COLUMN_TYPE;
-import static ru.money.DBHelper.TABLE_BANKNOTES;
-import static ru.money.DBHelper.TABLE_CATEGORIES;
+import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
+import static ru.money.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.money.utils.DBHelper.COLUMN_ID;
+import static ru.money.utils.DBHelper.COLUMN_IMAGE;
+import static ru.money.utils.DBHelper.COLUMN_NAME;
+import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
+import static ru.money.utils.DBHelper.COLUMN_PARENT;
+import static ru.money.utils.DBHelper.COLUMN_POSITION;
+import static ru.money.utils.DBHelper.COLUMN_TYPE;
+import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
+import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
 
 class ListUpdater extends AsyncTask<Void, Void, Void> {
 
@@ -69,7 +71,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
             type = DBHelper.updateCategoryType(currID, "no category");
         } else
             noItemsText.setVisibility(View.GONE);
-        onLoadListener.loadFinished(type);
+        onLoadListener.loadFinished(type, main.getAdapter());
         super.onPostExecute(object);
     }
 
@@ -160,6 +162,6 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     }
 
     public interface OnLoadListener {
-        void loadFinished(String type);
+        void loadFinished(String type, RecyclerView.Adapter adapter);
     }
 }

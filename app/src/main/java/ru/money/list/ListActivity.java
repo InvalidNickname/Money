@@ -1,7 +1,5 @@
-package ru.money;
+package ru.money.list;
 
-import android.animation.AnimatorInflater;
-import android.animation.ObjectAnimator;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
@@ -14,50 +12,47 @@ import android.view.View;
 
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.Collections;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.recyclerview.widget.RecyclerView.Adapter;
+import ru.money.R;
 import ru.money.dialog.BanknoteDialogFragment;
 import ru.money.dialog.NewCategoryDialogFragment;
 import ru.money.settings.SettingsActivity;
+import ru.money.utils.DBHelper;
 import ru.money.utils.Utils;
 
 import static ru.money.App.LOG_TAG;
-import static ru.money.App.height;
-import static ru.money.DBHelper.COLUMN_CIRCULATION;
-import static ru.money.DBHelper.COLUMN_COUNTRY;
-import static ru.money.DBHelper.COLUMN_DESCRIPTION;
-import static ru.money.DBHelper.COLUMN_ID;
-import static ru.money.DBHelper.COLUMN_IMAGE;
-import static ru.money.DBHelper.COLUMN_NAME;
-import static ru.money.DBHelper.COLUMN_OBVERSE;
-import static ru.money.DBHelper.COLUMN_PARENT;
-import static ru.money.DBHelper.COLUMN_POSITION;
-import static ru.money.DBHelper.COLUMN_REVERSE;
-import static ru.money.DBHelper.COLUMN_TYPE;
-import static ru.money.DBHelper.TABLE_BANKNOTES;
-import static ru.money.DBHelper.TABLE_CATEGORIES;
+import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
+import static ru.money.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.money.utils.DBHelper.COLUMN_DESCRIPTION;
+import static ru.money.utils.DBHelper.COLUMN_ID;
+import static ru.money.utils.DBHelper.COLUMN_IMAGE;
+import static ru.money.utils.DBHelper.COLUMN_NAME;
+import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
+import static ru.money.utils.DBHelper.COLUMN_PARENT;
+import static ru.money.utils.DBHelper.COLUMN_POSITION;
+import static ru.money.utils.DBHelper.COLUMN_REVERSE;
+import static ru.money.utils.DBHelper.COLUMN_TYPE;
+import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
+import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
 
 public class ListActivity extends AppCompatActivity
         implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener {
 
-    static String mode = "normal";
+    public ModeManager modeManager;
     private SQLiteDatabase database;
     private int currID;
     private String type;
-    private Menu menu;
-    private float fabY;
     private RecyclerView main;
-    private Toolbar toolbar;
-    private FloatingActionButton floatingActionButton;
+    private Adapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,30 +78,32 @@ public class ListActivity extends AppCompatActivity
         }
         c.close();
         // если это не главная категория, добавить кнопку "назад" и заголовок
-        toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        setSupportActionBar(findViewById(R.id.toolbar));
         if (currID != 1) {
             getSupportActionBar().setTitle(parentName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        // поиск RecyclerView
+        // инициализация ModeManager
+        modeManager = new ModeManager(this);
+        // поиск RecyclerView и установка слушателей
         main = findViewById(R.id.main);
         main.setLayoutManager(new LinearLayoutManager(this));
         setDragListener();
-        // поиск FloatingActionButton
-        floatingActionButton = findViewById(R.id.fab);
-
-        AdView adView = findViewById(R.id.ad);
-        AdRequest adRequest = new AdRequest.Builder().build();
-        adView.loadAd(adRequest);
+        initializeAd();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        this.menu = menu;
+        modeManager.setMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    void initializeAd() {
+        AdView adView = findViewById(R.id.ad);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        adView.loadAd(adRequest);
     }
 
     @Override
@@ -116,7 +113,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     public void openAddDialog(View view) {
-        if (mode.equals("normal"))
+        if (ModeManager.getMode().equals("normal"))
             switch (type) {
                 case "category":
                     Log.i(LOG_TAG, "Opening NewCategoryDialog");
@@ -148,7 +145,10 @@ public class ListActivity extends AppCompatActivity
     private void updateList() {
         Log.i(LOG_TAG, "Getting data from database...");
         ListUpdater updater = new ListUpdater(type, currID, this);
-        updater.setOnLoadListener(newType -> type = newType);
+        updater.setOnLoadListener((newType, newAdapter) -> {
+            type = newType;
+            adapter = newAdapter;
+        });
         updater.execute();
     }
 
@@ -164,10 +164,11 @@ public class ListActivity extends AppCompatActivity
                 onBackPressed();
                 break;
             case R.id.swap:
-                goToEditMode();
+                modeManager.setEditMode();
                 break;
             case R.id.done:
-                goToNormalMode();
+                modeManager.setNormalMode();
+                updateList();
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
@@ -175,34 +176,11 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (mode.equals("edit"))
-            goToNormalMode();
-        else
+        if (ModeManager.getMode().equals("edit")) {
+            modeManager.setNormalMode();
+            updateList();
+        } else
             super.onBackPressed();
-    }
-
-    private void goToNormalMode() {
-        mode = "normal";
-        menu.clear();
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        toolbar.setBackgroundColor(getResources().getColor(R.color.colorPrimary));
-        ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.vertical_slide);
-        animator.setFloatValues(floatingActionButton.getY(), fabY);
-        animator.setTarget(floatingActionButton);
-        animator.start();
-        updateList();
-    }
-
-    private void goToEditMode() {
-        mode = "edit";
-        menu.clear();
-        getMenuInflater().inflate(R.menu.edit_menu, menu);
-        toolbar.setBackgroundColor(getResources().getColor(R.color.editMode));
-        ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(this, R.animator.vertical_slide);
-        fabY = floatingActionButton.getY();
-        animator.setFloatValues(floatingActionButton.getY(), height);
-        animator.setTarget(floatingActionButton);
-        animator.start();
     }
 
     private void setDragListener() {
@@ -214,7 +192,6 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                RecyclerView.Adapter adapter = main.getAdapter();
                 if (type.equals("category"))
                     Collections.swap(((CategoryRVAdapter) adapter).getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 else if (type.equals("banknotes"))
@@ -230,7 +207,7 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             public boolean isLongPressDragEnabled() {
-                return mode.equals("edit");
+                return ModeManager.getMode().equals("edit");
             }
         }).attachToRecyclerView(main);
     }
@@ -243,7 +220,7 @@ public class ListActivity extends AppCompatActivity
         cv.put(COLUMN_IMAGE, flagPath);
         cv.put(COLUMN_TYPE, type);
         cv.put(COLUMN_PARENT, currID);
-        cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
+        cv.put(COLUMN_POSITION, adapter == null ? 1 : adapter.getItemCount() + 1);
         database.insert(TABLE_CATEGORIES, null, cv);
         Log.i(LOG_TAG, "Category was added");
         this.type = DBHelper.updateCategoryType(currID, "category");
@@ -261,7 +238,7 @@ public class ListActivity extends AppCompatActivity
         cv.put(COLUMN_REVERSE, reversePath);
         cv.put(COLUMN_DESCRIPTION, description);
         cv.put(COLUMN_PARENT, currID);
-        cv.put(COLUMN_POSITION, main.getAdapter() == null ? 1 : main.getAdapter().getItemCount() + 1);
+        cv.put(COLUMN_POSITION, adapter == null ? 1 : adapter.getItemCount() + 1);
         database.insert(TABLE_BANKNOTES, null, cv);
         Log.i(LOG_TAG, "Banknote added");
         type = DBHelper.updateCategoryType(currID, "banknotes");

@@ -7,7 +7,7 @@
 
         <variable
             name="category"
-            type="ru.money.Category" />
+            type="ru.money.list.Category" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

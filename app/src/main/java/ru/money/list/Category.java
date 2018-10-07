@@ -1,12 +1,11 @@
-package ru.money;
+package ru.money.list;
 
-@SuppressWarnings("WeakerAccess")
 public class Category {
 
     private final String categoryName, imagePath;
     private final int count, id;
 
-    Category(String categoryName, String imagePath, int count, int id) {
+    public Category(String categoryName, String imagePath, int count, int id) {
         this.categoryName = categoryName;
         this.imagePath = imagePath;
         this.count = count;

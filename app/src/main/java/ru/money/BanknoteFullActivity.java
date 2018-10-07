@@ -22,16 +22,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import ru.money.dialog.BanknoteDialogFragment;
+import ru.money.utils.DBHelper;
 
 import static ru.money.App.LOG_TAG;
-import static ru.money.DBHelper.COLUMN_CIRCULATION;
-import static ru.money.DBHelper.COLUMN_COUNTRY;
-import static ru.money.DBHelper.COLUMN_DESCRIPTION;
-import static ru.money.DBHelper.COLUMN_ID;
-import static ru.money.DBHelper.COLUMN_NAME;
-import static ru.money.DBHelper.COLUMN_OBVERSE;
-import static ru.money.DBHelper.COLUMN_REVERSE;
-import static ru.money.DBHelper.TABLE_BANKNOTES;
+import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
+import static ru.money.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.money.utils.DBHelper.COLUMN_DESCRIPTION;
+import static ru.money.utils.DBHelper.COLUMN_ID;
+import static ru.money.utils.DBHelper.COLUMN_NAME;
+import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
+import static ru.money.utils.DBHelper.COLUMN_REVERSE;
+import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
 
 public class BanknoteFullActivity extends AppCompatActivity implements BanknoteDialogFragment.OnUpdateListener {
 

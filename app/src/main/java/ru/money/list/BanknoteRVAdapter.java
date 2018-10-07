@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.list;
 
 import android.content.Context;
 import android.content.Intent;
@@ -16,6 +16,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+import ru.money.BanknoteFullActivity;
+import ru.money.R;
 import ru.money.utils.RoundCornerTransformation;
 
 public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
@@ -51,7 +53,7 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
         });
     }
 
-    List<Banknote> getList() {
+    public List<Banknote> getList() {
         return banknoteList;
     }
 

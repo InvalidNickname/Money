@@ -23,20 +23,20 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import ru.money.DBHelper;
 import ru.money.R;
+import ru.money.utils.DBHelper;
 import ru.money.utils.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static ru.money.App.width;
-import static ru.money.DBHelper.COLUMN_CIRCULATION;
-import static ru.money.DBHelper.COLUMN_COUNTRY;
-import static ru.money.DBHelper.COLUMN_DESCRIPTION;
-import static ru.money.DBHelper.COLUMN_ID;
-import static ru.money.DBHelper.COLUMN_NAME;
-import static ru.money.DBHelper.COLUMN_OBVERSE;
-import static ru.money.DBHelper.COLUMN_REVERSE;
-import static ru.money.DBHelper.TABLE_BANKNOTES;
+import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
+import static ru.money.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.money.utils.DBHelper.COLUMN_DESCRIPTION;
+import static ru.money.utils.DBHelper.COLUMN_ID;
+import static ru.money.utils.DBHelper.COLUMN_NAME;
+import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
+import static ru.money.utils.DBHelper.COLUMN_REVERSE;
+import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
 
 public class BanknoteDialogFragment extends DialogFragment {
 

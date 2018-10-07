@@ -15,6 +15,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        // нахождение высоты и ширины экрана
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         width = displayMetrics.widthPixels;
         height = displayMetrics.heightPixels;

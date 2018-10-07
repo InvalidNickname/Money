@@ -32,7 +32,7 @@ import ru.money.utils.Utils;
 
 import static android.app.Activity.RESULT_OK;
 import static ru.money.App.LOG_TAG;
-import static ru.money.DBHelper.DATABASE_NAME;
+import static ru.money.utils.DBHelper.DATABASE_NAME;
 
 @SuppressWarnings("WeakerAccess")
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {

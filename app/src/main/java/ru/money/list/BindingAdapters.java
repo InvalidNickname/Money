@@ -1,4 +1,4 @@
-package ru.money;
+package ru.money.list;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,10 +11,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BindingAdapter;
-import ru.money.CategoryRVAdapter.OnDeleteListener;
+import ru.money.R;
+import ru.money.list.CategoryRVAdapter.OnDeleteListener;
 import ru.money.utils.RoundCornerTransformation;
-
-import static ru.money.ListActivity.mode;
 
 @SuppressWarnings("WeakerAccess")
 public class BindingAdapters {
@@ -39,8 +38,9 @@ public class BindingAdapters {
     @BindingAdapter({"app:bind_listener"})
     public static void setListeners(final ConstraintLayout layout, final Category category) {
         final Context context = layout.getContext();
+        System.out.println(ModeManager.getMode());
         layout.setOnClickListener(v -> {
-            if (mode.equals("normal")) {
+            if (ModeManager.getMode().equals("normal")) {
                 Intent intent = new Intent(context, ListActivity.class);
                 intent.putExtra("parent", category.getId());
                 context.startActivity(intent);
@@ -48,7 +48,7 @@ public class BindingAdapters {
         });
         final OnDeleteListener onDeleteListener = (OnDeleteListener) layout.getContext();
         layout.setOnLongClickListener(v -> {
-            if (mode.equals("normal")) {
+            if (ModeManager.getMode().equals("normal")) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle(String.format(context.getResources().getString(R.string.delete_country), category.getCategoryName()))
                         .setMessage(R.string.delete_country_info)
