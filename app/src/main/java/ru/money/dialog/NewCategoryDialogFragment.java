@@ -90,7 +90,7 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         iconSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> getDialog().findViewById(R.id.flag).setVisibility(isChecked ? View.VISIBLE : View.GONE));
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+    public void onActivityResult(int requestCode, int resultCode, @NonNull Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK & requestCode == 1) {
             selectedImage = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width / 8);

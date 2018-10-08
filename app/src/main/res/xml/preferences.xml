@@ -10,7 +10,7 @@
             android:key="import"
             android:title="@string/import_db" />
         <SwitchPreference
-            android:defaultValue="true"
+            android:defaultValue="false"
             android:key="backup"
             android:summary="@string/backup_db_summary"
             android:title="@string/backup_db" />

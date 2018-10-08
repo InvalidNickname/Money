@@ -14,6 +14,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.Collections;
+import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -45,13 +46,14 @@ import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
 import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
 
 public class ListActivity extends AppCompatActivity
-        implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener {
+        implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener,
+        CategoryRVAdapter.OnAddListener {
 
     private ModeManager modeManager;
     private SQLiteDatabase database;
     private int currID;
+    private int parentID;
     private String type;
-    private RecyclerView main;
     private Adapter adapter;
 
     @Override
@@ -65,33 +67,21 @@ public class ListActivity extends AppCompatActivity
         database = DBHelper.getInstance(this).getDatabase();
         // сохранение резервной копии БД
         Utils.backupDB(this);
-        // получение ID текущей категории, если это - первая, то ID = 1
-        currID = getIntent().getIntExtra("parent", 1);
-        // получение типа и названия открытой категории
-        String parentName = "NaN";
-        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
-        if (c.moveToFirst()) {
-            type = c.getString(c.getColumnIndex(COLUMN_TYPE));
-            int parentID = c.getInt(c.getColumnIndex(COLUMN_PARENT));
-            Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + parentID, null, null, null, null);
-            if (c2.moveToFirst())
-                parentName = c.getString(c.getColumnIndex(COLUMN_NAME));
-            c2.close();
-        }
+        // запуск идёт с главной категории, поэтому ID = 1
+        currID = 1;
+        // получение типа главной категории
+        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = 1", null, null, null, null);
+        if (c.moveToFirst()) type = c.getString(c.getColumnIndex(COLUMN_TYPE));
         c.close();
         // если это не главная категория, добавить кнопку "назад" и заголовок
         setSupportActionBar(findViewById(R.id.toolbar));
-        if (currID != 1) {
-            getSupportActionBar().setTitle(parentName);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
         // инициализация ModeManager
         modeManager = new ModeManager(this);
         // поиск RecyclerView и установка слушателей
-        main = findViewById(R.id.main);
+        RecyclerView main = findViewById(R.id.main);
         main.setLayoutManager(new LinearLayoutManager(this));
-        setDragListener();
+        setDragListener(main);
+        updateList(true);
         initializeAd();
     }
 
@@ -109,9 +99,9 @@ public class ListActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
-        updateList();
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getBooleanExtra("update", false)) updateList(true);
     }
 
     public void openAddDialog(View view) {
@@ -144,18 +134,19 @@ public class ListActivity extends AppCompatActivity
             }
     }
 
-    private void updateList() {
+    private void updateList(boolean animationNeeded) {
         Log.i(LOG_TAG, "Getting data from database...");
-        ListUpdater updater = new ListUpdater(type, currID, this);
-        updater.setOnLoadListener((newType, newAdapter) -> {
+        ListUpdater updater = new ListUpdater(type, currID, animationNeeded, this);
+        updater.setOnLoadListener((newType, parent, newAdapter) -> {
             type = newType;
+            parentID = parent;
             adapter = newAdapter;
         });
         updater.execute();
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.settings:
                 Log.i(LOG_TAG, "Settings button clicked");
@@ -170,22 +161,29 @@ public class ListActivity extends AppCompatActivity
                 break;
             case R.id.done:
                 modeManager.setNormalMode();
-                updateList();
+                updateList(false);
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    private void goBack() {
+        if (currID == 1) finish();
+        else {
+            currID = parentID;
+            updateList(true);
+        }
     }
 
     @Override
     public void onBackPressed() {
         if (ModeManager.getMode().equals("edit")) {
             modeManager.setNormalMode();
-            updateList();
-        } else
-            super.onBackPressed();
+            updateList(false);
+        } else goBack();
     }
 
-    private void setDragListener() {
+    private void setDragListener(RecyclerView recyclerView) {
         new ItemTouchHelper(new ItemTouchHelper.Callback() {
             @Override
             public int getMovementFlags(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder) {
@@ -194,10 +192,8 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
-                if (type.equals("category"))
-                    Collections.swap(((CategoryRVAdapter) adapter).getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
-                else if (type.equals("banknotes"))
-                    Collections.swap(((BanknoteRVAdapter) adapter).getList(), viewHolder.getAdapterPosition(), target.getAdapterPosition());
+                List list = type.equals("category") ? ((CategoryRVAdapter) adapter).getList() : ((BanknoteRVAdapter) adapter).getList();
+                Collections.swap(list, viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 adapter.notifyItemMoved(viewHolder.getAdapterPosition(), target.getAdapterPosition());
                 return true;
             }
@@ -211,7 +207,7 @@ public class ListActivity extends AppCompatActivity
             public boolean isLongPressDragEnabled() {
                 return ModeManager.getMode().equals("edit");
             }
-        }).attachToRecyclerView(main);
+        }).attachToRecyclerView(recyclerView);
     }
 
     @Override
@@ -226,7 +222,7 @@ public class ListActivity extends AppCompatActivity
         database.insert(TABLE_CATEGORIES, null, cv);
         Log.i(LOG_TAG, "Category was added");
         this.type = DBHelper.updateCategoryType(currID, "category");
-        updateList();
+        updateList(false);
     }
 
     @Override
@@ -244,7 +240,7 @@ public class ListActivity extends AppCompatActivity
         database.insert(TABLE_BANKNOTES, null, cv);
         Log.i(LOG_TAG, "Banknote added");
         type = DBHelper.updateCategoryType(currID, "banknotes");
-        updateList();
+        updateList(false);
     }
 
     @Override
@@ -252,7 +248,7 @@ public class ListActivity extends AppCompatActivity
         Log.i(LOG_TAG, "Deleting category...");
         deleteChildren(id);
         Log.i(LOG_TAG, "Category was deleted");
-        updateList();
+        updateList(false);
     }
 
     private void deleteChildren(int id) {
@@ -285,5 +281,11 @@ public class ListActivity extends AppCompatActivity
                 } while (query.moveToNext());
             query.close();
         }
+    }
+
+    @Override
+    public void loadNewCategory(int id) {
+        currID = id;
+        updateList(true);
     }
 }

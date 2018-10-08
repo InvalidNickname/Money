@@ -8,6 +8,8 @@ import android.graphics.Shader;
 
 import com.squareup.picasso.Transformation;
 
+import androidx.annotation.NonNull;
+
 public class RoundCornerTransformation implements Transformation {
 
     private final int corner;
@@ -17,18 +19,18 @@ public class RoundCornerTransformation implements Transformation {
     }
 
     @Override
-    public Bitmap transform(Bitmap source) {
-        final Paint paint = new Paint();
+    public Bitmap transform(@NonNull Bitmap source) {
+        Paint paint = new Paint();
         paint.setAntiAlias(true);
         paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
-        final Bitmap output = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
-        final Canvas canvas = new Canvas(output);
+        Bitmap output = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
+        Canvas canvas = new Canvas(output);
         canvas.drawRoundRect(0, 0, source.getWidth(), source.getHeight(), source.getWidth() / corner, source.getWidth() / corner, paint);
-        if (source != output)
-            source.recycle();
+        if (source != output) source.recycle();
         return output;
     }
 
+    @NonNull
     @Override
     public String key() {
         return "roundCorner";

@@ -70,7 +70,7 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
         final TextView country;
         final ImageView image;
 
-        CardViewHolder(View itemView) {
+        CardViewHolder(@NonNull View itemView) {
             super(itemView);
             cardView = itemView.findViewById(R.id.cardView);
             circulationTime = itemView.findViewById(R.id.circulationTime);

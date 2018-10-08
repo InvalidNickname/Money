@@ -7,6 +7,7 @@ import android.view.MenuItem;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -32,7 +33,7 @@ public class HelpActivity extends AppCompatActivity {
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case android.R.id.home:
                 Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
@@ -46,8 +47,7 @@ public class HelpActivity extends AppCompatActivity {
         String[] titles = getResources().getStringArray(R.array.help_titles);
         String[] texts = getResources().getStringArray(R.array.help_texts);
         List<HelpItem> helpItemList = new ArrayList<>();
-        for (int i = 0; i < titles.length; i++)
-            helpItemList.add(new HelpItem(titles[i], texts[i]));
+        for (int i = 0; i < titles.length; i++) helpItemList.add(new HelpItem(titles[i], texts[i]));
         RecyclerView main = findViewById(R.id.main);
         main.setLayoutManager(new LinearLayoutManager(this));
         main.setAdapter(new HelpRVAdapter(helpItemList));

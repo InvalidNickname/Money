@@ -1,6 +1,7 @@
 package ru.money;
 
 import android.content.ContentValues;
+import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Typeface;
@@ -18,10 +19,12 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import ru.money.dialog.BanknoteDialogFragment;
+import ru.money.list.ListActivity;
 import ru.money.utils.DBHelper;
 
 import static ru.money.App.LOG_TAG;
@@ -104,7 +107,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case android.R.id.home:
                 Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
@@ -123,6 +126,9 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                             database.delete(TABLE_BANKNOTES, COLUMN_ID + " = " + banknoteID, null);
                             Log.i(LOG_TAG, "Banknote deleted, closing dialog");
                             dialog.dismiss();
+                            Intent intent = new Intent(this, ListActivity.class);
+                            intent.putExtra("update", true);
+                            startActivity(intent);
                             finish();
                         });
                 AlertDialog alert = builder.create();
