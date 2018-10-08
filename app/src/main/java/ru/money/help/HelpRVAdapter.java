@@ -62,7 +62,7 @@ public class HelpRVAdapter extends RecyclerView.Adapter<HelpRVAdapter.CardViewHo
         final TextView text;
         final LinearLayout layout;
 
-        CardViewHolder(View itemView) {
+        CardViewHolder(@NonNull View itemView) {
             super(itemView);
             text = itemView.findViewById(R.id.text);
             title = itemView.findViewById(R.id.title);

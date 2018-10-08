@@ -6,6 +6,9 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 import static ru.money.App.USES_DB_VERSION;
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -31,7 +34,8 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, USES_DB_VERSION);
     }
 
-    public static synchronized DBHelper getInstance(Context context) {
+    @Nullable
+    public static synchronized DBHelper getInstance(@NonNull Context context) {
         if (instance == null) {
             instance = new DBHelper(context.getApplicationContext());
             database = instance.getWritableDatabase();
@@ -54,7 +58,7 @@ public class DBHelper extends SQLiteOpenHelper {
     }
 
     @Override
-    public void onCreate(SQLiteDatabase db) {
+    public void onCreate(@NonNull SQLiteDatabase db) {
         db.execSQL("create table " + TABLE_BANKNOTES + " ("
                 + COLUMN_ID + " integer primary key autoincrement,"
                 + COLUMN_COUNTRY + " text,"

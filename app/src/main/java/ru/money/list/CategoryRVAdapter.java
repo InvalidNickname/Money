@@ -45,6 +45,10 @@ public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.Ca
         void deleteCategory(int id);
     }
 
+    public interface OnAddListener {
+        void loadNewCategory(int id);
+    }
+
     static class CardViewHolder extends RecyclerView.ViewHolder {
 
         final LayoutCardCategoryBinding binding;

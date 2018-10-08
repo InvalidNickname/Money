@@ -17,6 +17,7 @@ import java.io.File;
 import java.util.Date;
 import java.util.Objects;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceCategory;
@@ -45,12 +46,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     // убирает отступ под иконку во всем списке
+    @NonNull
     @Override
     protected RecyclerView.Adapter onCreateAdapter(PreferenceScreen preferenceScreen) {
         return new PreferenceGroupAdapter(preferenceScreen) {
             @SuppressLint("RestrictedApi")
             @Override
-            public void onBindViewHolder(PreferenceViewHolder holder, int position) {
+            public void onBindViewHolder(@NonNull PreferenceViewHolder holder, int position) {
                 super.onBindViewHolder(holder, position);
                 if (getItem(position) instanceof PreferenceCategory)
                     setZeroPaddingToLayoutChildren(holder.itemView);
@@ -61,8 +63,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     private void setZeroPaddingToLayoutChildren(View view) {
-        if (!(view instanceof ViewGroup))
-            return;
+        if (!(view instanceof ViewGroup)) return;
         ViewGroup viewGroup = (ViewGroup) view;
         int childCount = viewGroup.getChildCount();
         for (int i = 0; i < childCount; i++) {
@@ -110,8 +111,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 if (backupFolder.exists() || backupFolder.mkdirs()) {
                     File backupDB = new File(backupFolder, time + ".db");
                     File currentDB = new File(data, "/data/" + getActivity().getPackageName() + "/databases/" + DATABASE_NAME);
-                    if (!backupDB.exists())
-                        Utils.copyFileToDirectory(currentDB, backupDB);
+                    if (!backupDB.exists()) Utils.copyFileToDirectory(currentDB, backupDB);
                     Log.i(LOG_TAG, "Database exported, exporting images");
                 }
                 File backupData = new File(externalStorage, "/Exported Databases/" + time);
@@ -139,7 +139,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1: {
                 if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
@@ -163,7 +163,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @NonNull String key) {
         if (key.equals("text_size")) {
             // изменение размера шрифта
             Log.i(LOG_TAG, "Text size changed");

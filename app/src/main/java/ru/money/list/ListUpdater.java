@@ -12,10 +12,13 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import ru.money.R;
 import ru.money.utils.DBHelper;
+import ru.money.utils.Utils;
 
 import static ru.money.App.LOG_TAG;
 import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
@@ -37,16 +40,21 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     private final SQLiteDatabase database;
     private final List<Banknote> banknoteList = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
+    private final boolean animationNeeded;
     private OnLoadListener onLoadListener;
     private String type;
+    private int parent;
+    private String parentName;
 
-    ListUpdater(String type, int currID, AppCompatActivity activity) {
+    ListUpdater(String type, int currID, boolean animationNeeded, AppCompatActivity activity) {
         this.type = type;
         this.currID = currID;
+        this.animationNeeded = animationNeeded;
         this.activity = new WeakReference<>(activity);
         database = DBHelper.getInstance(activity).getDatabase();
     }
 
+    @Nullable
     @Override
     protected Void doInBackground(Void... voids) {
         updatePositions();
@@ -55,23 +63,52 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     }
 
     @Override
+    protected void onPreExecute() {
+        // очистка адаптера
+        RecyclerView main = activity.get().findViewById(R.id.main);
+        main.setAdapter(null);
+        // показ прогресса
+        activity.get().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        // установка заголовка
+        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
+        if (c.moveToFirst()) {
+            type = c.getString(c.getColumnIndex(COLUMN_TYPE));
+            parent = c.getInt(c.getColumnIndex(COLUMN_PARENT));
+            Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + parent, null, null, null, null);
+            if (c2.moveToFirst()) parentName = c.getString(c.getColumnIndex(COLUMN_NAME));
+            c2.close();
+        }
+        c.close();
+        ActionBar actionBar = activity.get().getSupportActionBar();
+        if (currID == 1) {
+            actionBar.setTitle(activity.get().getString(R.string.app_name));
+            actionBar.setDisplayHomeAsUpEnabled(false);
+            actionBar.setDisplayShowHomeEnabled(false);
+        } else {
+            actionBar.setTitle(parentName);
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        }
+        super.onPreExecute();
+    }
+
+    @Override
     protected void onPostExecute(Void object) {
         Log.i(LOG_TAG, "Data is loaded, updating list...");
-        RecyclerView main = activity.get().findViewById(R.id.main);
-        TextView noItemsText = activity.get().findViewById(R.id.noItemsText);
+        // скрытие прогресса
+        activity.get().findViewById(R.id.progressBar).setVisibility(View.GONE);
         // установка адаптера
-        if (type.equals("category"))
-            main.setAdapter(new CategoryRVAdapter(categoryList));
-        else
-            main.setAdapter(new BanknoteRVAdapter(banknoteList));
+        RecyclerView main = activity.get().findViewById(R.id.main);
+        main.setAdapter(type.equals("category") ? new CategoryRVAdapter(categoryList) : new BanknoteRVAdapter(banknoteList));
         Log.i(LOG_TAG, "List updated");
         // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
+        TextView noItemsText = activity.get().findViewById(R.id.noItemsText);
         if (main.getAdapter() == null || main.getAdapter().getItemCount() == 0) {
             noItemsText.setVisibility(View.VISIBLE);
             type = DBHelper.updateCategoryType(currID, "no category");
-        } else
-            noItemsText.setVisibility(View.GONE);
-        onLoadListener.loadFinished(type, main.getAdapter());
+        } else noItemsText.setVisibility(View.GONE);
+        if (animationNeeded) Utils.runLayoutAnimation(main);
+        onLoadListener.loadFinished(type, parent, main.getAdapter());
         super.onPostExecute(object);
     }
 
@@ -124,10 +161,6 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
 
     private void setData() {
         Cursor c = null;
-        Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
-        if (c2.moveToFirst())
-            type = c2.getString(c2.getColumnIndex(COLUMN_TYPE));
-        c2.close();
         switch (type) {
             case "category":
                 c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
@@ -153,8 +186,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
                     } while (c.moveToNext());
                 break;
         }
-        if (c != null)
-            c.close();
+        if (c != null) c.close();
     }
 
     void setOnLoadListener(OnLoadListener onLoadListener) {
@@ -162,6 +194,6 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     }
 
     public interface OnLoadListener {
-        void loadFinished(String type, RecyclerView.Adapter adapter);
+        void loadFinished(String type, int parent, RecyclerView.Adapter adapter);
     }
 }

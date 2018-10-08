@@ -18,6 +18,7 @@ import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -104,7 +105,7 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     }
 
     @Override
-    public boolean onOptionsItemSelected(MenuItem menuItem) {
+    public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case android.R.id.home:
                 Log.i(LOG_TAG, "Back button on toolbar selected, finishing");

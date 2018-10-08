@@ -58,8 +58,7 @@ public class BanknoteDialogFragment extends DialogFragment {
                 .setTitle(newBanknote ? getString(R.string.add_new_banknote) : getString(R.string.update_banknote))
                 .setPositiveButton(newBanknote ? R.string.add : R.string.update, null)
                 .setNegativeButton(R.string.cancel, (dialog, id) -> BanknoteDialogFragment.this.getDialog().cancel());
-        if (!newBanknote)
-            getData();
+        if (!newBanknote) getData();
         return builder.create();
     }
 
@@ -80,8 +79,7 @@ public class BanknoteDialogFragment extends DialogFragment {
                 EditText editCountry = getDialog().findViewById(R.id.editCountry);
                 String country = editCountry.getText().toString().trim().replaceAll("\\s+", " ");
                 // если описание пустое, оно заменяется на "нет описания"
-                if (description.equals(""))
-                    description = getString(R.string.no_description);
+                if (description.equals("")) description = getString(R.string.no_description);
                 // добавление возможно только если заполнены "название" и "страна"
                 if (!name.equals("") && !country.equals("")) {
                     if (newBanknote)
@@ -90,20 +88,10 @@ public class BanknoteDialogFragment extends DialogFragment {
                         onUpdateListener.updateBanknote(name, time, selectedObverse, selectedReverse, description, country);
                     d.dismiss();
                 } else {
-                    if (name.equals("")) {
-                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
-                        textInputLayout.setError(getString(R.string.banknote_name_error));
-                    } else {
-                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
-                        textInputLayout.setError(null);
-                    }
-                    if (country.equals("")) {
-                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
-                        textInputLayout.setError(getString(R.string.country_name_error));
-                    } else {
-                        TextInputLayout textInputLayout = getDialog().findViewById(R.id.countryInput);
-                        textInputLayout.setError(null);
-                    }
+                    TextInputLayout nameInput = getDialog().findViewById(R.id.nameInput);
+                    nameInput.setError(name.equals("") ? getString(R.string.banknote_name_error) : null);
+                    TextInputLayout countryInput = getDialog().findViewById(R.id.countryInput);
+                    countryInput.setError(name.equals("") ? getString(R.string.country_name_error) : null);
                 }
             });
         }
@@ -144,13 +132,11 @@ public class BanknoteDialogFragment extends DialogFragment {
             if (!obversePath.equals("nothing")) {
                 File file = context.getFileStreamPath(obversePath);
                 Picasso.get().load(file).into(obverse);
-            } else
-                Picasso.get().load(R.drawable.example_banknote).into(obverse);
+            } else Picasso.get().load(R.drawable.example_banknote).into(obverse);
             if (!reversePath.equals("nothing")) {
                 File file = context.getFileStreamPath(reversePath);
                 Picasso.get().load(file).into(reverse);
-            } else
-                Picasso.get().load(R.drawable.example_banknote).into(reverse);
+            } else Picasso.get().load(R.drawable.example_banknote).into(reverse);
             isDataSet = true;
         }
         obverse.setOnClickListener(v -> {
@@ -167,7 +153,7 @@ public class BanknoteDialogFragment extends DialogFragment {
         });
     }
 
-    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
+    public void onActivityResult(int requestCode, int resultCode, @NonNull Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK & requestCode == 1) {
             selectedObverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width);

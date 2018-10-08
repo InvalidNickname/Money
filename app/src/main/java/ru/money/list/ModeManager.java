@@ -7,6 +7,7 @@ import android.view.Menu;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import ru.money.R;
@@ -17,17 +18,18 @@ class ModeManager {
 
     private static String mode = "normal";
     private final Context context;
-    private Menu menu;
-    private float fabY;
     private final Toolbar toolbar;
     private final FloatingActionButton floatingActionButton;
+    private Menu menu;
+    private float fabY;
 
-    ModeManager(Context context) {
+    ModeManager(@NonNull Context context) {
         this.context = context;
         toolbar = ((AppCompatActivity) context).findViewById(R.id.toolbar);
         floatingActionButton = ((AppCompatActivity) context).findViewById(R.id.fab);
     }
 
+    @NonNull
     static String getMode() {
         return mode;
     }
