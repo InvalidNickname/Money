@@ -38,7 +38,6 @@ public class BindingAdapters {
     @BindingAdapter({"app:bind_listener"})
     public static void setListeners(final ConstraintLayout layout, final Category category) {
         final Context context = layout.getContext();
-        System.out.println(ModeManager.getMode());
         layout.setOnClickListener(v -> {
             if (ModeManager.getMode().equals("normal")) {
                 Intent intent = new Intent(context, ListActivity.class);

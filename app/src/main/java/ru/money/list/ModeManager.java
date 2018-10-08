@@ -16,11 +16,11 @@ import static ru.money.App.height;
 class ModeManager {
 
     private static String mode = "normal";
-    private Context context;
+    private final Context context;
     private Menu menu;
     private float fabY;
-    private Toolbar toolbar;
-    private FloatingActionButton floatingActionButton;
+    private final Toolbar toolbar;
+    private final FloatingActionButton floatingActionButton;
 
     ModeManager(Context context) {
         this.context = context;

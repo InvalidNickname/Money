@@ -47,7 +47,7 @@ import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
 public class ListActivity extends AppCompatActivity
         implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener {
 
-    public ModeManager modeManager;
+    private ModeManager modeManager;
     private SQLiteDatabase database;
     private int currID;
     private String type;
@@ -63,6 +63,8 @@ public class ListActivity extends AppCompatActivity
         setContentView(R.layout.activity_list);
         // создание или открытие БД
         database = DBHelper.getInstance(this).getDatabase();
+        // сохранение резервной копии БД
+        Utils.backupDB(this);
         // получение ID текущей категории, если это - первая, то ID = 1
         currID = getIntent().getIntExtra("parent", 1);
         // получение типа и названия открытой категории
@@ -100,7 +102,7 @@ public class ListActivity extends AppCompatActivity
         return true;
     }
 
-    void initializeAd() {
+    private void initializeAd() {
         AdView adView = findViewById(R.id.ad);
         AdRequest adRequest = new AdRequest.Builder().build();
         adView.loadAd(adRequest);

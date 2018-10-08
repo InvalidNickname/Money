@@ -1,5 +1,6 @@
 package ru.money.list;
 
+@SuppressWarnings("WeakerAccess")
 public class Banknote {
 
     private final String country, title, circulationTime, obversePath;

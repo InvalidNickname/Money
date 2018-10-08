@@ -1,5 +1,6 @@
 package ru.money.utils;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -28,6 +29,7 @@ import androidx.preference.PreferenceManager;
 
 import static android.content.Context.MODE_PRIVATE;
 import static ru.money.App.LOG_TAG;
+import static ru.money.utils.DBHelper.DATABASE_NAME;
 
 public class Utils {
 
@@ -114,19 +116,39 @@ public class Utils {
             Log.i(LOG_TAG, "Failed deleting " + name);
     }
 
-    public static void changeFontScale(boolean isChecked, Context context) {
-        Configuration configuration = context.getResources().getConfiguration();
-        configuration.fontScale = isChecked ? 1.15f : 1;
-        DisplayMetrics metrics = context.getResources().getDisplayMetrics();
-        metrics.scaledDensity = configuration.fontScale * metrics.density;
-        context.getResources().updateConfiguration(configuration, metrics);
-    }
-
     public static void updateFontScale(Context context) {
         Configuration configuration = context.getResources().getConfiguration();
         configuration.fontScale = PreferenceManager.getDefaultSharedPreferences(context).getBoolean("text_size", false) ? 1.15f : 1;
         DisplayMetrics metrics = context.getResources().getDisplayMetrics();
         metrics.scaledDensity = configuration.fontScale * metrics.density;
         context.getResources().updateConfiguration(configuration, metrics);
+    }
+
+    public static void backupDB(Context context) {
+        if (PreferenceManager.getDefaultSharedPreferences(context).getBoolean("backup", true)) {
+            Log.i(LOG_TAG, "Backing up database");
+            if (Utils.checkPermission(context, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                Log.i(LOG_TAG, "Exporting database...");
+                File data = Environment.getDataDirectory();
+                File externalStorage = Environment.getExternalStorageDirectory();
+                if (externalStorage.canWrite()) {
+                    File backupFolder = new File(externalStorage, "/Exported Databases/");
+                    // создание папки /Exported Databases/, если её не существует
+                    if (backupFolder.exists() || backupFolder.mkdirs()) {
+                        File backupDB = new File(backupFolder, "auto_backup.db");
+                        File currentDB = new File(data, "/data/" + context.getPackageName() + "/databases/" + DATABASE_NAME);
+                        Utils.copyFileToDirectory(currentDB, backupDB);
+                        Log.i(LOG_TAG, "Database exported, exporting images");
+                    }
+                    File backupData = new File(externalStorage, "/Exported Databases/auto_backup");
+                    // создание папки с уникальным названием. Если она существует - закончить экспорт
+                    if (backupData.exists() || backupData.mkdirs()) {
+                        File currentData = new File(data, "/data/" + context.getPackageName() + "/files/");
+                        Utils.copyFolderToDirectory(currentData, backupData);
+                        Log.i(LOG_TAG, "Images exported");
+                    }
+                }
+            }
+        }
     }
 }

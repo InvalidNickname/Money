@@ -1,5 +1,6 @@
 package ru.money.list;
 
+@SuppressWarnings("WeakerAccess")
 public class Category {
 
     private final String categoryName, imagePath;

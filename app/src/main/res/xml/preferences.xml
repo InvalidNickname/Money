@@ -9,6 +9,11 @@
         <Preference
             android:key="import"
             android:title="@string/import_db" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="backup"
+            android:summary="@string/backup_db_summary"
+            android:title="@string/backup_db" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/interface_cat_preference">

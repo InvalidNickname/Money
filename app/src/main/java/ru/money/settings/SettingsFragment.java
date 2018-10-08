@@ -86,7 +86,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             importDatabase();
             return true;
         });
-        // слушатель нажатия на кнопку импорта
+        // слушатель нажатия на кнопку помощи
         Preference helpPref = findPreference("help");
         helpPref.setOnPreferenceClickListener(preference -> {
             Intent intent = new Intent(getActivity(), HelpActivity.class);
@@ -165,16 +165,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         if (key.equals("text_size")) {
-            changeFontSize(sharedPreferences.getBoolean("text_size", false));
+            // изменение размера шрифта
+            Log.i(LOG_TAG, "Text size changed");
+            Utils.updateFontScale(getActivity());
+            // перезапуск активити для изменения размера шрифта в ней
+            getActivity().recreate();
         }
-    }
-
-    private void changeFontSize(boolean isChecked) {
-        // изменение размера шрифта
-        Log.i(LOG_TAG, "Text size changed");
-        Utils.changeFontScale(isChecked, getActivity());
-        // перезапуск активити для изменения размера шрифта в ней
-        getActivity().recreate();
     }
 
     @Override
