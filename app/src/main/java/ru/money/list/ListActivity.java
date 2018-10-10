@@ -46,7 +46,7 @@ import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
 import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
 
 public class ListActivity extends AppCompatActivity
-        implements CategoryDialogFragment.OnChangeListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener,
+        implements CategoryDialogFragment.OnChangeListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnChangeListener,
         CategoryRVAdapter.OnAddListener {
 
     private ModeManager modeManager;
@@ -252,6 +252,11 @@ public class ListActivity extends AppCompatActivity
         Log.i(LOG_TAG, "Banknote added");
         type = DBHelper.updateCategoryType(currID, "banknotes");
         updateList(false);
+    }
+
+    @Override
+    public void updateBanknote(String name, String circulationTime, String obversePath, String reversePath, String description, String country) {
+
     }
 
     @Override

@@ -75,8 +75,9 @@
             android:ems="10"
             android:hint="@string/description"
             android:importantForAutofill="no"
-            android:inputType="text|textCapSentences"
-            android:singleLine="true"
+            android:inputType="text|textCapSentences|textMultiLine"
+            android:maxLines="3"
+            android:scrollbars="vertical"
             app:layout_constraintTop_toTopOf="parent" />
 
     </com.google.android.material.textfield.TextInputLayout>
