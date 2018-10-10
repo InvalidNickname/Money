@@ -37,7 +37,7 @@ import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
 import static ru.money.utils.DBHelper.COLUMN_REVERSE;
 import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
 
-public class BanknoteFullActivity extends AppCompatActivity implements BanknoteDialogFragment.OnUpdateListener {
+public class BanknoteFullActivity extends AppCompatActivity implements BanknoteDialogFragment.OnChangeListener {
 
     private SQLiteDatabase database;
     private String name, circulationTime, obversePath, reversePath, description, country;
@@ -144,6 +144,11 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                 break;
         }
         return super.onOptionsItemSelected(menuItem);
+    }
+
+    @Override
+    public void addNewBanknote(String name, String circulationTime, String obversePath, String reversePath, String description, String country) {
+
     }
 
     @Override

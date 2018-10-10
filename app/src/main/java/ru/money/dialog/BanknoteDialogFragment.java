@@ -40,8 +40,7 @@ import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
 
 public class BanknoteDialogFragment extends DialogFragment {
 
-    private OnAddListener onAddListener;
-    private OnUpdateListener onUpdateListener;
+    private OnChangeListener onChangeListener;
     private String selectedObverse, selectedReverse;
     private String name, circulationTime, obversePath, reversePath, description, country;
     private boolean isDataSet = false, newBanknote;
@@ -83,9 +82,9 @@ public class BanknoteDialogFragment extends DialogFragment {
                 // добавление возможно только если заполнены "название" и "страна"
                 if (!name.equals("") && !country.equals("")) {
                     if (newBanknote)
-                        onAddListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description, country);
+                        onChangeListener.addNewBanknote(name, time, selectedObverse, selectedReverse, description, country);
                     else
-                        onUpdateListener.updateBanknote(name, time, selectedObverse, selectedReverse, description, country);
+                        onChangeListener.updateBanknote(name, time, selectedObverse, selectedReverse, description, country);
                     d.dismiss();
                 } else {
                     TextInputLayout nameInput = getDialog().findViewById(R.id.nameInput);
@@ -106,13 +105,12 @@ public class BanknoteDialogFragment extends DialogFragment {
         if (args != null) {
             id = args.getInt("id");
             newBanknote = false;
-            onUpdateListener = (OnUpdateListener) context;
         } else {
             newBanknote = true;
-            onAddListener = (OnAddListener) context;
             selectedReverse = "nothing";
             selectedObverse = "nothing";
         }
+        onChangeListener = (OnChangeListener) context;
     }
 
     @Override
@@ -181,11 +179,8 @@ public class BanknoteDialogFragment extends DialogFragment {
         }
     }
 
-    public interface OnAddListener {
+    public interface OnChangeListener {
         void addNewBanknote(String name, String circulationTime, String obversePath, String reversePath, String description, String country);
-    }
-
-    public interface OnUpdateListener {
         void updateBanknote(String name, String circulationTime, String obversePath, String reversePath, String description, String country);
     }
 }

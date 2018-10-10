@@ -75,7 +75,9 @@
             android:ems="10"
             android:hint="@string/description"
             android:importantForAutofill="no"
-            android:inputType="text|textCapSentences"
+            android:inputType="text|textCapSentences|textMultiLine"
+            android:maxLines="3"
+            android:scrollbars="vertical"
             android:singleLine="true"
             app:layout_constraintTop_toTopOf="parent" />
 
