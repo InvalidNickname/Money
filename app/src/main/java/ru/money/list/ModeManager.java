@@ -12,7 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import ru.money.R;
 
-import static ru.money.App.height;
+import static ru.money.App.width;
 
 class ModeManager {
 
@@ -21,7 +21,7 @@ class ModeManager {
     private final Toolbar toolbar;
     private final FloatingActionButton floatingActionButton;
     private Menu menu;
-    private float fabY;
+    private float fabX;
 
     ModeManager(@NonNull Context context) {
         this.context = context;
@@ -36,6 +36,7 @@ class ModeManager {
 
     void setMenu(Menu menu) {
         this.menu = menu;
+        fabX = floatingActionButton.getX();
     }
 
     void setNormalMode() {
@@ -43,8 +44,8 @@ class ModeManager {
         menu.clear();
         ((AppCompatActivity) context).getMenuInflater().inflate(R.menu.main_menu, menu);
         toolbar.setBackgroundColor(context.getResources().getColor(R.color.colorPrimary));
-        ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(context, R.animator.vertical_slide);
-        animator.setFloatValues(floatingActionButton.getY(), fabY);
+        ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(context, R.animator.slide);
+        animator.setFloatValues(floatingActionButton.getX(), fabX);
         animator.setTarget(floatingActionButton);
         animator.start();
     }
@@ -54,9 +55,8 @@ class ModeManager {
         menu.clear();
         ((AppCompatActivity) context).getMenuInflater().inflate(R.menu.edit_menu, menu);
         toolbar.setBackgroundColor(context.getResources().getColor(R.color.editMode));
-        ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(context, R.animator.vertical_slide);
-        fabY = floatingActionButton.getY();
-        animator.setFloatValues(floatingActionButton.getY(), height);
+        ObjectAnimator animator = (ObjectAnimator) AnimatorInflater.loadAnimator(context, R.animator.slide);
+        animator.setFloatValues(floatingActionButton.getX(), width);
         animator.setTarget(floatingActionButton);
         animator.start();
     }

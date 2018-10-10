@@ -41,8 +41,9 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     private final List<Banknote> banknoteList = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
     private final boolean animationNeeded;
+    private final String type;
     private OnLoadListener onLoadListener;
-    private String type;
+    private String newType;
     private int parent;
     private String parentName;
 
@@ -57,28 +58,21 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     @Nullable
     @Override
     protected Void doInBackground(Void... voids) {
+        getData();
         updatePositions();
         setData();
         return null;
     }
 
     @Override
-    protected void onPreExecute() {
+    protected void onProgressUpdate(Void... values) {
+        super.onProgressUpdate(values);
         // очистка адаптера
         RecyclerView main = activity.get().findViewById(R.id.main);
-        main.setAdapter(null);
+        main.setVisibility(View.INVISIBLE);
         // показ прогресса
         activity.get().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         // установка заголовка
-        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
-        if (c.moveToFirst()) {
-            type = c.getString(c.getColumnIndex(COLUMN_TYPE));
-            parent = c.getInt(c.getColumnIndex(COLUMN_PARENT));
-            Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + parent, null, null, null, null);
-            if (c2.moveToFirst()) parentName = c.getString(c.getColumnIndex(COLUMN_NAME));
-            c2.close();
-        }
-        c.close();
         ActionBar actionBar = activity.get().getSupportActionBar();
         if (currID == 1) {
             actionBar.setTitle(activity.get().getString(R.string.app_name));
@@ -89,7 +83,6 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
             actionBar.setDisplayHomeAsUpEnabled(true);
             actionBar.setDisplayShowHomeEnabled(true);
         }
-        super.onPreExecute();
     }
 
     @Override
@@ -99,17 +92,31 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         activity.get().findViewById(R.id.progressBar).setVisibility(View.GONE);
         // установка адаптера
         RecyclerView main = activity.get().findViewById(R.id.main);
-        main.setAdapter(type.equals("category") ? new CategoryRVAdapter(categoryList) : new BanknoteRVAdapter(banknoteList));
+        main.setVisibility(View.VISIBLE);
+        main.setAdapter(newType.equals("category") ? new CategoryRVAdapter(categoryList) : new BanknoteRVAdapter(banknoteList));
         Log.i(LOG_TAG, "List updated");
         // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
         TextView noItemsText = activity.get().findViewById(R.id.noItemsText);
         if (main.getAdapter() == null || main.getAdapter().getItemCount() == 0) {
             noItemsText.setVisibility(View.VISIBLE);
-            type = DBHelper.updateCategoryType(currID, "no category");
+            newType = DBHelper.updateCategoryType(currID, "no category");
         } else noItemsText.setVisibility(View.GONE);
         if (animationNeeded) Utils.runLayoutAnimation(main);
-        onLoadListener.loadFinished(type, parent, main.getAdapter());
+        onLoadListener.loadFinished(newType, parent, main.getAdapter());
         super.onPostExecute(object);
+    }
+
+    private void getData() {
+        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
+        if (c.moveToFirst()) {
+            newType = c.getString(c.getColumnIndex(COLUMN_TYPE));
+            parent = c.getInt(c.getColumnIndex(COLUMN_PARENT));
+            Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + parent, null, null, null, null);
+            if (c2.moveToFirst()) parentName = c.getString(c.getColumnIndex(COLUMN_NAME));
+            c2.close();
+        }
+        c.close();
+        publishProgress();
     }
 
     private int countBanknotes(int id, int count) {
@@ -161,7 +168,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
 
     private void setData() {
         Cursor c = null;
-        switch (type) {
+        switch (newType) {
             case "category":
                 c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
                 if (c.moveToFirst())

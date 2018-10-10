@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Money</string>
+    <string name="app_name">Мои банкноты</string>
     <string name="image">изображение</string>
     <string name="country">Страна</string>
     <string name="add_new_country">Добавить новую категорию</string>
@@ -12,7 +12,7 @@
     <string name="description">Описание</string>
     <string name="obverse">аверс</string>
     <string name="reverse">реверс</string>
-    <string name="delete_country">%s будет удалена!</string>
+    <string name="delete_country">Категория \"%s\" будет удалена!</string>
     <string name="delete_country_info">Банкноты этой категории также будут удалены</string>
     <string name="no_description">нет описания</string>
     <string name="country_name_error">Неверное название</string>
@@ -50,4 +50,8 @@
     <string name="backup_db">Автоматическое резервное копирование базы</string>
     <string name="backup_db_summary">Влияет на производительность</string>
     <string name="db_backup_failed">Не удалось сохранить резервную копию базы данных</string>
+    <string name="enable_bigger_icons">Увеличенные иконки</string>
+    <string name="pick_action">Выберите действие</string>
+    <string name="delete_category_action">Удалить</string>
+    <string name="edit_category_action">Редактировать</string>
 </resources>

@@ -5,6 +5,8 @@ import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
@@ -23,16 +26,24 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
 import ru.money.R;
+import ru.money.utils.DBHelper;
 import ru.money.utils.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
 import static ru.money.App.width;
+import static ru.money.utils.DBHelper.COLUMN_ID;
+import static ru.money.utils.DBHelper.COLUMN_IMAGE;
+import static ru.money.utils.DBHelper.COLUMN_NAME;
+import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
 
-public class NewCategoryDialogFragment extends DialogFragment implements View.OnClickListener {
+public class CategoryDialogFragment extends DialogFragment implements View.OnClickListener {
 
-    private OnAddListener onAddListener;
-    private String selectedImage;
+    private boolean newCategory;
+    private OnChangeListener onChangeListener;
+    private String selectedImage, name, imagePath;
     private Context context;
+    private boolean isDataSet = false;
+    private int id = -1;
 
     @SuppressLint("InflateParams")
     @NonNull
@@ -44,7 +55,8 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         builder.setView(inflater.inflate(R.layout.dialog_category, null))
                 .setTitle(getResources().getString(R.string.add_new_country))
                 .setPositiveButton(R.string.add, null)
-                .setNegativeButton(R.string.cancel, (dialog, id) -> NewCategoryDialogFragment.this.getDialog().cancel());
+                .setNegativeButton(R.string.cancel, (dialog, id) -> CategoryDialogFragment.this.getDialog().cancel());
+        if (!newCategory) getData();
         return builder.create();
     }
 
@@ -52,7 +64,26 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
     public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
-        onAddListener = (OnAddListener) context;
+        Bundle args = getArguments();
+        // получение id банкноты, которую надо обновить. если id == -1, то банкноту надо создать
+        if (args != null) {
+            id = args.getInt("id");
+            newCategory = false;
+        } else {
+            newCategory = true;
+            selectedImage = "nothing";
+        }
+        onChangeListener = (OnChangeListener) context;
+    }
+
+    private void getData() {
+        SQLiteDatabase database = DBHelper.getInstance(getContext()).getDatabase();
+        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + id, null, null, null, null);
+        if (c.moveToFirst()) {
+            name = c.getString(c.getColumnIndex(COLUMN_NAME));
+            imagePath = c.getString(c.getColumnIndex(COLUMN_IMAGE));
+            c.close();
+        }
     }
 
     @Override
@@ -67,7 +98,9 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
                 if (!name.equals("")) {
                     if (!((Switch) getDialog().findViewById(R.id.iconSwitch)).isChecked())
                         selectedImage = "no icon";
-                    onAddListener.addNewCategory(name, selectedImage, "no category");
+                    if (newCategory)
+                        onChangeListener.addNewCategory(name, selectedImage, "no category");
+                    else onChangeListener.updateCategory(name, selectedImage, id);
                     d.dismiss();
                 } else {
                     TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
@@ -82,11 +115,28 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         super.onStart();
         // чтобы диалог нельзя было закрыть, случайно нажав вне него
         getDialog().setCanceledOnTouchOutside(false);
-        // отслеживание нажатий по иконке
         ImageView imageView = getDialog().findViewById(R.id.flag);
+        Switch iconSwitch = getDialog().findViewById(R.id.iconSwitch);
+        if (!newCategory && !isDataSet) {
+            ((TextView) getDialog().findViewById(R.id.editText)).setText(name);
+            selectedImage = imagePath;
+            switch (selectedImage) {
+                case "nothing":
+                    Picasso.get().load(R.drawable.example_flag).into(imageView);
+                    break;
+                case "no icon":
+                    imageView.setVisibility(View.GONE);
+                    iconSwitch.setChecked(false);
+                    break;
+                default:
+                    Picasso.get().load(context.getFileStreamPath(selectedImage)).into(imageView);
+                    break;
+            }
+            isDataSet = true;
+        }
+        // отслеживание нажатий по иконке
         imageView.setOnClickListener(this);
         // переключатель необходимости иконки
-        Switch iconSwitch = getDialog().findViewById(R.id.iconSwitch);
         iconSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> getDialog().findViewById(R.id.flag).setVisibility(isChecked ? View.VISIBLE : View.GONE));
     }
 
@@ -107,8 +157,9 @@ public class NewCategoryDialogFragment extends DialogFragment implements View.On
         }
     }
 
-    public interface OnAddListener {
+    public interface OnChangeListener {
         void addNewCategory(String name, String flagPath, String category);
-    }
 
+        void updateCategory(String name, String flagPath, int id);
+    }
 }

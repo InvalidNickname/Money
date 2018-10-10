@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Money</string>
+    <string name="app_name">My banknotes</string>
     <string name="image">image</string>
     <string name="add_new_country">Add new category</string>
     <string name="cancel">Cancel</string>
@@ -50,4 +50,8 @@
     <string name="backup_db">Backup database on every screen</string>
     <string name="backup_db_summary">Affects performance</string>
     <string name="db_backup_failed">Backup failed</string>
+    <string name="enable_bigger_icons">Bigger icons</string>
+    <string name="pick_action">Select an action</string>
+    <string name="delete_category_action">Delete</string>
+    <string name="edit_category_action">Edit</string>
 </resources>

@@ -25,7 +25,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
 import ru.money.R;
 import ru.money.dialog.BanknoteDialogFragment;
-import ru.money.dialog.NewCategoryDialogFragment;
+import ru.money.dialog.CategoryDialogFragment;
 import ru.money.settings.SettingsActivity;
 import ru.money.utils.DBHelper;
 import ru.money.utils.Utils;
@@ -46,7 +46,7 @@ import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
 import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
 
 public class ListActivity extends AppCompatActivity
-        implements NewCategoryDialogFragment.OnAddListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener,
+        implements CategoryDialogFragment.OnChangeListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnAddListener,
         CategoryRVAdapter.OnAddListener {
 
     private ModeManager modeManager;
@@ -109,7 +109,7 @@ public class ListActivity extends AppCompatActivity
             switch (type) {
                 case "category":
                     Log.i(LOG_TAG, "Opening NewCategoryDialog");
-                    (new NewCategoryDialogFragment()).show(getSupportFragmentManager(), "add_category");
+                    (new CategoryDialogFragment()).show(getSupportFragmentManager(), "add_category");
                     break;
                 case "banknotes":
                     Log.i(LOG_TAG, "Opening NewBanknoteDialog");
@@ -122,7 +122,7 @@ public class ListActivity extends AppCompatActivity
                                 switch (which) {
                                     case 0:
                                         Log.i(LOG_TAG, "Opening NewCategoryDialog");
-                                        (new NewCategoryDialogFragment()).show(getSupportFragmentManager(), "add_category");
+                                        (new CategoryDialogFragment()).show(getSupportFragmentManager(), "add_category");
                                         break;
                                     case 1:
                                         Log.i(LOG_TAG, "Opening NewBanknoteDialog");
@@ -222,6 +222,17 @@ public class ListActivity extends AppCompatActivity
         database.insert(TABLE_CATEGORIES, null, cv);
         Log.i(LOG_TAG, "Category was added");
         this.type = DBHelper.updateCategoryType(currID, "category");
+        updateList(false);
+    }
+
+    @Override
+    public void updateCategory(String name, String flagPath, int id) {
+        Log.i(LOG_TAG, "Updating category...");
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, name);
+        cv.put(COLUMN_IMAGE, flagPath);
+        database.update(TABLE_CATEGORIES, cv, COLUMN_ID + " = " + id, null);
+        Log.i(LOG_TAG, "Category updated");
         updateList(false);
     }
 
