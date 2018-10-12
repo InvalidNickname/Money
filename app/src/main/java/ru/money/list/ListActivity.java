@@ -70,7 +70,7 @@ public class ListActivity extends AppCompatActivity
         // запуск идёт с главной категории, поэтому ID = 1
         currID = 1;
         // получение типа главной категории
-        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = 1", null, null, null, null);
+        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
         if (c.moveToFirst()) type = c.getString(c.getColumnIndex(COLUMN_TYPE));
         c.close();
         // если это не главная категория, добавить кнопку "назад" и заголовок
@@ -99,7 +99,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     @Override
-    protected void onNewIntent(Intent intent) {
+    protected void onNewIntent(@NonNull Intent intent) {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("update", false)) updateList(true);
     }
@@ -290,7 +290,7 @@ public class ListActivity extends AppCompatActivity
             Cursor query = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + id, null, null, null, null);
             if (query.moveToFirst())
                 do {
-                    database.delete(TABLE_CATEGORIES, COLUMN_ID + " = " + query.getInt(query.getColumnIndex(COLUMN_ID)), null);
+                    database.delete(TABLE_BANKNOTES, COLUMN_ID + " = " + query.getInt(query.getColumnIndex(COLUMN_ID)), null);
                     // удаление изображений
                     Utils.deleteFromFiles(query.getString(query.getColumnIndex(COLUMN_OBVERSE)), this);
                     Utils.deleteFromFiles(query.getString(query.getColumnIndex(COLUMN_REVERSE)), this);

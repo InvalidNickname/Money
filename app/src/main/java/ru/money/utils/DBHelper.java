@@ -79,18 +79,14 @@ public class DBHelper extends SQLiteOpenHelper {
         createMainCategory(db);
     }
 
-    // создание главной категории, если её ещё нет
+    // создание главной категории
     private void createMainCategory(SQLiteDatabase database) {
-        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = 1", null, null, null, null);
-        if (c.getCount() == 0) {
-            ContentValues cv = new ContentValues();
-            cv.put(COLUMN_NAME, "main");
-            cv.put(COLUMN_IMAGE, "nothing");
-            cv.put(COLUMN_TYPE, "no category");
-            cv.put(COLUMN_PARENT, 0);
-            database.insert(TABLE_CATEGORIES, null, cv);
-        }
-        c.close();
+        ContentValues cv = new ContentValues();
+        cv.put(COLUMN_NAME, "main");
+        cv.put(COLUMN_IMAGE, "nothing");
+        cv.put(COLUMN_TYPE, "no category");
+        cv.put(COLUMN_PARENT, 0);
+        database.insert(TABLE_CATEGORIES, null, cv);
     }
 
     @Override

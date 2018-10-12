@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">My banknotes</string>
+    <string name="app_name">My collection</string>
     <string name="image">image</string>
     <string name="add_new_country">Add new category</string>
     <string name="cancel">Cancel</string>

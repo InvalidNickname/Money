@@ -89,7 +89,7 @@ public class BindingAdapters {
 
     // установка размера иконки сдвигом guideline
     @BindingAdapter("app:guideline_percent")
-    public static void setGuideline(Guideline guideline, Context context) {
+    public static void setGuideline(Guideline guideline, @NonNull Context context) {
         guideline.setGuidelinePercent(PreferenceManager.getDefaultSharedPreferences(context).getBoolean("icon_size", false) ? 0.25f : 0.2f);
     }
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Мои банкноты</string>
+    <string name="app_name">Моя коллекция</string>
     <string name="image">изображение</string>
     <string name="country">Страна</string>
     <string name="add_new_country">Добавить новую категорию</string>
