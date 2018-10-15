@@ -94,6 +94,15 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             startActivity(intent);
             return true;
         });
+        // установка текста версии
+        String versionName = "unknown";
+        try {
+            versionName = getActivity().getPackageManager().getPackageInfo(getActivity().getPackageName(), 0).versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        Preference versionPref = findPreference("version");
+        versionPref.setTitle(String.format(getResources().getString(R.string.version), versionName));
         // запрет на overscroll, без него выглядит лучше
         getListView().setOverScrollMode(View.OVER_SCROLL_NEVER);
     }

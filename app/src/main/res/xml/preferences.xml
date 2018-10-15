@@ -26,6 +26,10 @@
             android:defaultValue="false"
             android:key="icon_size"
             android:title="@string/enable_bigger_icons" />
+        <SwitchPreference
+            android:defaultValue="true"
+            android:key="rotate_vertical_image"
+            android:title="@string/rotate_vertical_image" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="@string/other_cat_preference">
@@ -33,6 +37,9 @@
         <Preference
             android:key="help"
             android:title="@string/help_title" />
+        <Preference
+            android:key="version"
+            android:title="@string/version" />
     </PreferenceCategory>
 
 </PreferenceScreen>

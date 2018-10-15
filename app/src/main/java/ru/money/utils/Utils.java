@@ -139,7 +139,7 @@ public class Utils {
                         Log.i(LOG_TAG, "Database exported, exporting images");
                     }
                     File backupData = new File(externalStorage, "/Exported Databases/auto_backup");
-                    // создание папки с уникальным названием. Если она существует - закончить экспорт
+                    // создание папки с auto_backup. Если она существует - закончить экспорт
                     if (backupData.exists() || backupData.mkdirs()) {
                         File currentData = new File(data, "/data/" + context.getPackageName() + "/files/");
                         Utils.copyFolderToDirectory(currentData, backupData);

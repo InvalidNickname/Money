@@ -53,8 +53,8 @@ public class CategoryDialogFragment extends DialogFragment implements View.OnCli
         LayoutInflater inflater = getActivity().getLayoutInflater();
         selectedImage = "nothing";
         builder.setView(inflater.inflate(R.layout.dialog_category, null))
-                .setTitle(getResources().getString(R.string.add_new_country))
-                .setPositiveButton(R.string.add, null)
+                .setTitle(newCategory ? getResources().getString(R.string.add_new_category) : getResources().getString(R.string.update_category))
+                .setPositiveButton(newCategory ? R.string.add : R.string.update, null)
                 .setNegativeButton(R.string.cancel, (dialog, id) -> CategoryDialogFragment.this.getDialog().cancel());
         if (!newCategory) getData();
         return builder.create();

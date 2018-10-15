@@ -5,6 +5,8 @@ import android.util.DisplayMetrics;
 
 import com.google.android.gms.ads.MobileAds;
 
+import ru.money.utils.Utils;
+
 public class App extends Application {
 
     public static final String LOG_TAG = "ru.money";
@@ -20,5 +22,6 @@ public class App extends Application {
         width = displayMetrics.widthPixels;
         height = displayMetrics.heightPixels;
         MobileAds.initialize(this, "ca-app-pub-2853509457699224~5628614596");
+        Utils.updateFontScale(this);
     }
 }

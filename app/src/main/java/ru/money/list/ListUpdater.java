@@ -67,9 +67,8 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onProgressUpdate(Void... values) {
         super.onProgressUpdate(values);
-        // очистка адаптера
-        RecyclerView main = activity.get().findViewById(R.id.main);
-        main.setVisibility(View.INVISIBLE);
+        // скрытие RecyclerView до загрузки нового списка
+        ((RecyclerView) activity.get().findViewById(R.id.main)).setAdapter(null);
         // показ прогресса
         activity.get().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         // установка заголовка
@@ -92,7 +91,6 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         activity.get().findViewById(R.id.progressBar).setVisibility(View.GONE);
         // установка адаптера
         RecyclerView main = activity.get().findViewById(R.id.main);
-        main.setVisibility(View.VISIBLE);
         main.setAdapter(newType.equals("category") ? new CategoryRVAdapter(categoryList) : new BanknoteRVAdapter(banknoteList));
         Log.i(LOG_TAG, "List updated");
         // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается

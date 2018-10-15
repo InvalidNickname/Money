@@ -107,11 +107,19 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     }
 
     @Override
+    public void onBackPressed() {
+        Intent intent = new Intent(this, ListActivity.class);
+        intent.putExtra("update", false);
+        startActivity(intent);
+        finish();
+    }
+
+    @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case android.R.id.home:
                 Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
-                finish();
+                onBackPressed();
                 break;
             case R.id.delete:
                 Log.i(LOG_TAG, "Opening delete dialog");

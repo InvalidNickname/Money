@@ -3,7 +3,7 @@
     <string name="app_name">Моя коллекция</string>
     <string name="image">изображение</string>
     <string name="country">Страна</string>
-    <string name="add_new_country">Добавить новую категорию</string>
+    <string name="add_new_category">Добавить новую категорию</string>
     <string name="cancel">Отмена</string>
     <string name="add">Добавить</string>
     <string name="name">Название</string>
@@ -28,7 +28,7 @@
     <string name="settings">Настройки</string>
     <string name="db_exported">База данных была экспортирована в папку \"Exported Databases\"</string>
     <string name="db_invalid">Файл базы данных должен иметь расширение \".db\"</string>
-    <string name="version">версия %s</string>
+    <string name="version">Версия %s</string>
     <string name="banknote">Банкнота</string>
     <string name="select_add">Выберите, что добавить</string>
     <string name="category">Название категории</string>
@@ -54,4 +54,6 @@
     <string name="pick_action">Выберите действие</string>
     <string name="delete_category_action">Удалить</string>
     <string name="edit_category_action">Редактировать</string>
+    <string name="update_category">Обновить категорию</string>
+    <string name="rotate_vertical_image">Поворачивать вертикальные изображения в списке</string>
 </resources>

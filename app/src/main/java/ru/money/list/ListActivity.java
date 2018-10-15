@@ -60,13 +60,9 @@ public class ListActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "ListActivity is created");
-        // установка выбранного размера шрифта
-        Utils.updateFontScale(this);
         setContentView(R.layout.activity_list);
         // создание или открытие БД
         database = DBHelper.getInstance(this).getDatabase();
-        // сохранение резервной копии БД
-        Utils.backupDB(this);
         // запуск идёт с главной категории, поэтому ID = 1
         currID = 1;
         // получение типа главной категории
@@ -135,6 +131,9 @@ public class ListActivity extends AppCompatActivity
     }
 
     private void updateList(boolean animationNeeded) {
+        // сохранение резервной копии БД
+        Utils.backupDB(this);
+        // обновление списка
         Log.i(LOG_TAG, "Getting data from database...");
         ListUpdater updater = new ListUpdater(type, currID, animationNeeded, this);
         updater.setOnLoadListener((newType, parent, newAdapter) -> {
