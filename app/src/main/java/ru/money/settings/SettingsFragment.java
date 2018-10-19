@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.Date;
 import java.util.Objects;
 
 import androidx.annotation.NonNull;
@@ -78,7 +77,8 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         // слушатель нажатие на кнопку экспорта
         Preference export = findPreference("export");
         export.setOnPreferenceClickListener(preference -> {
-            exportDatabase();
+            CopyTask copyTask = new CopyTask(getContext());
+            copyTask.execute();
             return true;
         });
         // слушатель нажатия на кнопку импорта
@@ -105,37 +105,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         versionPref.setTitle(String.format(getResources().getString(R.string.version), versionName));
         // запрет на overscroll, без него выглядит лучше
         getListView().setOverScrollMode(View.OVER_SCROLL_NEVER);
-    }
-
-    private void exportDatabase() {
-        if (Utils.checkPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Log.i(LOG_TAG, "Exporting database...");
-            File data = Environment.getDataDirectory();
-            File externalStorage = Environment.getExternalStorageDirectory();
-            if (externalStorage.canWrite()) {
-                // текущее время - уникальное название для файлов БД
-                long time = (new Date()).getTime();
-                File backupFolder = new File(externalStorage, "/Exported Databases/");
-                // создание папки /Exported Databases/, если её не существует
-                if (backupFolder.exists() || backupFolder.mkdirs()) {
-                    File backupDB = new File(backupFolder, time + ".db");
-                    File currentDB = new File(data, "/data/" + getActivity().getPackageName() + "/databases/" + DATABASE_NAME);
-                    if (!backupDB.exists()) Utils.copyFileToDirectory(currentDB, backupDB);
-                    Log.i(LOG_TAG, "Database exported, exporting images");
-                }
-                File backupData = new File(externalStorage, "/Exported Databases/" + time);
-                // создание папки с уникальным названием. Если она существует - закончить экспорт
-                if (backupData.mkdirs()) {
-                    File currentData = new File(data, "/data/" + getActivity().getPackageName() + "/files/");
-                    Utils.copyFolderToDirectory(currentData, backupData);
-                    Log.i(LOG_TAG, "Images exported");
-                } else {
-                    Toast.makeText(getActivity(), R.string.db_folder_already_exists, Toast.LENGTH_SHORT).show();
-                    return;
-                }
-                Toast.makeText(getActivity(), R.string.db_exported, Toast.LENGTH_SHORT).show();
-            }
-        }
     }
 
     private void importDatabase() {

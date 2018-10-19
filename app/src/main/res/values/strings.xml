@@ -56,4 +56,5 @@
     <string name="edit_category_action">Edit</string>
     <string name="update_category">Update category</string>
     <string name="rotate_vertical_image">Rotate vertical images in list</string>
+    <string name="a_of_b" translatable="false">%d/%d</string>
 </resources>

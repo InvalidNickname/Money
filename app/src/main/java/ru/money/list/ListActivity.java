@@ -61,6 +61,8 @@ public class ListActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "ListActivity is created");
         setContentView(R.layout.activity_list);
+        // сохранение резервной копии БД
+        Utils.backupDB(this);
         // создание или открытие БД
         database = DBHelper.getInstance(this).getDatabase();
         // запуск идёт с главной категории, поэтому ID = 1
@@ -131,8 +133,6 @@ public class ListActivity extends AppCompatActivity
     }
 
     private void updateList(boolean animationNeeded) {
-        // сохранение резервной копии БД
-        Utils.backupDB(this);
         // обновление списка
         Log.i(LOG_TAG, "Getting data from database...");
         ListUpdater updater = new ListUpdater(type, currID, animationNeeded, this);
