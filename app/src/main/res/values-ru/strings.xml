@@ -56,4 +56,8 @@
     <string name="edit_category_action">Редактировать</string>
     <string name="update_category">Обновить категорию</string>
     <string name="rotate_vertical_image">Поворачивать вертикальные изображения в списке</string>
+    <string name="export_in_progress">Экспорт базы данных…</string>
+    <string name="export_in_progress_subtitle">Не сворачивайте и не закрывайте приложение до окончания экспорта</string>
+    <string name="import_in_progress">Импорт базы данных…</string>
+    <string name="import_in_progress_subtitle">Не сворачивайте и не закрывайте приложение до окончания импорта</string>
 </resources>

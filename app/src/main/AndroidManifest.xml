@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="ru.money"
-    android:versionName="1.1.6">
+    android:versionName="1.2.0">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -20,6 +20,7 @@
             android:name=".list.ListActivity"
             android:launchMode="singleTask"
             android:screenOrientation="portrait"
+            android:theme="@style/AppTheme.Launcher"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

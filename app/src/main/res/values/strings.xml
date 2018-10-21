@@ -57,4 +57,8 @@
     <string name="update_category">Update category</string>
     <string name="rotate_vertical_image">Rotate vertical images in list</string>
     <string name="a_of_b" translatable="false">%d/%d</string>
+    <string name="export_in_progress">Exporting database…</string>
+    <string name="export_in_progress_subtitle">Do not pause or close the application until export ends</string>
+    <string name="import_in_progress">Importing database…</string>
+    <string name="import_in_progress_subtitle">Do not pause or close the application until import ends</string>
 </resources>

@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -14,7 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import java.io.File;
-import java.util.Objects;
+import java.util.Date;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -36,6 +37,8 @@ import static ru.money.utils.DBHelper.DATABASE_NAME;
 
 @SuppressWarnings("WeakerAccess")
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
+
+    private static CopyTask copyTask;
 
     // добавление настроек
     @Override
@@ -77,8 +80,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         // слушатель нажатие на кнопку экспорта
         Preference export = findPreference("export");
         export.setOnPreferenceClickListener(preference -> {
-            CopyTask copyTask = new CopyTask(getContext());
-            copyTask.execute();
+            exportDatabase();
             return true;
         });
         // слушатель нажатия на кнопку импорта
@@ -140,6 +142,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         getPreferenceScreen().getSharedPreferences().unregisterOnSharedPreferenceChangeListener(this);
     }
 
+    void cancelTask() {
+        if (copyTask != null && copyTask.getStatus() == AsyncTask.Status.RUNNING) {
+            copyTask.cancel(true);
+        }
+    }
+
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, @NonNull String key) {
         if (key.equals("text_size")) {
@@ -151,13 +159,49 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
     }
 
+    private void exportDatabase() {
+        if (Utils.checkPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Log.i(LOG_TAG, "Exporting database...");
+            File data = Environment.getDataDirectory();
+            File externalStorage = Environment.getExternalStorageDirectory();
+            if (externalStorage.canWrite()) {
+                // текущее время - уникальное название для файлов БД
+                long time = (new Date()).getTime();
+                File backupFolder = new File(externalStorage, "/Exported Databases/");
+                // создание папки /Exported Databases/, если её не существует
+                if (backupFolder.exists() || backupFolder.mkdirs()) {
+                    File backupDB = new File(backupFolder, time + ".db");
+                    File currentDB = new File(data, "/data/" + getActivity().getPackageName() + "/databases/" + DATABASE_NAME);
+                    if (!backupDB.exists()) Utils.copyFileToDirectory(currentDB, backupDB);
+                    Log.i(LOG_TAG, "Database exported, exporting images");
+                }
+                File backupData = new File(externalStorage, "/Exported Databases/" + time);
+                // создание папки с уникальным названием. Если она существует - закончить экспорт
+                if (backupData.mkdirs()) {
+                    File currentData = new File(data, "/data/" + getActivity().getPackageName() + "/files/");
+                    copyTask = new CopyTask(
+                            getContext(),
+                            currentData.getPath(),
+                            backupData.getPath(),
+                            getString(R.string.export_in_progress),
+                            getString(R.string.export_in_progress_subtitle));
+                    copyTask.execute();
+                    Log.i(LOG_TAG, "Images exported");
+                } else {
+                    Toast.makeText(getActivity(), R.string.db_folder_already_exists, Toast.LENGTH_SHORT).show();
+                }
+                // TODO db exported notification
+            }
+        }
+    }
+
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         // если файл не выбран - uri = null
         Uri uri = data != null ? data.getData() : null;
         if (uri != null) {
-            String path = Utils.getPath(getActivity(), uri) == null ? Objects.requireNonNull(uri.getPath()).replaceFirst("/root", "") : Utils.getPath(getActivity(), uri);
+            String path = Utils.getPath(getActivity(), uri);
             if (requestCode == 0 && resultCode == RESULT_OK) {
                 if (path != null && path.endsWith(".db")) {
                     Log.i(LOG_TAG, "Importing database...");
@@ -174,7 +218,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                     // создание папки /files/, если её не существует
                     if (oldData.exists() || oldData.mkdirs()) {
                         File newData = new File(path.substring(0, path.length() - 3));
-                        Utils.copyFolderToDirectory(newData, oldData);
+                        copyTask = new CopyTask(
+                                getContext(),
+                                newData.getPath(),
+                                oldData.getPath(),
+                                getString(R.string.import_in_progress),
+                                getString(R.string.import_in_progress_subtitle));
+                        copyTask.execute();
                         Log.i(LOG_TAG, "Images imported");
                     }
                 } else {
@@ -184,5 +234,4 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             }
         }
     }
-
 }

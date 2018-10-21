@@ -58,6 +58,8 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // изменение темы splashscreen на обычную
+        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "ListActivity is created");
         setContentView(R.layout.activity_list);

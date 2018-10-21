@@ -14,12 +14,15 @@ import static ru.money.App.LOG_TAG;
 
 public class SettingsActivity extends AppCompatActivity {
 
+    private SettingsFragment fragment;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "SettingsActivity is created");
         setContentView(R.layout.activity_settings);
-        getSupportFragmentManager().beginTransaction().add(new SettingsFragment(), null);
+        fragment = new SettingsFragment();
+        getSupportFragmentManager().beginTransaction().add(fragment, "settings");
         setSupportActionBar(findViewById(R.id.toolbar));
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -30,11 +33,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
         if (menuItem.getItemId() == android.R.id.home) {
-            Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
-            Intent intent = new Intent(this, ListActivity.class);
-            intent.putExtra("update", true);
-            startActivity(intent);
-            finish();
+            onBackPressed();
         }
         return super.onOptionsItemSelected(menuItem);
     }
@@ -45,5 +44,11 @@ public class SettingsActivity extends AppCompatActivity {
         intent.putExtra("update", true);
         startActivity(intent);
         finish();
+    }
+
+    @Override
+    protected void onPause() {
+        fragment.cancelTask();
+        super.onPause();
     }
 }

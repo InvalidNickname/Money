@@ -1,6 +1,7 @@
 package ru.money.utils;
 
 import android.Manifest;
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -66,37 +67,45 @@ public class Utils {
         }
     }
 
-    public static void copyFolderToDirectory(File source, File destination) {
+    private static void copyFolderToDirectory(File source, File destination) {
         File[] listOfFiles = source.listFiles();
         if (listOfFiles != null)
             for (File file : listOfFiles)
                 copyFileToDirectory(file, new File(destination + "/" + file.getName()));
     }
 
-    public static String getPath(@NonNull Context context, @NonNull Uri uri) {
+    public static String getPath(final Context context, final Uri uri) {
         if (DocumentsContract.isDocumentUri(context, uri)) {
-            if (Objects.equals(uri.getAuthority(), "com.android.externalstorage.documents")) {
-                String idArr[] = DocumentsContract.getDocumentId(uri).split(":");
-                if (idArr.length == 2) {
-                    String type = idArr[0];
-                    String realDocId = idArr[1];
-                    if ("primary".equalsIgnoreCase(type))
-                        return Environment.getExternalStorageDirectory() + "/" + realDocId;
-                }
+            if ("com.android.externalstorage.documents".equals(uri.getAuthority())) {
+                final String[] split = DocumentsContract.getDocumentId(uri).split(":");
+                if ("primary".equalsIgnoreCase(split[0]))
+                    return Environment.getExternalStorageDirectory() + "/" + split[1];
+            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
+                final String id = DocumentsContract.getDocumentId(uri);
+                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
+                return getDataColumn(context, contentUri);
             }
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) {
-            String[] projection = {"_data"};
-            Cursor cursor = context.getContentResolver().query(uri, projection, null, null, null);
-            if (cursor != null) {
-                int column_index = cursor.getColumnIndexOrThrow("_data");
-                if (cursor.moveToFirst()) {
-                    String string = cursor.getString(column_index);
-                    cursor.close();
-                    return string;
-                }
-            }
-        } else if ("file".equalsIgnoreCase(uri.getScheme())) return uri.getPath();
+        } else if ("content".equalsIgnoreCase(uri.getScheme())) return getDataColumn(context, uri);
+        else if ("file".equalsIgnoreCase(uri.getScheme())) return uri.getPath();
         return null;
+    }
+
+    private static String getDataColumn(Context context, Uri uri) {
+        final String column = "_data";
+        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
+        if (cursor != null) {
+            String[] strings = cursor.getColumnNames();
+            cursor.moveToFirst();
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                if (column.equals(strings[i])) {
+                    final int column_index = cursor.getColumnIndexOrThrow(column);
+                    String path = cursor.getString(column_index);
+                    cursor.close();
+                    return path;
+                }
+            }
+        }
+        return Objects.requireNonNull(uri.getPath()).replaceFirst("/root", "");
     }
 
     public static boolean checkPermission(@NonNull Context context, @NonNull String permission) {

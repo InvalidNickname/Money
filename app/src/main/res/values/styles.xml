@@ -12,4 +12,8 @@
         <item name="android:colorBackground">@color/background</item>
     </style>
 
+    <style name="AppTheme.Launcher">
+        <item name="android:windowBackground">@drawable/launch_screen</item>
+    </style>
+
 </resources>
