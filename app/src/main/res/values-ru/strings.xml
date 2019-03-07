@@ -60,4 +60,6 @@
     <string name="export_in_progress_subtitle">Не сворачивайте и не закрывайте приложение до окончания экспорта</string>
     <string name="import_in_progress">Импорт базы данных…</string>
     <string name="import_in_progress_subtitle">Не сворачивайте и не закрывайте приложение до окончания импорта</string>
+    <string name="search">Поиск</string>
+    <string name="empty_search_string">Наберите текст для поиска</string>
 </resources>

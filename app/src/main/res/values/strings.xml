@@ -61,4 +61,6 @@
     <string name="export_in_progress_subtitle">Do not pause or close the application until export ends</string>
     <string name="import_in_progress">Importing database…</string>
     <string name="import_in_progress_subtitle">Do not pause or close the application until import ends</string>
+    <string name="search">Search</string>
+    <string name="empty_search_string">Enter the text to search</string>
 </resources>

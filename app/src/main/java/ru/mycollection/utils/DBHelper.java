@@ -1,4 +1,4 @@
-package ru.money.utils;
+package ru.mycollection.utils;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -9,7 +9,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
-import static ru.money.App.USES_DB_VERSION;
+import static ru.mycollection.App.USES_DB_VERSION;
 
 public class DBHelper extends SQLiteOpenHelper {
 

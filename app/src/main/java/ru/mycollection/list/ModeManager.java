@@ -1,4 +1,4 @@
-package ru.money.list;
+package ru.mycollection.list;
 
 import android.animation.AnimatorInflater;
 import android.animation.ObjectAnimator;
@@ -10,9 +10,9 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import ru.money.R;
+import ru.mycollection.R;
 
-import static ru.money.App.width;
+import static ru.mycollection.App.width;
 
 class ModeManager {
 

@@ -1,4 +1,4 @@
-package ru.money.help;
+package ru.mycollection.help;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,9 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.money.R;
+import ru.mycollection.R;
 
-import static ru.money.App.LOG_TAG;
+import static ru.mycollection.App.LOG_TAG;
 
 public class HelpActivity extends AppCompatActivity {
 

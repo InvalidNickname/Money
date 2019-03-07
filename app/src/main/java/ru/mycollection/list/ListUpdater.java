@@ -1,4 +1,4 @@
-package ru.money.list;
+package ru.mycollection.list;
 
 import android.content.ContentValues;
 import android.database.Cursor;
@@ -16,42 +16,54 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.money.R;
-import ru.money.utils.DBHelper;
-import ru.money.utils.Utils;
+import ru.mycollection.R;
+import ru.mycollection.utils.DBHelper;
+import ru.mycollection.utils.Utils;
 
-import static ru.money.App.LOG_TAG;
-import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
-import static ru.money.utils.DBHelper.COLUMN_COUNTRY;
-import static ru.money.utils.DBHelper.COLUMN_ID;
-import static ru.money.utils.DBHelper.COLUMN_IMAGE;
-import static ru.money.utils.DBHelper.COLUMN_NAME;
-import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
-import static ru.money.utils.DBHelper.COLUMN_PARENT;
-import static ru.money.utils.DBHelper.COLUMN_POSITION;
-import static ru.money.utils.DBHelper.COLUMN_TYPE;
-import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
-import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
+import static ru.mycollection.App.LOG_TAG;
+import static ru.mycollection.utils.DBHelper.COLUMN_CIRCULATION;
+import static ru.mycollection.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.mycollection.utils.DBHelper.COLUMN_ID;
+import static ru.mycollection.utils.DBHelper.COLUMN_IMAGE;
+import static ru.mycollection.utils.DBHelper.COLUMN_NAME;
+import static ru.mycollection.utils.DBHelper.COLUMN_OBVERSE;
+import static ru.mycollection.utils.DBHelper.COLUMN_PARENT;
+import static ru.mycollection.utils.DBHelper.COLUMN_POSITION;
+import static ru.mycollection.utils.DBHelper.COLUMN_TYPE;
+import static ru.mycollection.utils.DBHelper.TABLE_BANKNOTES;
+import static ru.mycollection.utils.DBHelper.TABLE_CATEGORIES;
 
 class ListUpdater extends AsyncTask<Void, Void, Void> {
 
-    private final int currID;
     private final WeakReference<AppCompatActivity> activity;
     private final SQLiteDatabase database;
     private final List<Banknote> banknoteList = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
     private final boolean animationNeeded;
-    private final String type;
+    private int currID;
+    private String type;
     private OnLoadListener onLoadListener;
     private String newType;
     private int parent;
     private String parentName;
+    private boolean searchMode;
+    private String searchString;
 
     ListUpdater(String type, int currID, boolean animationNeeded, AppCompatActivity activity) {
         this.type = type;
         this.currID = currID;
         this.animationNeeded = animationNeeded;
         this.activity = new WeakReference<>(activity);
+        searchMode = false;
+        database = DBHelper.getInstance(activity).getDatabase();
+    }
+
+    ListUpdater(String searchString, boolean animationNeeded, AppCompatActivity activity) {
+        this.searchString = searchString;
+        this.animationNeeded = animationNeeded;
+        this.activity = new WeakReference<>(activity);
+        searchMode = true;
+        newType = "banknotes";
         database = DBHelper.getInstance(activity).getDatabase();
     }
 
@@ -59,7 +71,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... voids) {
         getData();
-        updatePositions();
+        if (!searchMode) updatePositions();
         setData();
         return null;
     }
@@ -73,7 +85,11 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         activity.get().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         // установка заголовка
         ActionBar actionBar = activity.get().getSupportActionBar();
-        if (currID == 1) {
+        if (searchMode) {
+            actionBar.setTitle(activity.get().getString(R.string.search));
+            actionBar.setDisplayHomeAsUpEnabled(true);
+            actionBar.setDisplayShowHomeEnabled(true);
+        } else if (currID == 1) {
             actionBar.setTitle(activity.get().getString(R.string.app_name));
             actionBar.setDisplayHomeAsUpEnabled(false);
             actionBar.setDisplayShowHomeEnabled(false);
@@ -105,15 +121,17 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     }
 
     private void getData() {
-        Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
-        if (c.moveToFirst()) {
-            newType = c.getString(c.getColumnIndex(COLUMN_TYPE));
-            parent = c.getInt(c.getColumnIndex(COLUMN_PARENT));
-            Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + parent, null, null, null, null);
-            if (c2.moveToFirst()) parentName = c.getString(c.getColumnIndex(COLUMN_NAME));
-            c2.close();
+        if (!searchMode) {
+            Cursor c = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + currID, null, null, null, null);
+            if (c.moveToFirst()) {
+                newType = c.getString(c.getColumnIndex(COLUMN_TYPE));
+                parent = c.getInt(c.getColumnIndex(COLUMN_PARENT));
+                Cursor c2 = database.query(TABLE_CATEGORIES, null, COLUMN_ID + " = " + parent, null, null, null, null);
+                if (c2.moveToFirst()) parentName = c.getString(c.getColumnIndex(COLUMN_NAME));
+                c2.close();
+            }
+            c.close();
         }
-        c.close();
         publishProgress();
     }
 
@@ -165,33 +183,50 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     }
 
     private void setData() {
-        Cursor c = null;
-        switch (newType) {
-            case "category":
-                c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
-                if (c.moveToFirst())
-                    do {
-                        String name = c.getString(c.getColumnIndex(COLUMN_NAME));
-                        String image = c.getString(c.getColumnIndex(COLUMN_IMAGE));
-                        int id = c.getInt(c.getColumnIndex(COLUMN_ID));
-                        int count = countBanknotes(id, 0);
-                        categoryList.add(new Category(name, image, count, id));
-                    } while (c.moveToNext());
-                break;
-            case "banknotes":
-                c = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
-                if (c.moveToFirst())
-                    do {
-                        int id = c.getInt(c.getColumnIndex(COLUMN_ID));
-                        String name = c.getString(c.getColumnIndex(COLUMN_NAME));
+        if (searchMode) {
+            Cursor c;
+            c = database.query(TABLE_BANKNOTES, null, null, null, null, null, "position");
+            if (c.moveToFirst())
+                do {
+                    int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+                    String name = c.getString(c.getColumnIndex(COLUMN_NAME));
+                    if (name.toLowerCase().contains(searchString.toLowerCase())) {
                         String circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
                         String obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
                         String country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
                         banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
-                    } while (c.moveToNext());
-                break;
+                    }
+                } while (c.moveToNext());
+            c.close();
+        } else {
+            Cursor c = null;
+            switch (newType) {
+                case "category":
+                    c = database.query(TABLE_CATEGORIES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
+                    if (c.moveToFirst())
+                        do {
+                            String name = c.getString(c.getColumnIndex(COLUMN_NAME));
+                            String image = c.getString(c.getColumnIndex(COLUMN_IMAGE));
+                            int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+                            int count = countBanknotes(id, 0);
+                            categoryList.add(new Category(name, image, count, id));
+                        } while (c.moveToNext());
+                    break;
+                case "banknotes":
+                    c = database.query(TABLE_BANKNOTES, null, COLUMN_PARENT + " = " + currID, null, null, null, "position");
+                    if (c.moveToFirst())
+                        do {
+                            int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+                            String name = c.getString(c.getColumnIndex(COLUMN_NAME));
+                            String circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
+                            String obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
+                            String country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
+                            banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
+                        } while (c.moveToNext());
+                    break;
+            }
+            if (c != null) c.close();
         }
-        if (c != null) c.close();
     }
 
     void setOnLoadListener(OnLoadListener onLoadListener) {

@@ -1,4 +1,4 @@
-package ru.money.utils;
+package ru.mycollection.utils;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

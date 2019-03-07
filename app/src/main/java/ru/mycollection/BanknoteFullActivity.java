@@ -1,4 +1,4 @@
-package ru.money;
+package ru.mycollection;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -23,19 +23,19 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import ru.money.dialog.BanknoteDialogFragment;
-import ru.money.list.ListActivity;
-import ru.money.utils.DBHelper;
+import ru.mycollection.dialog.BanknoteDialogFragment;
+import ru.mycollection.list.ListActivity;
+import ru.mycollection.utils.DBHelper;
 
-import static ru.money.App.LOG_TAG;
-import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
-import static ru.money.utils.DBHelper.COLUMN_COUNTRY;
-import static ru.money.utils.DBHelper.COLUMN_DESCRIPTION;
-import static ru.money.utils.DBHelper.COLUMN_ID;
-import static ru.money.utils.DBHelper.COLUMN_NAME;
-import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
-import static ru.money.utils.DBHelper.COLUMN_REVERSE;
-import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
+import static ru.mycollection.App.LOG_TAG;
+import static ru.mycollection.utils.DBHelper.COLUMN_CIRCULATION;
+import static ru.mycollection.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.mycollection.utils.DBHelper.COLUMN_DESCRIPTION;
+import static ru.mycollection.utils.DBHelper.COLUMN_ID;
+import static ru.mycollection.utils.DBHelper.COLUMN_NAME;
+import static ru.mycollection.utils.DBHelper.COLUMN_OBVERSE;
+import static ru.mycollection.utils.DBHelper.COLUMN_REVERSE;
+import static ru.mycollection.utils.DBHelper.TABLE_BANKNOTES;
 
 public class BanknoteFullActivity extends AppCompatActivity implements BanknoteDialogFragment.OnChangeListener {
 

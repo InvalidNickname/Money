@@ -1,4 +1,4 @@
-package ru.money.help;
+package ru.mycollection.help;
 
 class HelpItem {
 

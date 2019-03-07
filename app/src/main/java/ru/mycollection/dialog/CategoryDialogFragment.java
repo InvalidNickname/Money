@@ -1,4 +1,4 @@
-package ru.money.dialog;
+package ru.mycollection.dialog;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -25,16 +25,16 @@ import java.util.Objects;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import ru.money.R;
-import ru.money.utils.DBHelper;
-import ru.money.utils.Utils;
+import ru.mycollection.R;
+import ru.mycollection.utils.DBHelper;
+import ru.mycollection.utils.Utils;
 
 import static androidx.appcompat.app.AppCompatActivity.RESULT_OK;
-import static ru.money.App.width;
-import static ru.money.utils.DBHelper.COLUMN_ID;
-import static ru.money.utils.DBHelper.COLUMN_IMAGE;
-import static ru.money.utils.DBHelper.COLUMN_NAME;
-import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
+import static ru.mycollection.App.width;
+import static ru.mycollection.utils.DBHelper.COLUMN_ID;
+import static ru.mycollection.utils.DBHelper.COLUMN_IMAGE;
+import static ru.mycollection.utils.DBHelper.COLUMN_NAME;
+import static ru.mycollection.utils.DBHelper.TABLE_CATEGORIES;
 
 public class CategoryDialogFragment extends DialogFragment implements View.OnClickListener {
 

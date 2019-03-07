@@ -1,15 +1,15 @@
-package ru.money;
+package ru.mycollection;
 
 import android.app.Application;
 import android.util.DisplayMetrics;
 
 import com.google.android.gms.ads.MobileAds;
 
-import ru.money.utils.Utils;
+import ru.mycollection.utils.Utils;
 
 public class App extends Application {
 
-    public static final String LOG_TAG = "ru.money";
+    public static final String LOG_TAG = "ru.mycollection";
     public static final int USES_DB_VERSION = 2;
     static public int width;
     static public int height;

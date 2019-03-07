@@ -1,4 +1,4 @@
-package ru.money.settings;
+package ru.mycollection.settings;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -8,9 +8,9 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 
 import androidx.appcompat.app.AppCompatActivity;
-import ru.money.dialog.ProgressDialog;
+import ru.mycollection.dialog.ProgressDialog;
 
-import static ru.money.utils.Utils.copyFileToDirectory;
+import static ru.mycollection.utils.Utils.copyFileToDirectory;
 
 class CopyTask extends AsyncTask<Void, Integer, Void> {
 

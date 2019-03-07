@@ -1,4 +1,4 @@
-package ru.money.list;
+package ru.mycollection.list;
 
 @SuppressWarnings("WeakerAccess")
 public class Banknote {

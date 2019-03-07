@@ -1,4 +1,4 @@
-package ru.money.utils;
+package ru.mycollection.utils;
 
 import android.Manifest;
 import android.content.ContentUris;
@@ -31,11 +31,11 @@ import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.money.R;
+import ru.mycollection.R;
 
 import static android.content.Context.MODE_PRIVATE;
-import static ru.money.App.LOG_TAG;
-import static ru.money.utils.DBHelper.DATABASE_NAME;
+import static ru.mycollection.App.LOG_TAG;
+import static ru.mycollection.utils.DBHelper.DATABASE_NAME;
 
 public class Utils {
 

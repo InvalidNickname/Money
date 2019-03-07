@@ -1,4 +1,4 @@
-package ru.money.list;
+package ru.mycollection.list;
 
 import android.content.Context;
 import android.content.Intent;
@@ -20,9 +20,9 @@ import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.money.BanknoteFullActivity;
-import ru.money.R;
-import ru.money.utils.RoundCornerTransformation;
+import ru.mycollection.BanknoteFullActivity;
+import ru.mycollection.R;
+import ru.mycollection.utils.RoundCornerTransformation;
 
 public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
 

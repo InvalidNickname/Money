@@ -1,4 +1,4 @@
-package ru.money.list;
+package ru.mycollection.list;
 
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -8,8 +8,8 @@ import java.util.List;
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.money.R;
-import ru.money.databinding.LayoutCardCategoryBinding;
+import ru.mycollection.R;
+import ru.mycollection.databinding.LayoutCardCategoryBinding;
 
 public class CategoryRVAdapter extends RecyclerView.Adapter<CategoryRVAdapter.CardViewHolder> {
 

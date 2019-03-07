@@ -1,4 +1,4 @@
-package ru.money.help;
+package ru.mycollection.help;
 
 import android.content.Context;
 import android.util.TypedValue;
@@ -12,8 +12,8 @@ import java.util.List;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.money.R;
-import ru.money.utils.DropDownView;
+import ru.mycollection.R;
+import ru.mycollection.utils.DropDownView;
 
 public class HelpRVAdapter extends RecyclerView.Adapter<HelpRVAdapter.CardViewHolder> {
 

@@ -1,4 +1,4 @@
-package ru.money.dialog;
+package ru.mycollection.dialog;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -12,7 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
-import ru.money.R;
+import ru.mycollection.R;
 
 public class ProgressDialog extends DialogFragment {
 

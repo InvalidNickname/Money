@@ -1,4 +1,4 @@
-package ru.money.list;
+package ru.mycollection.list;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -16,13 +16,13 @@ import androidx.constraintlayout.widget.Guideline;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BindingAdapter;
 import androidx.preference.PreferenceManager;
-import ru.money.R;
-import ru.money.dialog.CategoryDialogFragment;
-import ru.money.list.CategoryRVAdapter.OnAddListener;
-import ru.money.list.CategoryRVAdapter.OnDeleteListener;
-import ru.money.utils.RoundCornerTransformation;
+import ru.mycollection.R;
+import ru.mycollection.dialog.CategoryDialogFragment;
+import ru.mycollection.list.CategoryRVAdapter.OnAddListener;
+import ru.mycollection.list.CategoryRVAdapter.OnDeleteListener;
+import ru.mycollection.utils.RoundCornerTransformation;
 
-import static ru.money.App.LOG_TAG;
+import static ru.mycollection.App.LOG_TAG;
 
 @SuppressWarnings("WeakerAccess")
 public class BindingAdapters {

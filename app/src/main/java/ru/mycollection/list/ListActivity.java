@@ -1,4 +1,4 @@
-package ru.money.list;
+package ru.mycollection.list;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -23,31 +23,32 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
-import ru.money.R;
-import ru.money.dialog.BanknoteDialogFragment;
-import ru.money.dialog.CategoryDialogFragment;
-import ru.money.settings.SettingsActivity;
-import ru.money.utils.DBHelper;
-import ru.money.utils.Utils;
+import ru.mycollection.R;
+import ru.mycollection.dialog.BanknoteDialogFragment;
+import ru.mycollection.dialog.CategoryDialogFragment;
+import ru.mycollection.dialog.SearchDialogFragment;
+import ru.mycollection.settings.SettingsActivity;
+import ru.mycollection.utils.DBHelper;
+import ru.mycollection.utils.Utils;
 
-import static ru.money.App.LOG_TAG;
-import static ru.money.utils.DBHelper.COLUMN_CIRCULATION;
-import static ru.money.utils.DBHelper.COLUMN_COUNTRY;
-import static ru.money.utils.DBHelper.COLUMN_DESCRIPTION;
-import static ru.money.utils.DBHelper.COLUMN_ID;
-import static ru.money.utils.DBHelper.COLUMN_IMAGE;
-import static ru.money.utils.DBHelper.COLUMN_NAME;
-import static ru.money.utils.DBHelper.COLUMN_OBVERSE;
-import static ru.money.utils.DBHelper.COLUMN_PARENT;
-import static ru.money.utils.DBHelper.COLUMN_POSITION;
-import static ru.money.utils.DBHelper.COLUMN_REVERSE;
-import static ru.money.utils.DBHelper.COLUMN_TYPE;
-import static ru.money.utils.DBHelper.TABLE_BANKNOTES;
-import static ru.money.utils.DBHelper.TABLE_CATEGORIES;
+import static ru.mycollection.App.LOG_TAG;
+import static ru.mycollection.utils.DBHelper.COLUMN_CIRCULATION;
+import static ru.mycollection.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.mycollection.utils.DBHelper.COLUMN_DESCRIPTION;
+import static ru.mycollection.utils.DBHelper.COLUMN_ID;
+import static ru.mycollection.utils.DBHelper.COLUMN_IMAGE;
+import static ru.mycollection.utils.DBHelper.COLUMN_NAME;
+import static ru.mycollection.utils.DBHelper.COLUMN_OBVERSE;
+import static ru.mycollection.utils.DBHelper.COLUMN_PARENT;
+import static ru.mycollection.utils.DBHelper.COLUMN_POSITION;
+import static ru.mycollection.utils.DBHelper.COLUMN_REVERSE;
+import static ru.mycollection.utils.DBHelper.COLUMN_TYPE;
+import static ru.mycollection.utils.DBHelper.TABLE_BANKNOTES;
+import static ru.mycollection.utils.DBHelper.TABLE_CATEGORIES;
 
 public class ListActivity extends AppCompatActivity
         implements CategoryDialogFragment.OnChangeListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnChangeListener,
-        CategoryRVAdapter.OnAddListener {
+        CategoryRVAdapter.OnAddListener, SearchDialogFragment.OnSearchListener {
 
     private ModeManager modeManager;
     private SQLiteDatabase database;
@@ -55,6 +56,7 @@ public class ListActivity extends AppCompatActivity
     private int parentID;
     private String type;
     private Adapter adapter;
+    private boolean searchMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -164,12 +166,19 @@ public class ListActivity extends AppCompatActivity
                 modeManager.setNormalMode();
                 updateList(false);
                 break;
+            case R.id.search:
+                Log.i(LOG_TAG, "Opening search dialog");
+                (new SearchDialogFragment()).show(getSupportFragmentManager(), "search");
+                break;
         }
         return super.onOptionsItemSelected(menuItem);
     }
 
     private void goBack() {
-        if (currID == 1) finish();
+        if (searchMode) {
+            searchMode = false;
+            updateList(true);
+        } else if (currID == 1) finish();
         else {
             currID = parentID;
             updateList(true);
@@ -304,5 +313,19 @@ public class ListActivity extends AppCompatActivity
     public void loadNewCategory(int id) {
         currID = id;
         updateList(true);
+    }
+
+    @Override
+    public void searchForBanknote(String name) {
+        searchMode = true;
+        // обновление списка
+        Log.i(LOG_TAG, "Getting data from database...");
+        ListUpdater updater = new ListUpdater(name, true, this);
+        updater.setOnLoadListener((newType, parent, newAdapter) -> {
+            type = newType;
+            parentID = parent;
+            adapter = newAdapter;
+        });
+        updater.execute();
     }
 }

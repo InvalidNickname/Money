@@ -1,4 +1,4 @@
-package ru.money.settings;
+package ru.mycollection.settings;
 
 import android.Manifest;
 import android.annotation.SuppressLint;
@@ -27,13 +27,13 @@ import androidx.preference.PreferenceManager;
 import androidx.preference.PreferenceScreen;
 import androidx.preference.PreferenceViewHolder;
 import androidx.recyclerview.widget.RecyclerView;
-import ru.money.R;
-import ru.money.help.HelpActivity;
-import ru.money.utils.Utils;
+import ru.mycollection.R;
+import ru.mycollection.help.HelpActivity;
+import ru.mycollection.utils.Utils;
 
 import static android.app.Activity.RESULT_OK;
-import static ru.money.App.LOG_TAG;
-import static ru.money.utils.DBHelper.DATABASE_NAME;
+import static ru.mycollection.App.LOG_TAG;
+import static ru.mycollection.utils.DBHelper.DATABASE_NAME;
 
 @SuppressWarnings("WeakerAccess")
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
@@ -119,7 +119,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], @NonNull int[] grantResults) {
+    public void onRequestPermissionsResult(int requestCode, @NonNull String permissions[], @NonNull int[] grantResults) {
         switch (requestCode) {
             case 1: {
                 if (grantResults.length <= 0 || grantResults[0] != PackageManager.PERMISSION_GRANTED) {
