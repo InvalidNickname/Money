@@ -6,6 +6,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 
 import com.google.android.material.textfield.TextInputLayout;
@@ -49,8 +50,18 @@ public class SearchDialogFragment extends DialogFragment {
                 EditText editText = getDialog().findViewById(R.id.editText);
                 String name = editText.getText().toString();
                 if (!name.equals("")) {
-                    onSearchListener.searchForBanknote(name);
-                    d.dismiss();
+                    if (((CheckBox) getDialog().findViewById(R.id.search_in_name)).isChecked()) {
+                        if (((CheckBox) getDialog().findViewById(R.id.search_in_desc)).isChecked()) {
+                            onSearchListener.searchForBanknote(name, 3); // поиск по названию и описанию
+                            d.dismiss();
+                        } else {
+                            onSearchListener.searchForBanknote(name, 2); // поиск по названию
+                            d.dismiss();
+                        }
+                    } else if (((CheckBox) getDialog().findViewById(R.id.search_in_desc)).isChecked()) {
+                        onSearchListener.searchForBanknote(name, 1); // поиск по описанию
+                        d.dismiss();
+                    }
                 } else {
                     TextInputLayout textInputLayout = getDialog().findViewById(R.id.nameInput);
                     textInputLayout.setError(getString(R.string.empty_search_string));
@@ -67,6 +78,6 @@ public class SearchDialogFragment extends DialogFragment {
     }
 
     public interface OnSearchListener {
-        void searchForBanknote(String name);
+        void searchForBanknote(String name, int searchMode);
     }
 }

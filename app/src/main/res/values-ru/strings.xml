@@ -62,4 +62,6 @@
     <string name="import_in_progress_subtitle">Не сворачивайте и не закрывайте приложение до окончания импорта</string>
     <string name="search">Поиск</string>
     <string name="empty_search_string">Наберите текст для поиска</string>
+    <string name="search_in_name">Искать в названии</string>
+    <string name="search_in_description">Искать в описании</string>
 </resources>

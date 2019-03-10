@@ -316,11 +316,11 @@ public class ListActivity extends AppCompatActivity
     }
 
     @Override
-    public void searchForBanknote(String name) {
+    public void searchForBanknote(String name, int search) {
         searchMode = true;
         // обновление списка
         Log.i(LOG_TAG, "Getting data from database...");
-        ListUpdater updater = new ListUpdater(name, true, this);
+        ListUpdater updater = new ListUpdater(name, true, search, this);
         updater.setOnLoadListener((newType, parent, newAdapter) -> {
             type = newType;
             parentID = parent;

@@ -23,6 +23,7 @@ import ru.mycollection.utils.Utils;
 import static ru.mycollection.App.LOG_TAG;
 import static ru.mycollection.utils.DBHelper.COLUMN_CIRCULATION;
 import static ru.mycollection.utils.DBHelper.COLUMN_COUNTRY;
+import static ru.mycollection.utils.DBHelper.COLUMN_DESCRIPTION;
 import static ru.mycollection.utils.DBHelper.COLUMN_ID;
 import static ru.mycollection.utils.DBHelper.COLUMN_IMAGE;
 import static ru.mycollection.utils.DBHelper.COLUMN_NAME;
@@ -44,7 +45,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     private String type;
     private OnLoadListener onLoadListener;
     private String newType;
-    private int parent;
+    private int parent, search;
     private String parentName;
     private boolean searchMode;
     private String searchString;
@@ -58,11 +59,12 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         database = DBHelper.getInstance(activity).getDatabase();
     }
 
-    ListUpdater(String searchString, boolean animationNeeded, AppCompatActivity activity) {
+    ListUpdater(String searchString, boolean animationNeeded, int search, AppCompatActivity activity) {
         this.searchString = searchString;
         this.animationNeeded = animationNeeded;
         this.activity = new WeakReference<>(activity);
         searchMode = true;
+        this.search = search;
         newType = "banknotes";
         database = DBHelper.getInstance(activity).getDatabase();
     }
@@ -182,22 +184,29 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
             }
     }
 
+    private void searchForData() {
+        Cursor c;
+        c = database.query(TABLE_BANKNOTES, null, null, null, null, null, "position");
+        if (c.moveToFirst())
+            do {
+                int id = c.getInt(c.getColumnIndex(COLUMN_ID));
+                String name = c.getString(c.getColumnIndex(COLUMN_NAME));
+                String description = c.getString(c.getColumnIndex(COLUMN_DESCRIPTION));
+                if ((search == 3 && name.toLowerCase().contains(searchString.toLowerCase()) && description.toLowerCase().contains(searchString.toLowerCase()))
+                        || (search == 2 && name.toLowerCase().contains(searchString.toLowerCase()))
+                        || (search == 1 && description.toLowerCase().contains(searchString.toLowerCase()))) {
+                    String circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
+                    String obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
+                    String country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
+                    banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
+                }
+            } while (c.moveToNext());
+        c.close();
+    }
+
     private void setData() {
         if (searchMode) {
-            Cursor c;
-            c = database.query(TABLE_BANKNOTES, null, null, null, null, null, "position");
-            if (c.moveToFirst())
-                do {
-                    int id = c.getInt(c.getColumnIndex(COLUMN_ID));
-                    String name = c.getString(c.getColumnIndex(COLUMN_NAME));
-                    if (name.toLowerCase().contains(searchString.toLowerCase())) {
-                        String circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
-                        String obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
-                        String country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
-                        banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
-                    }
-                } while (c.moveToNext());
-            c.close();
+            searchForData();
         } else {
             Cursor c = null;
             switch (newType) {
