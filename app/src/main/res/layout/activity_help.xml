@@ -11,7 +11,8 @@
         android:background="@color/colorPrimary"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:popupTheme="@style/AppTheme.ToolbarPopup" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/main"

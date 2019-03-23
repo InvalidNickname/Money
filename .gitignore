@@ -9,3 +9,4 @@
 app/release/
 
 app/google-services.json
+app/build.gradle

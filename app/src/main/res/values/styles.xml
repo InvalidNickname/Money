@@ -16,4 +16,9 @@
         <item name="android:windowBackground">@drawable/launch_screen</item>
     </style>
 
+    <style name="AppTheme.ToolbarPopup" parent="Base.ThemeOverlay.AppCompat.ActionBar">
+        <item name="android:textColorPrimary">@color/textColorPrimary</item>
+        <item name="android:background">@color/background</item>
+    </style>
+
 </resources>

@@ -11,6 +11,7 @@
         android:layout_height="?attr/actionBarSize"
         android:background="@color/colorPrimary"
         android:elevation="4dp"
+        app:popupTheme="@style/AppTheme.ToolbarPopup"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -70,6 +71,7 @@
                 android:background="?android:attr/listDivider" />
 
             <ImageView
+                android:onClick="openImage"
                 android:id="@+id/obverseImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -80,6 +82,7 @@
                 app:srcCompat="@drawable/example_banknote" />
 
             <ImageView
+                android:onClick="openImage"
                 android:id="@+id/reverseImage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -87,18 +87,20 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         activity.get().findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
         // установка заголовка
         ActionBar actionBar = activity.get().getSupportActionBar();
-        if (searchMode) {
-            actionBar.setTitle(activity.get().getString(R.string.search));
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
-        } else if (currID == 1) {
-            actionBar.setTitle(activity.get().getString(R.string.app_name));
-            actionBar.setDisplayHomeAsUpEnabled(false);
-            actionBar.setDisplayShowHomeEnabled(false);
-        } else {
-            actionBar.setTitle(parentName);
-            actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setDisplayShowHomeEnabled(true);
+        if (actionBar != null) {
+            if (searchMode) {
+                actionBar.setTitle(activity.get().getString(R.string.search));
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setDisplayShowHomeEnabled(true);
+            } else if (currID == 1) {
+                actionBar.setTitle(activity.get().getString(R.string.app_name));
+                actionBar.setDisplayHomeAsUpEnabled(false);
+                actionBar.setDisplayShowHomeEnabled(false);
+            } else {
+                actionBar.setTitle(parentName);
+                actionBar.setDisplayHomeAsUpEnabled(true);
+                actionBar.setDisplayShowHomeEnabled(true);
+            }
         }
     }
 

@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="ru.mycollection"
-    android:versionName="1.3.1">
+    android:versionName="1.4.0">
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -29,7 +29,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".BanknoteFullActivity"
+            android:name=".banknote.BanknoteFullActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing" />
         <activity
@@ -37,6 +37,9 @@
             android:screenOrientation="portrait" />
         <activity
             android:name=".help.HelpActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".banknote.BanknoteImageActivity"
             android:screenOrientation="portrait" />
 
         <meta-data

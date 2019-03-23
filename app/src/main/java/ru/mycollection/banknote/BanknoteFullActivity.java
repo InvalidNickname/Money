@@ -1,4 +1,4 @@
-package ru.mycollection;
+package ru.mycollection.banknote;
 
 import android.content.ContentValues;
 import android.content.Intent;
@@ -12,6 +12,7 @@ import android.text.style.StyleSpan;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import ru.mycollection.R;
 import ru.mycollection.dialog.BanknoteDialogFragment;
 import ru.mycollection.list.ListActivity;
 import ru.mycollection.utils.DBHelper;
@@ -50,6 +52,11 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         database = DBHelper.getInstance(this).getDatabase();
         setContentView(R.layout.activity_banknote_full);
         getData();
+        setToolbar();
+        setData();
+    }
+
+    private void setToolbar() {
         Toolbar toolbar = findViewById(R.id.toolbar);
         toolbar.setTitle(name);
         setSupportActionBar(toolbar);
@@ -57,7 +64,6 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
-        setData();
     }
 
     @Override
@@ -162,7 +168,6 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     @Override
     public void updateBanknote(String name, String circulationTime, String obversePath, String reversePath, String description, String country) {
         Log.i(LOG_TAG, "Updating banknote...");
-        getSupportActionBar().setTitle(name);
         ContentValues cv = new ContentValues();
         cv.put(COLUMN_NAME, name);
         cv.put(COLUMN_CIRCULATION, circulationTime);
@@ -173,6 +178,22 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + banknoteID, null);
         Log.i(LOG_TAG, "Banknote updated");
         getData();
+        setToolbar();
         setData();
+    }
+
+    // открытие увеличенного изображения
+    public void openImage(View view) {
+        Intent intent = new Intent(this, BanknoteImageActivity.class);
+        switch (view.getId()) {
+            case R.id.reverseImage:
+                intent.putExtra("image", reversePath);
+                break;
+            case R.id.obverseImage:
+                intent.putExtra("image", obversePath);
+                break;
+        }
+        intent.putExtra("name", name);
+        startActivity(intent);
     }
 }

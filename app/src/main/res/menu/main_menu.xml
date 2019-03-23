@@ -12,12 +12,12 @@
         android:id="@+id/swap"
         android:icon="@drawable/ic_swap"
         android:title="@string/swap"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
     <item
         android:id="@+id/settings"
         android:icon="@drawable/ic_settings"
         android:title="@string/settings"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="never" />
 
 </menu>

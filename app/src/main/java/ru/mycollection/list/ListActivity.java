@@ -27,6 +27,8 @@ import ru.mycollection.R;
 import ru.mycollection.dialog.BanknoteDialogFragment;
 import ru.mycollection.dialog.CategoryDialogFragment;
 import ru.mycollection.dialog.SearchDialogFragment;
+import ru.mycollection.list.modemanager.Mode;
+import ru.mycollection.list.modemanager.ModeManager;
 import ru.mycollection.settings.SettingsActivity;
 import ru.mycollection.utils.DBHelper;
 import ru.mycollection.utils.Utils;
@@ -56,7 +58,6 @@ public class ListActivity extends AppCompatActivity
     private int parentID;
     private String type;
     private Adapter adapter;
-    private boolean searchMode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,7 +108,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     public void openAddDialog(View view) {
-        if (ModeManager.getMode().equals("normal"))
+        if (ModeManager.getMode() == Mode.Normal)
             switch (type) {
                 case "category":
                     Log.i(LOG_TAG, "Opening NewCategoryDialog");
@@ -175,10 +176,7 @@ public class ListActivity extends AppCompatActivity
     }
 
     private void goBack() {
-        if (searchMode) {
-            searchMode = false;
-            updateList(true);
-        } else if (currID == 1) finish();
+        if (currID == 1) finish();
         else {
             currID = parentID;
             updateList(true);
@@ -187,7 +185,7 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (ModeManager.getMode().equals("edit")) {
+        if (!(ModeManager.getMode() == Mode.Normal)) {
             modeManager.setNormalMode();
             updateList(false);
         } else goBack();
@@ -215,7 +213,7 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             public boolean isLongPressDragEnabled() {
-                return ModeManager.getMode().equals("edit");
+                return ModeManager.getMode() == Mode.Edit;
             }
         }).attachToRecyclerView(recyclerView);
     }
@@ -317,7 +315,7 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void searchForBanknote(String name, int search) {
-        searchMode = true;
+        modeManager.setSearchMode();
         // обновление списка
         Log.i(LOG_TAG, "Getting data from database...");
         ListUpdater updater = new ListUpdater(name, true, search, this);

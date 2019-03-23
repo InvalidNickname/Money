@@ -20,6 +20,8 @@ import ru.mycollection.R;
 import ru.mycollection.dialog.CategoryDialogFragment;
 import ru.mycollection.list.CategoryRVAdapter.OnAddListener;
 import ru.mycollection.list.CategoryRVAdapter.OnDeleteListener;
+import ru.mycollection.list.modemanager.Mode;
+import ru.mycollection.list.modemanager.ModeManager;
 import ru.mycollection.utils.RoundCornerTransformation;
 
 import static ru.mycollection.App.LOG_TAG;
@@ -49,12 +51,12 @@ public class BindingAdapters {
         final Context context = layout.getContext();
         final OnAddListener onAddListener = (OnAddListener) context;
         layout.setOnClickListener(v -> {
-            if (ModeManager.getMode().equals("normal"))
+            if (ModeManager.getMode() == Mode.Normal)
                 onAddListener.loadNewCategory(category.getId());
         });
         final OnDeleteListener onDeleteListener = (OnDeleteListener) context;
         layout.setOnLongClickListener(v -> {
-            if (ModeManager.getMode().equals("normal")) {
+            if (ModeManager.getMode() == Mode.Normal) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
                 builder.setTitle(context.getResources().getString(R.string.pick_action))
                         .setItems(new CharSequence[]{context.getString(R.string.delete_category_action), context.getString(R.string.edit_category_action)}, (dialog, which) -> {
