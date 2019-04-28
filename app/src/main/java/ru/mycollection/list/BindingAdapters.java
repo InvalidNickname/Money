@@ -6,8 +6,6 @@ import android.util.Log;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -16,6 +14,9 @@ import androidx.constraintlayout.widget.Guideline;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.databinding.BindingAdapter;
 import androidx.preference.PreferenceManager;
+
+import com.squareup.picasso.Picasso;
+
 import ru.mycollection.R;
 import ru.mycollection.dialog.CategoryDialogFragment;
 import ru.mycollection.list.CategoryRVAdapter.OnAddListener;
@@ -51,7 +52,7 @@ public class BindingAdapters {
         final Context context = layout.getContext();
         final OnAddListener onAddListener = (OnAddListener) context;
         layout.setOnClickListener(v -> {
-            if (ModeManager.getMode() == Mode.Normal)
+            if (ModeManager.getMode() == Mode.Normal || ModeManager.getMode() == Mode.Move)
                 onAddListener.loadNewCategory(category.getId());
         });
         final OnDeleteListener onDeleteListener = (OnDeleteListener) context;

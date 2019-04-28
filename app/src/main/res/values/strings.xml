@@ -2,7 +2,6 @@
     <string name="app_name">My collection</string>
     <string name="image">image</string>
     <string name="add_new_category">Add new category</string>
-    <string name="cancel">Cancel</string>
     <string name="add">Add</string>
     <string name="name">Name</string>
     <string name="circulation_time">Circulation time</string>
@@ -65,4 +64,6 @@
     <string name="empty_search_string">Enter the text to search</string>
     <string name="search_in_name">Search in name</string>
     <string name="search_in_description">Search in description</string>
+    <string name="move">Move</string>
+    <string name="cancel">Cancel</string>
 </resources>

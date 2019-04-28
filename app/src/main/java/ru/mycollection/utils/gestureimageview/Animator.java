@@ -1,8 +1,8 @@
 package ru.mycollection.utils.gestureimageview;
 
-public class Animator extends Thread {
+class Animator extends Thread {
 
-    private GestureImageView view;
+    private final GestureImageView view;
     private Animation animation;
     private boolean running = false;
     private boolean active = false;

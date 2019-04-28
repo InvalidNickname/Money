@@ -16,14 +16,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.Picasso;
-
-import java.io.File;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.squareup.picasso.Picasso;
+
+import java.io.File;
+
 import ru.mycollection.R;
 import ru.mycollection.dialog.BanknoteDialogFragment;
 import ru.mycollection.list.ListActivity;
@@ -156,6 +157,13 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
                 fragment.setArguments(bundle);
                 fragment.show(getSupportFragmentManager(), "update_banknote");
                 break;
+            case R.id.move:
+                Log.i(LOG_TAG, "Moving item");
+                Intent intent = new Intent(this, ListActivity.class);
+                intent.putExtra("id", banknoteID);
+                startActivity(intent);
+                finish();
+                break;
         }
         return super.onOptionsItemSelected(menuItem);
     }
@@ -185,15 +193,24 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
     // открытие увеличенного изображения
     public void openImage(View view) {
         Intent intent = new Intent(this, BanknoteImageActivity.class);
+        boolean start = true;
         switch (view.getId()) {
             case R.id.reverseImage:
-                intent.putExtra("image", reversePath);
+                if (reversePath.equals("nothing"))
+                    start = false;
+                else
+                    intent.putExtra("image", reversePath);
                 break;
             case R.id.obverseImage:
-                intent.putExtra("image", obversePath);
+                if (obversePath.equals("nothing"))
+                    start = false;
+                else
+                    intent.putExtra("image", obversePath);
                 break;
         }
         intent.putExtra("name", name);
-        startActivity(intent);
+        if (start) {
+            startActivity(intent);
+        }
     }
 }

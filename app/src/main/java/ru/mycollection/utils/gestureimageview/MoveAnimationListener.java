@@ -1,6 +1,6 @@
 package ru.mycollection.utils.gestureimageview;
 
-public interface MoveAnimationListener {
+interface MoveAnimationListener {
 
     void onMove(float x, float y);
 

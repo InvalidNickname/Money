@@ -37,7 +37,7 @@
     <string name="edit">Редактировать</string>
     <string name="done">Готово</string>
     <string name="db_folder_already_exists">Папка базы данных уже существует. Попробуйте экспортировать ещё раз</string>
-    <string name="swap">Перемещение</string>
+    <string name="swap">Сортировка</string>
     <string name="enable_bigger_text">Увеличенный размер текста</string>
     <string name="export_db">Экспорт базы данных</string>
     <string name="import_db">Импорт базы данных</string>
@@ -64,4 +64,5 @@
     <string name="empty_search_string">Наберите текст для поиска</string>
     <string name="search_in_name">Искать в названии</string>
     <string name="search_in_description">Искать в описании</string>
+    <string name="move">Переместить</string>
 </resources>

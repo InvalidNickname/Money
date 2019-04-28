@@ -1,6 +1,6 @@
 package ru.mycollection.utils.gestureimageview;
 
-public interface FlingAnimationListener {
+interface FlingAnimationListener {
 
     void onMove(float x, float y);
 

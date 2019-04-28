@@ -1,6 +1,6 @@
 package ru.mycollection.utils.gestureimageview;
 
-public interface Animation {
+interface Animation {
 
     boolean update(GestureImageView view, long time);
 

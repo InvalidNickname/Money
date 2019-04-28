@@ -10,12 +10,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
-
-import java.util.Collections;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -23,17 +17,27 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.recyclerview.widget.RecyclerView.Adapter;
+
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+
+import java.util.Collections;
+import java.util.List;
+
 import ru.mycollection.R;
 import ru.mycollection.dialog.BanknoteDialogFragment;
 import ru.mycollection.dialog.CategoryDialogFragment;
 import ru.mycollection.dialog.SearchDialogFragment;
-import ru.mycollection.list.modemanager.Mode;
 import ru.mycollection.list.modemanager.ModeManager;
 import ru.mycollection.settings.SettingsActivity;
 import ru.mycollection.utils.DBHelper;
 import ru.mycollection.utils.Utils;
 
 import static ru.mycollection.App.LOG_TAG;
+import static ru.mycollection.list.modemanager.Mode.Edit;
+import static ru.mycollection.list.modemanager.Mode.Move;
+import static ru.mycollection.list.modemanager.Mode.Normal;
+import static ru.mycollection.list.modemanager.Mode.Search;
 import static ru.mycollection.utils.DBHelper.COLUMN_CIRCULATION;
 import static ru.mycollection.utils.DBHelper.COLUMN_COUNTRY;
 import static ru.mycollection.utils.DBHelper.COLUMN_DESCRIPTION;
@@ -58,6 +62,8 @@ public class ListActivity extends AppCompatActivity
     private int parentID;
     private String type;
     private Adapter adapter;
+
+    private int moveID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,10 +111,14 @@ public class ListActivity extends AppCompatActivity
     protected void onNewIntent(@NonNull Intent intent) {
         super.onNewIntent(intent);
         if (intent.getBooleanExtra("update", false)) updateList(true);
+        if (intent.getIntExtra("id", -1) != -1) {
+            moveID = intent.getIntExtra("id", -1);
+            modeManager.setMode(Move);
+        }
     }
 
     public void openAddDialog(View view) {
-        if (ModeManager.getMode() == Mode.Normal)
+        if (ModeManager.getMode() == Normal)
             switch (type) {
                 case "category":
                     Log.i(LOG_TAG, "Opening NewCategoryDialog");
@@ -161,11 +171,23 @@ public class ListActivity extends AppCompatActivity
                 onBackPressed();
                 break;
             case R.id.swap:
-                modeManager.setEditMode();
+                modeManager.setMode(Edit);
                 break;
             case R.id.done:
-                modeManager.setNormalMode();
-                updateList(false);
+                if (ModeManager.getMode() == Move && type.equals("banknotes")) {
+                    ContentValues cv = new ContentValues();
+                    cv.put(COLUMN_PARENT, currID);
+                    database.update(TABLE_BANKNOTES, cv, COLUMN_ID + " = " + moveID, null);
+                    modeManager.setMode(Normal);
+                    updateList(false);
+                }
+                if (ModeManager.getMode() == Edit) {
+                    modeManager.setMode(Normal);
+                    updateList(false);
+                }
+                break;
+            case R.id.cancel:
+                modeManager.setMode(Normal);
                 break;
             case R.id.search:
                 Log.i(LOG_TAG, "Opening search dialog");
@@ -185,8 +207,8 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void onBackPressed() {
-        if (!(ModeManager.getMode() == Mode.Normal)) {
-            modeManager.setNormalMode();
+        if (!(ModeManager.getMode() == Normal) && !(ModeManager.getMode() == Move)) {
+            modeManager.setMode(Normal);
             updateList(false);
         } else goBack();
     }
@@ -213,7 +235,7 @@ public class ListActivity extends AppCompatActivity
 
             @Override
             public boolean isLongPressDragEnabled() {
-                return ModeManager.getMode() == Mode.Edit;
+                return ModeManager.getMode() == Edit;
             }
         }).attachToRecyclerView(recyclerView);
     }
@@ -315,7 +337,7 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     public void searchForBanknote(String name, int search) {
-        modeManager.setSearchMode();
+        modeManager.setMode(Search);
         // обновление списка
         Log.i(LOG_TAG, "Getting data from database...");
         ListUpdater updater = new ListUpdater(name, true, search, this);

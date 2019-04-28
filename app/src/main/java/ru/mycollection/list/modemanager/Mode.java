@@ -1,5 +1,5 @@
 package ru.mycollection.list.modemanager;
 
 public enum Mode {
-    Normal, Edit, Search
+    Normal, Edit, Search, Move
 }

@@ -3,7 +3,7 @@ package ru.mycollection.utils.gestureimageview;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 
-public class FlingListener extends SimpleOnGestureListener {
+class FlingListener extends SimpleOnGestureListener {
 
     private float velocityX;
     private float velocityY;

@@ -1,6 +1,6 @@
 package ru.mycollection.utils.gestureimageview;
 
-public interface ZoomAnimationListener {
+interface ZoomAnimationListener {
 
     void onZoom(float scale, float x, float y);
 

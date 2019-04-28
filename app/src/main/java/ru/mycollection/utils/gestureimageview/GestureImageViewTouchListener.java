@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 
-public class GestureImageViewTouchListener implements OnTouchListener {
+class GestureImageViewTouchListener implements OnTouchListener {
 
     private final PointF current = new PointF();
     private final PointF last = new PointF();
@@ -17,7 +17,7 @@ public class GestureImageViewTouchListener implements OnTouchListener {
     private final PointF midpoint = new PointF();
     private final VectorF scaleVector = new VectorF();
     private final VectorF pinchVector = new VectorF();
-    private GestureImageView image;
+    private final GestureImageView image;
     private OnClickListener onClickListener;
     private boolean touched = false;
     private boolean inZoom = false;
@@ -38,26 +38,26 @@ public class GestureImageViewTouchListener implements OnTouchListener {
 
     private int canvasHeight = 0;
 
-    private float centerX;
-    private float centerY;
+    private final float centerX;
+    private final float centerY;
 
     private boolean canDragX = false;
     private boolean canDragY = false;
 
     private boolean multiTouch = false;
 
-    private int displayWidth;
-    private int displayHeight;
+    private final int displayWidth;
+    private final int displayHeight;
 
-    private int imageWidth;
-    private int imageHeight;
+    private final int imageWidth;
+    private final int imageHeight;
 
-    private FlingListener flingListener;
-    private FlingAnimation flingAnimation;
-    private ZoomAnimation zoomAnimation;
-    private GestureDetector tapDetector;
-    private GestureDetector flingDetector;
-    private GestureImageViewListener imageListener;
+    private final FlingListener flingListener;
+    private final FlingAnimation flingAnimation;
+    private final ZoomAnimation zoomAnimation;
+    private final GestureDetector tapDetector;
+    private final GestureDetector flingDetector;
+    private final GestureImageViewListener imageListener;
 
     GestureImageViewTouchListener(final GestureImageView image, int displayWidth, int displayHeight) {
         super();

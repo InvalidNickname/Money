@@ -8,14 +8,15 @@ import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
-import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.mycollection.R;
 import ru.mycollection.utils.DBHelper;
 import ru.mycollection.utils.Utils;
@@ -47,7 +48,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     private String newType;
     private int parent, search;
     private String parentName;
-    private boolean searchMode;
+    private final boolean searchMode;
     private String searchString;
 
     ListUpdater(String type, int currID, boolean animationNeeded, AppCompatActivity activity) {

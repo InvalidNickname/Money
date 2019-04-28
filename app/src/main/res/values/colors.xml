@@ -5,6 +5,7 @@
     <color name="colorAccent">#2962ff</color>
     <color name="colorAccentDark">#0039cb</color>
     <color name="editMode">#b71c1c</color>
+    <color name="moveMode">#b71c1c</color>
     <color name="lightGreyText">#3c000000</color>
     <color name="textColorPrimary">#dd000000</color>
     <color name="background">#fafafa</color>

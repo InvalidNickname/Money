@@ -4,12 +4,13 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
-import com.squareup.picasso.Picasso;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+
+import com.squareup.picasso.Picasso;
+
 import ru.mycollection.R;
 import ru.mycollection.utils.gestureimageview.GestureImageView;
 
@@ -20,6 +21,7 @@ public class BanknoteImageActivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        overridePendingTransition(0, 0);
         Log.i(LOG_TAG, "BanknoteImageActivity is created");
         setContentView(R.layout.activity_banknote_image);
         setToolbar();
@@ -39,11 +41,9 @@ public class BanknoteImageActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case android.R.id.home:
-                Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
-                onBackPressed();
-                break;
+        if (menuItem.getItemId() == android.R.id.home) {
+            Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
+            onBackPressed();
         }
         return super.onOptionsItemSelected(menuItem);
     }

@@ -10,17 +10,17 @@ import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
 import android.view.ViewGroup.LayoutParams;
 
+import androidx.appcompat.widget.AppCompatImageView;
+
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
-import androidx.appcompat.widget.AppCompatImageView;
-
 public class GestureImageView extends AppCompatImageView {
 
-    public static final String GLOBAL_NS = "http://schemas.android.com/apk/res/android";
-    public static final String LOCAL_NS = "http://schemas.polites.com/android";
+    private static final String GLOBAL_NS = "http://schemas.android.com/apk/res/android";
+    private static final String LOCAL_NS = "http://schemas.polites.com/android";
     private final Semaphore drawLock = new Semaphore(0);
-    boolean isLandscaped;
+    private boolean isLandscaped;
     private Animator animator;
     private Drawable drawable;
     private float x = 0, y = 0;
@@ -111,7 +111,7 @@ public class GestureImageView extends AppCompatImageView {
     }
 
     @SuppressLint("ClickableViewAccessibility")
-    protected void setupCanvas(int measuredWidth, int measuredHeight, int orientation) {
+    private void setupCanvas(int measuredWidth, int measuredHeight, int orientation) {
         if (deviceOrientation != orientation) {
             layout = false;
             deviceOrientation = orientation;
@@ -162,12 +162,12 @@ public class GestureImageView extends AppCompatImageView {
         }
     }
 
-    protected void computeCropScale(int imageWidth, int imageHeight, int measuredWidth, int measuredHeight) {
+    private void computeCropScale(int imageWidth, int imageHeight, int measuredWidth, int measuredHeight) {
         fitScaleHorizontal = (float) measuredWidth / (float) imageWidth;
         fitScaleVertical = (float) measuredHeight / (float) imageHeight;
     }
 
-    protected void computeStartingScale(int imageWidth, int imageHeight, int measuredWidth, int measuredHeight) {
+    private void computeStartingScale(int imageWidth, int imageHeight, int measuredWidth, int measuredHeight) {
         float wRatio = (float) imageWidth / (float) measuredWidth;
         float hRatio = (float) imageHeight / (float) measuredHeight;
         isLandscaped = wRatio > hRatio;
@@ -178,7 +178,7 @@ public class GestureImageView extends AppCompatImageView {
         }
     }
 
-    protected boolean isRecycled() {
+    private boolean isRecycled() {
         if (drawable instanceof BitmapDrawable) {
             Bitmap bitmap = ((BitmapDrawable) drawable).getBitmap();
             if (bitmap != null) {
@@ -242,7 +242,7 @@ public class GestureImageView extends AppCompatImageView {
         super.onDetachedFromWindow();
     }
 
-    protected void initImage() {
+    private void initImage() {
         if (drawable != null) {
             drawable.setFilterBitmap(true);
         }
@@ -295,14 +295,14 @@ public class GestureImageView extends AppCompatImageView {
         postInvalidate();
     }
 
-    public void setMinScale(float min) {
+    private void setMinScale(float min) {
         this.minScale = min;
         if (gestureImageViewTouchListener != null) {
             gestureImageViewTouchListener.setMinScale(min * fitScaleHorizontal);
         }
     }
 
-    public void setMaxScale(float max) {
+    private void setMaxScale(float max) {
         this.maxScale = max;
         if (gestureImageViewTouchListener != null) {
             gestureImageViewTouchListener.setMaxScale(max * startingScale);
@@ -351,7 +351,7 @@ public class GestureImageView extends AppCompatImageView {
         return isLandscaped;
     }
 
-    public void setStartingScale(float startingScale) {
+    private void setStartingScale(float startingScale) {
         this.startingScale = startingScale;
     }
 

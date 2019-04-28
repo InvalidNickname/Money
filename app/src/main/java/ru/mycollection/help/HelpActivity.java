@@ -4,14 +4,15 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import ru.mycollection.R;
 
 import static ru.mycollection.App.LOG_TAG;
@@ -34,11 +35,9 @@ public class HelpActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem menuItem) {
-        switch (menuItem.getItemId()) {
-            case android.R.id.home:
-                Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
-                finish();
-                break;
+        if (menuItem.getItemId() == android.R.id.home) {
+            Log.i(LOG_TAG, "Back button on toolbar selected, finishing");
+            finish();
         }
         return super.onOptionsItemSelected(menuItem);
     }
