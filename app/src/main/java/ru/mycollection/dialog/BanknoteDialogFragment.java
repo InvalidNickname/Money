@@ -14,15 +14,17 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
+
 import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import ru.mycollection.R;
 import ru.mycollection.utils.DBHelper;
 import ru.mycollection.utils.Utils;
@@ -53,8 +55,9 @@ public class BanknoteDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(getActivity()));
         LayoutInflater inflater = getActivity().getLayoutInflater();
+        String namedItem = String.format(getString(R.string.add_new_banknote), PreferenceManager.getDefaultSharedPreferences(getContext()).getString("item_name", ""));
         builder.setView(inflater.inflate(R.layout.dialog_banknote, null))
-                .setTitle(newBanknote ? getString(R.string.add_new_banknote) : getString(R.string.update_banknote))
+                .setTitle(newBanknote ? namedItem : getString(R.string.update_banknote))
                 .setPositiveButton(newBanknote ? R.string.add : R.string.update, null)
                 .setNegativeButton(R.string.cancel, (dialog, id) -> BanknoteDialogFragment.this.getDialog().cancel());
         if (!newBanknote) getData();

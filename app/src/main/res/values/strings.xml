@@ -1,17 +1,17 @@
 <resources>
     <string name="app_name">My collection</string>
     <string name="image">image</string>
-    <string name="add_new_category">Add new category</string>
+    <string name="add_new_category">Category</string>
     <string name="add">Add</string>
     <string name="name">Name</string>
     <string name="circulation_time">Circulation time</string>
-    <string name="add_new_banknote">Add new banknote</string>
+    <string name="add_new_banknote">%s</string>
     <string name="description">Description</string>
     <string name="obverse">obverse</string>
     <string name="reverse">reverse</string>
     <string name="delete_country">%s will be deleted!</string>
     <string name="ok" translatable="false">OK</string>
-    <string name="delete_country_info">Banknotes of this category will also be deleted!</string>
+    <string name="delete_country_info">Content of this category will also be deleted!</string>
     <string name="no_description">no description</string>
     <string name="country_name_error">Invalid name</string>
     <string name="country_s">Country: %s</string>
@@ -20,7 +20,7 @@
     <string name="delete">Delete</string>
     <string name="delete_banknote">Delete %s?</string>
     <string name="yes">YES</string>
-    <string name="update_banknote">Update banknote</string>
+    <string name="update_banknote">Editing</string>
     <string name="update">Update</string>
     <string name="no_items">There are no items here yet\nTap the button to add some</string>
     <string name="settings">Settings</string>
@@ -29,7 +29,7 @@
     <string name="version">Version %s</string>
     <string name="category">Category name</string>
     <string name="select_add">Select what to add</string>
-    <string name="banknote">Banknote</string>
+    <string name="banknote">%s</string>
     <string name="country">Country</string>
     <string name="categoryName">Category</string>
     <string name="rw_permission_denied">To export/import databases and add images, enable read/write permissions!</string>
@@ -66,4 +66,8 @@
     <string name="search_in_description">Search in description</string>
     <string name="move">Move</string>
     <string name="cancel">Cancel</string>
+    <string name="item_name_title">What will be stored in collection?</string>
+    <string name="default_item_name">Banknote</string>
+    <string name="change_item_name">Change items\' name</string>
+    <string name="current_item_name">Current: %s</string>
 </resources>

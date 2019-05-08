@@ -13,6 +13,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -27,6 +28,7 @@ import java.util.List;
 import ru.mycollection.R;
 import ru.mycollection.dialog.BanknoteDialogFragment;
 import ru.mycollection.dialog.CategoryDialogFragment;
+import ru.mycollection.dialog.ItemNameDialogFragment;
 import ru.mycollection.dialog.SearchDialogFragment;
 import ru.mycollection.list.modemanager.ModeManager;
 import ru.mycollection.settings.SettingsActivity;
@@ -92,6 +94,7 @@ public class ListActivity extends AppCompatActivity
         setDragListener(main);
         updateList(true);
         initializeAd();
+        checkIfItemNameSet();
     }
 
     @Override
@@ -99,6 +102,14 @@ public class ListActivity extends AppCompatActivity
         modeManager.setMenu(menu);
         getMenuInflater().inflate(R.menu.main_menu, menu);
         return true;
+    }
+
+    private void checkIfItemNameSet() {
+        if (PreferenceManager.getDefaultSharedPreferences(this).getString("item_name", "").equals("")) {
+            ItemNameDialogFragment dialogFragment = new ItemNameDialogFragment();
+            dialogFragment.setCancelable(false);
+            dialogFragment.show(getSupportFragmentManager(), "item_name");
+        }
     }
 
     private void initializeAd() {
@@ -130,8 +141,9 @@ public class ListActivity extends AppCompatActivity
                     break;
                 default:
                     AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                    String namedItem = String.format(getString(R.string.banknote), PreferenceManager.getDefaultSharedPreferences(this).getString("item_name", ""));
                     builder.setTitle(R.string.select_add)
-                            .setItems(new CharSequence[]{getString(R.string.categoryName), getString(R.string.banknote)}, (dialog, which) -> {
+                            .setItems(new CharSequence[]{getString(R.string.categoryName), namedItem}, (dialog, which) -> {
                                 switch (which) {
                                     case 0:
                                         Log.i(LOG_TAG, "Opening NewCategoryDialog");

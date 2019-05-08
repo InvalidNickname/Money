@@ -12,9 +12,10 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+
 import ru.mycollection.R;
 
-public class ProgressDialog extends DialogFragment {
+public class ProgressDialogFragment extends DialogFragment {
 
     private ProgressBar progressBar;
     private TextView progressText;

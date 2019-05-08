@@ -4,11 +4,12 @@ import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import java.io.File;
 import java.lang.ref.WeakReference;
 
-import androidx.appcompat.app.AppCompatActivity;
-import ru.mycollection.dialog.ProgressDialog;
+import ru.mycollection.dialog.ProgressDialogFragment;
 
 import static ru.mycollection.utils.Utils.copyFileToDirectory;
 
@@ -16,7 +17,7 @@ class CopyTask extends AsyncTask<Void, Integer, Void> {
 
     private final WeakReference<Context> contextWeakReference;
     private final String source, destination, title, subtitle;
-    private ProgressDialog dialog;
+    private ProgressDialogFragment dialog;
 
     CopyTask(Context context, String source, String destination, String title, String subtitle) {
         this.contextWeakReference = new WeakReference<>(context);
@@ -29,7 +30,7 @@ class CopyTask extends AsyncTask<Void, Integer, Void> {
     @Override
     protected void onPreExecute() {
         Context context = contextWeakReference.get();
-        dialog = new ProgressDialog();
+        dialog = new ProgressDialogFragment();
         Bundle bundle = new Bundle();
         bundle.putString("title", title);
         bundle.putString("subtitle", subtitle);

@@ -18,6 +18,10 @@
 
     <PreferenceCategory android:title="@string/interface_cat_preference">
 
+        <Preference
+            android:key="item_name"
+            android:summary="@string/current_item_name"
+            android:title="@string/change_item_name" />
         <SwitchPreference
             android:defaultValue="false"
             android:key="text_size"

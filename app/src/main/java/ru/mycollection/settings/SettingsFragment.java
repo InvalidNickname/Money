@@ -29,6 +29,7 @@ import java.io.File;
 import java.util.Date;
 
 import ru.mycollection.R;
+import ru.mycollection.dialog.ItemNameDialogFragment;
 import ru.mycollection.help.HelpActivity;
 import ru.mycollection.utils.Utils;
 
@@ -36,7 +37,6 @@ import static android.app.Activity.RESULT_OK;
 import static ru.mycollection.App.LOG_TAG;
 import static ru.mycollection.utils.DBHelper.DATABASE_NAME;
 
-@SuppressWarnings("WeakerAccess")
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     private static CopyTask copyTask;
@@ -97,6 +97,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             startActivity(intent);
             return true;
         });
+        // слушатель нажатия на кнопку изменения названия
+        Preference editItemNamePref = findPreference("item_name");
+        editItemNamePref.setOnPreferenceClickListener(preference -> {
+            ItemNameDialogFragment dialogFragment = new ItemNameDialogFragment();
+            dialogFragment.setCancelable(false);
+            dialogFragment.show(getActivity().getSupportFragmentManager(), "item_name");
+            return true;
+        });
         // установка текста версии
         String versionName = "unknown";
         try {
@@ -106,6 +114,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
         }
         Preference versionPref = findPreference("version");
         versionPref.setTitle(String.format(getResources().getString(R.string.version), versionName));
+
+        Preference editItemName = findPreference("item_name");
+        editItemName.setSummary(String.format(getResources().getString(R.string.current_item_name), PreferenceManager.getDefaultSharedPreferences(getContext()).getString("item_name", "")));
         // запрет на overscroll, без него выглядит лучше
         getListView().setOverScrollMode(View.OVER_SCROLL_NEVER);
     }
@@ -154,6 +165,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             Utils.updateFontScale(getActivity());
             // перезапуск активити для изменения размера шрифта в ней
             getActivity().recreate();
+        } else if (key.equals("item_name")) {
+            Preference editItemName = findPreference("item_name");
+            String name = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("item_name", "");
+            editItemName.setSummary(String.format(getResources().getString(R.string.current_item_name), name));
         }
     }
 
