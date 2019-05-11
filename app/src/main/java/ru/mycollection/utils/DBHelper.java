@@ -39,6 +39,7 @@ public class DBHelper extends SQLiteOpenHelper {
         if (instance == null) {
             instance = new DBHelper(context.getApplicationContext());
             database = instance.getWritableDatabase();
+            database.disableWriteAheadLogging();
         }
         return instance;
     }

@@ -17,6 +17,13 @@ import android.util.Log;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -25,12 +32,6 @@ import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.RecyclerView;
 import ru.mycollection.R;
 
 import static android.content.Context.MODE_PRIVATE;
@@ -82,6 +83,10 @@ public class Utils {
                     return Environment.getExternalStorageDirectory() + "/" + split[1];
             } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
                 final String id = DocumentsContract.getDocumentId(uri);
+                System.out.println(id);
+                if (id.startsWith("raw:")) {
+                    return id.replaceFirst("raw:", "");
+                }
                 final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
                 return getDataColumn(context, contentUri);
             }
