@@ -13,7 +13,7 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import java.lang.ref.WeakReference;
+import java.lang.ref.SoftReference;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,7 +37,7 @@ import static ru.mycollection.utils.DBHelper.TABLE_CATEGORIES;
 
 class ListUpdater extends AsyncTask<Void, Void, Void> {
 
-    private final WeakReference<AppCompatActivity> activity;
+    private SoftReference<AppCompatActivity> activity;
     private final SQLiteDatabase database;
     private final List<Banknote> banknoteList = new ArrayList<>();
     private final List<Category> categoryList = new ArrayList<>();
@@ -55,7 +55,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         this.type = type;
         this.currID = currID;
         this.animationNeeded = animationNeeded;
-        this.activity = new WeakReference<>(activity);
+        this.activity = new SoftReference<>(activity);
         searchMode = false;
         database = DBHelper.getInstance(activity).getDatabase();
     }
@@ -63,7 +63,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
     ListUpdater(String searchString, boolean animationNeeded, int search, AppCompatActivity activity) {
         this.searchString = searchString;
         this.animationNeeded = animationNeeded;
-        this.activity = new WeakReference<>(activity);
+        this.activity = new SoftReference<>(activity);
         searchMode = true;
         this.search = search;
         newType = "banknotes";
@@ -122,6 +122,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         } else noItemsText.setVisibility(View.GONE);
         if (animationNeeded) Utils.runLayoutAnimation(main);
         onLoadListener.loadFinished(newType, parent, main.getAdapter());
+        activity = null;
         super.onPostExecute(object);
     }
 

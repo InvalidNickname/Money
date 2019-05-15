@@ -6,13 +6,14 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+
+import ru.mycollection.BaseActivity;
 import ru.mycollection.R;
 import ru.mycollection.list.ListActivity;
 
 import static ru.mycollection.App.LOG_TAG;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends BaseActivity {
 
     private SettingsFragment fragment;
 

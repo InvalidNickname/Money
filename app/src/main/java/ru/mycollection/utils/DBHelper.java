@@ -7,7 +7,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import static ru.mycollection.App.USES_DB_VERSION;
 
@@ -34,7 +33,6 @@ public class DBHelper extends SQLiteOpenHelper {
         super(context, DATABASE_NAME, null, USES_DB_VERSION);
     }
 
-    @Nullable
     public static synchronized DBHelper getInstance(@NonNull Context context) {
         if (instance == null) {
             instance = new DBHelper(context.getApplicationContext());

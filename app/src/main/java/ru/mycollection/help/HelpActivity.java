@@ -5,7 +5,6 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -13,11 +12,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
+import ru.mycollection.BaseActivity;
 import ru.mycollection.R;
 
 import static ru.mycollection.App.LOG_TAG;
 
-public class HelpActivity extends AppCompatActivity {
+public class HelpActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

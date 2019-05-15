@@ -12,7 +12,6 @@ import android.view.View;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceManager;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -25,6 +24,7 @@ import com.google.android.gms.ads.AdView;
 import java.util.Collections;
 import java.util.List;
 
+import ru.mycollection.BaseActivity;
 import ru.mycollection.R;
 import ru.mycollection.dialog.BanknoteDialogFragment;
 import ru.mycollection.dialog.CategoryDialogFragment;
@@ -54,7 +54,7 @@ import static ru.mycollection.utils.DBHelper.COLUMN_TYPE;
 import static ru.mycollection.utils.DBHelper.TABLE_BANKNOTES;
 import static ru.mycollection.utils.DBHelper.TABLE_CATEGORIES;
 
-public class ListActivity extends AppCompatActivity
+public class ListActivity extends BaseActivity
         implements CategoryDialogFragment.OnChangeListener, CategoryRVAdapter.OnDeleteListener, BanknoteDialogFragment.OnChangeListener,
         CategoryRVAdapter.OnAddListener, SearchDialogFragment.OnSearchListener {
 
@@ -69,8 +69,6 @@ public class ListActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // изменение темы splashscreen на обычную
-        setTheme(R.style.AppTheme);
         super.onCreate(savedInstanceState);
         Log.i(LOG_TAG, "ListActivity is created");
         setContentView(R.layout.activity_list);

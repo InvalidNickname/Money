@@ -69,4 +69,6 @@
     <string name="default_item_name">Банкнота</string>
     <string name="change_item_name">Изменить название хранимых объектов</string>
     <string name="current_item_name">Текущее название: %s</string>
+    <string name="show_status_bar">Показать статус-бар</string>
+    <string name="restart_status_bar">Перезапустите приложение чтобы применить изменения</string>
 </resources>

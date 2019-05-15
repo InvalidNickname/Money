@@ -16,15 +16,16 @@ import android.widget.ImageView;
 import android.widget.Switch;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+
 import com.google.android.material.textfield.TextInputLayout;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import ru.mycollection.R;
 import ru.mycollection.utils.DBHelper;
 import ru.mycollection.utils.Utils;
@@ -61,7 +62,7 @@ public class CategoryDialogFragment extends DialogFragment implements View.OnCli
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
         Bundle args = getArguments();
@@ -140,7 +141,7 @@ public class CategoryDialogFragment extends DialogFragment implements View.OnCli
         iconSwitch.setOnCheckedChangeListener((buttonView, isChecked) -> getDialog().findViewById(R.id.flag).setVisibility(isChecked ? View.VISIBLE : View.GONE));
     }
 
-    public void onActivityResult(int requestCode, int resultCode, @NonNull Intent imageReturnedIntent) {
+    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK & requestCode == 1) {
             selectedImage = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width / 8);

@@ -49,7 +49,7 @@ public class ProgressDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         Bundle args = getArguments();
         if (args != null) {

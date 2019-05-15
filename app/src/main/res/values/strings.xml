@@ -70,4 +70,6 @@
     <string name="default_item_name">Banknote</string>
     <string name="change_item_name">Change items\' name</string>
     <string name="current_item_name">Current: %s</string>
+    <string name="show_status_bar">Show status bar</string>
+    <string name="restart_status_bar">Restart application to apply changes</string>
 </resources>

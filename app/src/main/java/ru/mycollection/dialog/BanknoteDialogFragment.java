@@ -100,7 +100,7 @@ public class BanknoteDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         this.context = context;
         Bundle args = getArguments();
@@ -154,7 +154,7 @@ public class BanknoteDialogFragment extends DialogFragment {
         });
     }
 
-    public void onActivityResult(int requestCode, int resultCode, @NonNull Intent imageReturnedIntent) {
+    public void onActivityResult(int requestCode, int resultCode, Intent imageReturnedIntent) {
         super.onActivityResult(requestCode, resultCode, imageReturnedIntent);
         if (resultCode == RESULT_OK & requestCode == 1) {
             selectedObverse = Utils.saveReturnedImageInFile(imageReturnedIntent, context, width);

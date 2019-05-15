@@ -6,17 +6,17 @@ import android.view.MenuItem;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.squareup.picasso.Picasso;
 
+import ru.mycollection.BaseActivity;
 import ru.mycollection.R;
 import ru.mycollection.utils.gestureimageview.GestureImageView;
 
 import static ru.mycollection.App.LOG_TAG;
 
-public class BanknoteImageActivity extends AppCompatActivity {
+public class BanknoteImageActivity extends BaseActivity {
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {

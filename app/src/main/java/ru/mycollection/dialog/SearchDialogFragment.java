@@ -9,13 +9,14 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.fragment.app.DialogFragment;
+
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Objects;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.DialogFragment;
 import ru.mycollection.R;
 
 public class SearchDialogFragment extends DialogFragment {
@@ -35,7 +36,7 @@ public class SearchDialogFragment extends DialogFragment {
     }
 
     @Override
-    public void onAttach(Context context) {
+    public void onAttach(@NonNull Context context) {
         super.onAttach(context);
         onSearchListener = (OnSearchListener) context;
     }

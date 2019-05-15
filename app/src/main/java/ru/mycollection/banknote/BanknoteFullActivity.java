@@ -18,13 +18,13 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
 
+import ru.mycollection.BaseActivity;
 import ru.mycollection.R;
 import ru.mycollection.dialog.BanknoteDialogFragment;
 import ru.mycollection.list.ListActivity;
@@ -40,7 +40,7 @@ import static ru.mycollection.utils.DBHelper.COLUMN_OBVERSE;
 import static ru.mycollection.utils.DBHelper.COLUMN_REVERSE;
 import static ru.mycollection.utils.DBHelper.TABLE_BANKNOTES;
 
-public class BanknoteFullActivity extends AppCompatActivity implements BanknoteDialogFragment.OnChangeListener {
+public class BanknoteFullActivity extends BaseActivity implements BanknoteDialogFragment.OnChangeListener {
 
     private SQLiteDatabase database;
     private String name, circulationTime, obversePath, reversePath, description, country;
@@ -97,9 +97,13 @@ public class BanknoteFullActivity extends AppCompatActivity implements BanknoteD
         SpannableStringBuilder circulation = new SpannableStringBuilder(String.format(getString(R.string.circulation_time_s), this.circulationTime));
         circulation.setSpan(new StyleSpan(Typeface.BOLD), 0, getString(R.string.circulation_time_s).length() - 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
         ((TextView) findViewById(R.id.circulationText)).setText(circulation);
-        SpannableStringBuilder description = new SpannableStringBuilder(String.format(getString(R.string.description_s), this.description));
-        description.setSpan(new StyleSpan(Typeface.BOLD), 0, getString(R.string.description_s).length() - 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
-        ((TextView) findViewById(R.id.descriptionText)).setText(description);
+        if (description.equals("нет описания") || description.equals("no description")) {
+            findViewById(R.id.descriptionText).setVisibility(View.GONE);
+        } else {
+            SpannableStringBuilder description = new SpannableStringBuilder(String.format(getString(R.string.description_s), this.description));
+            description.setSpan(new StyleSpan(Typeface.BOLD), 0, getString(R.string.description_s).length() - 2, Spannable.SPAN_EXCLUSIVE_INCLUSIVE);
+            ((TextView) findViewById(R.id.descriptionText)).setText(description);
+        }
         if (!obversePath.equals("nothing")) {
             File file = getFileStreamPath(obversePath);
             Picasso.get().load(file).into((ImageView) findViewById(R.id.obverseImage));
