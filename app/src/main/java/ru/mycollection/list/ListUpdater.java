@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -19,7 +21,6 @@ import java.util.List;
 
 import ru.mycollection.R;
 import ru.mycollection.utils.DBHelper;
-import ru.mycollection.utils.Utils;
 
 import static ru.mycollection.App.LOG_TAG;
 import static ru.mycollection.utils.DBHelper.COLUMN_CIRCULATION;
@@ -37,18 +38,18 @@ import static ru.mycollection.utils.DBHelper.TABLE_CATEGORIES;
 
 class ListUpdater extends AsyncTask<Void, Void, Void> {
 
-    private SoftReference<AppCompatActivity> activity;
     private final SQLiteDatabase database;
-    private final List<Banknote> banknoteList = new ArrayList<>();
-    private final List<Category> categoryList = new ArrayList<>();
+    private final List<Banknote> banknotes = new ArrayList<>();
+    private final List<Category> categories = new ArrayList<>();
     private final boolean animationNeeded;
+    private final boolean searchMode;
+    private SoftReference<AppCompatActivity> activity;
     private int currID;
     private String type;
     private OnLoadListener onLoadListener;
     private String newType;
     private int parent, search;
     private String parentName;
-    private final boolean searchMode;
     private String searchString;
 
     ListUpdater(String type, int currID, boolean animationNeeded, AppCompatActivity activity) {
@@ -112,7 +113,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
         activity.get().findViewById(R.id.progressBar).setVisibility(View.GONE);
         // установка адаптера
         RecyclerView main = activity.get().findViewById(R.id.main);
-        main.setAdapter(newType.equals("category") ? new CategoryRVAdapter(categoryList) : new BanknoteRVAdapter(banknoteList));
+        main.setAdapter(newType.equals("category") ? new CategoryRVAdapter(categories) : new BanknoteRVAdapter(banknotes));
         Log.i(LOG_TAG, "List updated");
         // выводится надпись об отсутствии объектов в категории, тип категории сбрасывается
         TextView noItemsText = activity.get().findViewById(R.id.noItemsText);
@@ -120,7 +121,12 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
             noItemsText.setVisibility(View.VISIBLE);
             newType = DBHelper.updateCategoryType(currID, "no category");
         } else noItemsText.setVisibility(View.GONE);
-        if (animationNeeded) Utils.runLayoutAnimation(main);
+        if (animationNeeded) {
+            LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(activity.get(), R.anim.list_animation);
+            main.setLayoutAnimation(controller);
+            main.getAdapter().notifyDataSetChanged();
+            main.scheduleLayoutAnimation();
+        }
         onLoadListener.loadFinished(newType, parent, main.getAdapter());
         activity = null;
         super.onPostExecute(object);
@@ -202,7 +208,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
                     String circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
                     String obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
                     String country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
-                    banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
+                    banknotes.add(new Banknote(id, country, name, circulationTime, obversePath));
                 }
             } while (c.moveToNext());
         c.close();
@@ -222,7 +228,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
                             String image = c.getString(c.getColumnIndex(COLUMN_IMAGE));
                             int id = c.getInt(c.getColumnIndex(COLUMN_ID));
                             int count = countBanknotes(id, 0);
-                            categoryList.add(new Category(name, image, count, id));
+                            categories.add(new Category(name, image, count, id));
                         } while (c.moveToNext());
                     break;
                 case "banknotes":
@@ -234,7 +240,7 @@ class ListUpdater extends AsyncTask<Void, Void, Void> {
                             String circulationTime = c.getString(c.getColumnIndex(COLUMN_CIRCULATION));
                             String obversePath = c.getString(c.getColumnIndex(COLUMN_OBVERSE));
                             String country = c.getString(c.getColumnIndex(COLUMN_COUNTRY));
-                            banknoteList.add(new Banknote(id, country, name, circulationTime, obversePath));
+                            banknotes.add(new Banknote(id, country, name, circulationTime, obversePath));
                         } while (c.moveToNext());
                     break;
             }

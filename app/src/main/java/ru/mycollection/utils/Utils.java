@@ -1,28 +1,21 @@
 package ru.mycollection.utils;
 
 import android.Manifest;
-import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.Environment;
-import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.animation.AnimationUtils;
-import android.view.animation.LayoutAnimationController;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,8 +24,6 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 import java.util.Date;
 import java.util.Objects;
-
-import ru.mycollection.R;
 
 import static android.content.Context.MODE_PRIVATE;
 import static ru.mycollection.App.LOG_TAG;
@@ -69,48 +60,10 @@ public class Utils {
     }
 
     private static void copyFolderToDirectory(File source, File destination) {
-        File[] listOfFiles = source.listFiles();
-        if (listOfFiles != null)
-            for (File file : listOfFiles)
+        File[] files = source.listFiles();
+        if (files != null)
+            for (File file : files)
                 copyFileToDirectory(file, new File(destination + "/" + file.getName()));
-    }
-
-    public static String getPath(final Context context, final Uri uri) {
-        if (DocumentsContract.isDocumentUri(context, uri)) {
-            if ("com.android.externalstorage.documents".equals(uri.getAuthority())) {
-                final String[] split = DocumentsContract.getDocumentId(uri).split(":");
-                if ("primary".equalsIgnoreCase(split[0]))
-                    return Environment.getExternalStorageDirectory() + "/" + split[1];
-            } else if ("com.android.providers.downloads.documents".equals(uri.getAuthority())) {
-                final String id = DocumentsContract.getDocumentId(uri);
-                System.out.println(id);
-                if (id.startsWith("raw:")) {
-                    return id.replaceFirst("raw:", "");
-                }
-                final Uri contentUri = ContentUris.withAppendedId(Uri.parse("content://downloads/public_downloads"), Long.valueOf(id));
-                return getDataColumn(context, contentUri);
-            }
-        } else if ("content".equalsIgnoreCase(uri.getScheme())) return getDataColumn(context, uri);
-        else if ("file".equalsIgnoreCase(uri.getScheme())) return uri.getPath();
-        return null;
-    }
-
-    private static String getDataColumn(Context context, Uri uri) {
-        final String column = "_data";
-        Cursor cursor = context.getContentResolver().query(uri, null, null, null, null);
-        if (cursor != null) {
-            String[] strings = cursor.getColumnNames();
-            cursor.moveToFirst();
-            for (int i = 0; i < cursor.getColumnCount(); i++) {
-                if (column.equals(strings[i])) {
-                    final int column_index = cursor.getColumnIndexOrThrow(column);
-                    String path = cursor.getString(column_index);
-                    cursor.close();
-                    return path;
-                }
-            }
-        }
-        return Objects.requireNonNull(uri.getPath()).replaceFirst("/root", "");
     }
 
     public static boolean checkPermission(@NonNull Context context, @NonNull String permission) {
@@ -162,13 +115,5 @@ public class Utils {
                 }
             }
         }
-    }
-
-    public static void runLayoutAnimation(RecyclerView recyclerView) {
-        Context context = recyclerView.getContext();
-        LayoutAnimationController controller = AnimationUtils.loadLayoutAnimation(context, R.anim.list_animation);
-        recyclerView.setLayoutAnimation(controller);
-        recyclerView.getAdapter().notifyDataSetChanged();
-        recyclerView.scheduleLayoutAnimation();
     }
 }

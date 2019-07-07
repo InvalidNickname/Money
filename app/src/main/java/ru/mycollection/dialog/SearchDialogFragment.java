@@ -12,6 +12,7 @@ import android.widget.EditText;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.DialogFragment;
+import androidx.preference.PreferenceManager;
 
 import com.google.android.material.textfield.TextInputLayout;
 
@@ -47,6 +48,8 @@ public class SearchDialogFragment extends DialogFragment {
         final AlertDialog d = (AlertDialog) getDialog();
         if (d != null) {
             Button positiveButton = d.getButton(Dialog.BUTTON_POSITIVE);
+            ((TextInputLayout) getDialog().findViewById(R.id.nameInput)).setHint(
+                    String.format(getString(R.string.banknote), PreferenceManager.getDefaultSharedPreferences(getContext()).getString("item_name", "")));
             positiveButton.setOnClickListener(v -> {
                 EditText editText = getDialog().findViewById(R.id.editText);
                 String name = editText.getText().toString();

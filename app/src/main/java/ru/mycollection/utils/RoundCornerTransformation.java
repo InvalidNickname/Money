@@ -6,9 +6,9 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Shader;
 
-import com.squareup.picasso.Transformation;
-
 import androidx.annotation.NonNull;
+
+import com.squareup.picasso.Transformation;
 
 public class RoundCornerTransformation implements Transformation {
 
@@ -25,7 +25,8 @@ public class RoundCornerTransformation implements Transformation {
         paint.setShader(new BitmapShader(source, Shader.TileMode.CLAMP, Shader.TileMode.CLAMP));
         Bitmap output = Bitmap.createBitmap(source.getWidth(), source.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(output);
-        canvas.drawRoundRect(0, 0, source.getWidth(), source.getHeight(), source.getWidth() / corner, source.getWidth() / corner, paint);
+        canvas.drawRoundRect(0, 0, source.getWidth(), source.getHeight(),
+                source.getWidth() / (float) corner, source.getWidth() / (float) corner, paint);
         if (source != output) source.recycle();
         return output;
     }

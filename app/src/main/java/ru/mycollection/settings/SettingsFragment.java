@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
@@ -14,7 +13,6 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.Preference;
 import androidx.preference.PreferenceFragmentCompat;
@@ -27,6 +25,7 @@ import java.util.Date;
 
 import ru.mycollection.R;
 import ru.mycollection.dialog.ItemNameDialogFragment;
+import ru.mycollection.explorer.ExplorerActivity;
 import ru.mycollection.help.HelpActivity;
 import ru.mycollection.utils.Utils;
 
@@ -126,9 +125,12 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
 
     private void importDatabase() {
         if (Utils.checkPermission(context, Manifest.permission.READ_EXTERNAL_STORAGE)) {
-            Log.i(LOG_TAG, "Opening import dialog");
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getPath()), "*/*");
+            //Log.i(LOG_TAG, "Opening import dialog");
+            //Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            //intent.setDataAndType(Uri.parse(Environment.getExternalStorageDirectory().getPath()), "*/*");
+            //startActivityForResult(intent, 0);
+
+            Intent intent = new Intent(getActivity(), ExplorerActivity.class);
             startActivityForResult(intent, 0);
         }
     }
@@ -210,41 +212,37 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        // если файл не выбран - uri = null
-        Uri uri = data != null ? data.getData() : null;
-        if (uri != null) {
-            String path = Utils.getPath(context, uri);
-            if (requestCode == 0 && resultCode == RESULT_OK) {
-                if (path != null && path.endsWith(".db")) {
-                    Log.i(LOG_TAG, "Importing database...");
-                    File newDB = new File(path);
-                    File dataFile = Environment.getDataDirectory();
-                    File dbFolder = new File(dataFile, "/data/" + context.getPackageName() + "/databases/");
-                    // создание папки /databases/, если её не существует
-                    if (dbFolder.exists() || dbFolder.mkdirs()) {
-                        File oldDB = new File(dataFile, "/data/" + context.getPackageName() + "/databases/" + DATABASE_NAME);
-                        Utils.copyFileToDirectory(newDB, oldDB);
-                        Log.i(LOG_TAG, "Database imported, importing images");
-                    }
-                    File oldData = new File(dataFile, "/data/" + context.getPackageName() + "/files/");
-                    // создание папки /files/, если её не существует
-                    if (oldData.exists() || oldData.mkdirs()) {
-                        File newData = new File(path.substring(0, path.length() - 3));
-                        copyTask = new CopyTask(
-                                getContext(),
-                                newData.getPath(),
-                                oldData.getPath(),
-                                getString(R.string.import_in_progress),
-                                getString(R.string.import_in_progress_subtitle));
-                        copyTask.execute();
-                        Log.i(LOG_TAG, "Images imported");
-                    }
-                } else {
-                    Log.i(LOG_TAG, "Invalid database");
-                    Toast.makeText(context, R.string.db_invalid, Toast.LENGTH_SHORT).show();
+        if (requestCode == 0 && resultCode == RESULT_OK) {
+            String path = data.getStringExtra("path");
+            if (path != null && path.endsWith(".db")) {
+                Log.i(LOG_TAG, "Importing database...");
+                File newDB = new File(path);
+                File dataFile = Environment.getDataDirectory();
+                File dbFolder = new File(dataFile, "/data/" + context.getPackageName() + "/databases/");
+                // создание папки /databases/, если её не существует
+                if (dbFolder.exists() || dbFolder.mkdirs()) {
+                    File oldDB = new File(dataFile, "/data/" + context.getPackageName() + "/databases/" + DATABASE_NAME);
+                    Utils.copyFileToDirectory(newDB, oldDB);
+                    Log.i(LOG_TAG, "Database imported, importing images");
                 }
+                File oldData = new File(dataFile, "/data/" + context.getPackageName() + "/files/");
+                // создание папки /files/, если её не существует
+                if (oldData.exists() || oldData.mkdirs()) {
+                    File newData = new File(path.substring(0, path.length() - 3));
+                    copyTask = new CopyTask(
+                            getContext(),
+                            newData.getPath(),
+                            oldData.getPath(),
+                            getString(R.string.import_in_progress),
+                            getString(R.string.import_in_progress_subtitle));
+                    copyTask.execute();
+                    Log.i(LOG_TAG, "Images imported");
+                }
+            } else {
+                Log.i(LOG_TAG, "Invalid database");
+                Toast.makeText(context, R.string.db_invalid, Toast.LENGTH_SHORT).show();
             }
         }
     }

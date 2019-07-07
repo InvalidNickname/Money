@@ -45,10 +45,10 @@ public class HelpActivity extends BaseActivity {
     private void setData() {
         String[] titles = getResources().getStringArray(R.array.help_titles);
         String[] texts = getResources().getStringArray(R.array.help_texts);
-        List<HelpItem> helpItemList = new ArrayList<>();
-        for (int i = 0; i < titles.length; i++) helpItemList.add(new HelpItem(titles[i], texts[i]));
+        List<HelpItem> helpItems = new ArrayList<>();
+        for (int i = 0; i < titles.length; i++) helpItems.add(new HelpItem(titles[i], texts[i]));
         RecyclerView main = findViewById(R.id.main);
         main.setLayoutManager(new LinearLayoutManager(this));
-        main.setAdapter(new HelpRVAdapter(helpItemList));
+        main.setAdapter(new HelpRVAdapter(helpItems));
     }
 }

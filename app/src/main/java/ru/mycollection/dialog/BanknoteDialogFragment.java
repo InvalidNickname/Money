@@ -59,7 +59,7 @@ public class BanknoteDialogFragment extends DialogFragment {
         builder.setView(inflater.inflate(R.layout.dialog_banknote, null))
                 .setTitle(newBanknote ? namedItem : getString(R.string.update_banknote))
                 .setPositiveButton(newBanknote ? R.string.add : R.string.update, null)
-                .setNegativeButton(R.string.cancel, (dialog, id) -> BanknoteDialogFragment.this.getDialog().cancel());
+                .setNegativeButton(R.string.cancel, (dialog, id) -> getDialog().cancel());
         if (!newBanknote) getData();
         return builder.create();
     }

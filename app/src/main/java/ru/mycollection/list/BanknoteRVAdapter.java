@@ -11,25 +11,26 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.preference.PreferenceManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.squareup.picasso.Picasso;
 import com.squareup.picasso.Target;
 
 import java.util.List;
 
-import androidx.annotation.NonNull;
-import androidx.cardview.widget.CardView;
-import androidx.preference.PreferenceManager;
-import androidx.recyclerview.widget.RecyclerView;
 import ru.mycollection.R;
 import ru.mycollection.banknote.BanknoteFullActivity;
 import ru.mycollection.utils.RoundCornerTransformation;
 
 public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.CardViewHolder> {
 
-    private final List<Banknote> banknoteList;
+    private final List<Banknote> banknotes;
 
-    BanknoteRVAdapter(List<Banknote> banknoteList) {
-        this.banknoteList = banknoteList;
+    BanknoteRVAdapter(List<Banknote> banknotes) {
+        this.banknotes = banknotes;
     }
 
     @NonNull
@@ -41,11 +42,11 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
 
     @Override
     public void onBindViewHolder(@NonNull final CardViewHolder cardViewHolder, int i) {
-        cardViewHolder.circulationTime.setText(banknoteList.get(i).getCirculationTime());
-        cardViewHolder.country.setText(banknoteList.get(i).getCountry());
-        cardViewHolder.title.setText(banknoteList.get(i).getTitle());
+        cardViewHolder.circulationTime.setText(banknotes.get(i).getCirculationTime());
+        cardViewHolder.country.setText(banknotes.get(i).getCountry());
+        cardViewHolder.title.setText(banknotes.get(i).getTitle());
         final Context context = cardViewHolder.circulationTime.getContext();
-        if (!banknoteList.get(i).getObversePath().equals("nothing")) {
+        if (!banknotes.get(i).getObversePath().equals("nothing")) {
             final Target target = new Target() {
                 @Override
                 public void onBitmapLoaded(Bitmap bitmap, Picasso.LoadedFrom from) {
@@ -68,25 +69,25 @@ public class BanknoteRVAdapter extends RecyclerView.Adapter<BanknoteRVAdapter.Ca
 
                 }
             };
-            Picasso.get().load(context.getFileStreamPath(banknoteList.get(i).getObversePath()))
+            Picasso.get().load(context.getFileStreamPath(banknotes.get(i).getObversePath()))
                     .transform(new RoundCornerTransformation(20))
                     .into(target);
             cardViewHolder.image.setTag(target);
         } else Picasso.get().load(R.drawable.example_banknote).into(cardViewHolder.image);
         cardViewHolder.cardView.setOnClickListener(v -> {
             Intent intent = new Intent(context, BanknoteFullActivity.class);
-            intent.putExtra("id", banknoteList.get(i).getId());
+            intent.putExtra("id", banknotes.get(i).getId());
             context.startActivity(intent);
         });
     }
 
     public List<Banknote> getList() {
-        return banknoteList;
+        return banknotes;
     }
 
     @Override
     public int getItemCount() {
-        return banknoteList.size();
+        return banknotes.size();
     }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {

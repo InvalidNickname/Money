@@ -56,7 +56,7 @@ public class CategoryDialogFragment extends DialogFragment implements View.OnCli
         builder.setView(inflater.inflate(R.layout.dialog_category, null))
                 .setTitle(newCategory ? getResources().getString(R.string.add_new_category) : getResources().getString(R.string.update_category))
                 .setPositiveButton(newCategory ? R.string.add : R.string.update, null)
-                .setNegativeButton(R.string.cancel, (dialog, id) -> CategoryDialogFragment.this.getDialog().cancel());
+                .setNegativeButton(R.string.cancel, (dialog, id) -> getDialog().cancel());
         if (!newCategory) getData();
         return builder.create();
     }

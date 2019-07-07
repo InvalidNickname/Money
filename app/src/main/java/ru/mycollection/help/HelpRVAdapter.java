@@ -8,19 +8,20 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import java.util.List;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.List;
+
 import ru.mycollection.R;
 import ru.mycollection.utils.DropDownView;
 
 public class HelpRVAdapter extends RecyclerView.Adapter<HelpRVAdapter.CardViewHolder> {
 
-    private final List<HelpItem> helpItemList;
+    private final List<HelpItem> helpItems;
 
-    HelpRVAdapter(List<HelpItem> helpItemList) {
-        this.helpItemList = helpItemList;
+    HelpRVAdapter(List<HelpItem> helpItems) {
+        this.helpItems = helpItems;
     }
 
     @NonNull
@@ -38,8 +39,8 @@ public class HelpRVAdapter extends RecyclerView.Adapter<HelpRVAdapter.CardViewHo
             lp.setMargins(0, (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 16, context.getResources().getDisplayMetrics()), 0, 0);
             cardViewHolder.layout.setLayoutParams(lp);
         }
-        cardViewHolder.text.setText(helpItemList.get(i).getText());
-        cardViewHolder.title.setText(helpItemList.get(i).getTitle());
+        cardViewHolder.text.setText(helpItems.get(i).getText());
+        cardViewHolder.title.setText(helpItems.get(i).getTitle());
         cardViewHolder.title.setOnClickListener(v -> {
             if (cardViewHolder.text.getMeasuredHeight() == 0) {
                 DropDownView.expand(cardViewHolder.text);
@@ -53,7 +54,7 @@ public class HelpRVAdapter extends RecyclerView.Adapter<HelpRVAdapter.CardViewHo
 
     @Override
     public int getItemCount() {
-        return helpItemList.size();
+        return helpItems.size();
     }
 
     static class CardViewHolder extends RecyclerView.ViewHolder {
