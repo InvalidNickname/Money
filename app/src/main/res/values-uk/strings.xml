@@ -26,8 +26,6 @@
     <string name="update">Обновить</string>
     <string name="no_items">Здесь пока ничего нет</string>
     <string name="settings">Настройки</string>
-    <string name="db_exported">База данных была экспортирована в папку \"Exported Databases\"</string>
-    <string name="db_invalid">Файл базы данных должен иметь расширение \".db\"</string>
     <string name="version">Версия %s</string>
     <string name="banknote">%s</string>
     <string name="select_add">Выберите, что добавить</string>
@@ -36,7 +34,6 @@
     <string name="rw_permission_denied">Для экспорта/импорта базы данных и добавления изображений приложению требуются права на чтение/запись файлов</string>
     <string name="edit">Редактировать</string>
     <string name="done">Готово</string>
-    <string name="db_folder_already_exists">Папка базы данных уже существует. Попробуйте экспортировать ещё раз</string>
     <string name="swap">Сортировка</string>
     <string name="enable_bigger_text">Увеличенный размер текста</string>
     <string name="export_db">Экспорт базы данных</string>
@@ -49,7 +46,6 @@
     <string name="help_title">Помощь</string>
     <string name="backup_db">Автоматическое резервное копирование базы</string>
     <string name="backup_db_summary">Влияет на производительность</string>
-    <string name="db_backup_failed">Не удалось сохранить резервную копию базы данных</string>
     <string name="enable_bigger_icons">Увеличенные иконки</string>
     <string name="pick_action">Выберите действие</string>
     <string name="delete_category_action">Удалить</string>

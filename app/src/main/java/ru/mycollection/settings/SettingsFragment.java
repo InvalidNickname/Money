@@ -38,6 +38,25 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     private static CopyTask copyTask;
     private Context context;
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
+    private static void delete(File file) {
+        if (file.isDirectory()) {
+            if (file.list().length == 0) {
+                file.delete();
+            } else {
+                for (String temp : file.list()) {
+                    File fileDelete = new File(file, temp);
+                    delete(fileDelete);
+                }
+                if (file.list().length == 0) {
+                    file.delete();
+                }
+            }
+        } else {
+            file.delete();
+        }
+    }
+
     // добавление настроек
     @Override
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
@@ -184,65 +203,66 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             if (externalStorage.canWrite()) {
                 // текущее время - уникальное название для файлов БД
                 long time = (new Date()).getTime();
+                // создание архива
+                File backupData = new File(externalStorage, "/Exported Databases/" + time + ".cdb");
                 File backupFolder = new File(externalStorage, "/Exported Databases/");
+                File currentData = new File(data, "/data/" + context.getPackageName() + "/files/");
                 // создание папки /Exported Databases/, если её не существует
                 if (backupFolder.exists() || backupFolder.mkdirs()) {
-                    File backupDB = new File(backupFolder, time + ".db");
                     File currentDB = new File(data, "/data/" + context.getPackageName() + "/databases/" + DATABASE_NAME);
-                    if (!backupDB.exists()) Utils.copyFileToDirectory(currentDB, backupDB);
-                    Log.i(LOG_TAG, "Database exported, exporting images");
-                }
-                File backupData = new File(externalStorage, "/Exported Databases/" + time);
-                // создание папки с уникальным названием. Если она существует - закончить экспорт
-                if (backupData.mkdirs()) {
-                    File currentData = new File(data, "/data/" + context.getPackageName() + "/files/");
+                    Utils.copyFileToDirectory(currentDB, currentData);
                     copyTask = new CopyTask(
                             getContext(),
                             currentData.getPath(),
                             backupData.getPath(),
                             getString(R.string.export_in_progress),
-                            getString(R.string.export_in_progress_subtitle));
+                            getString(R.string.export_in_progress_subtitle),
+                            CopyTask.Task.ZIP);
                     copyTask.execute();
                     Log.i(LOG_TAG, "Images exported");
-                } else {
-                    Toast.makeText(context, R.string.db_folder_already_exists, Toast.LENGTH_SHORT).show();
                 }
             }
         }
     }
 
+    @SuppressWarnings("ResultOfMethodCallIgnored")
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 0 && resultCode == RESULT_OK) {
             String path = data.getStringExtra("path");
+            File dataFile = Environment.getDataDirectory();
+            File dbFolder = new File(dataFile, "/data/" + context.getPackageName() + "/databases/");
+            dbFolder.mkdirs();
+            File oldData = new File(dataFile, "/data/" + context.getPackageName() + "/files/");
+            delete(oldData);
+            oldData.mkdirs();
             if (path != null && path.endsWith(".db")) {
                 Log.i(LOG_TAG, "Importing database...");
-                File newDB = new File(path);
-                File dataFile = Environment.getDataDirectory();
-                File dbFolder = new File(dataFile, "/data/" + context.getPackageName() + "/databases/");
-                // создание папки /databases/, если её не существует
-                if (dbFolder.exists() || dbFolder.mkdirs()) {
-                    File oldDB = new File(dataFile, "/data/" + context.getPackageName() + "/databases/" + DATABASE_NAME);
-                    Utils.copyFileToDirectory(newDB, oldDB);
-                    Log.i(LOG_TAG, "Database imported, importing images");
-                }
-                File oldData = new File(dataFile, "/data/" + context.getPackageName() + "/files/");
-                // создание папки /files/, если её не существует
-                if (oldData.exists() || oldData.mkdirs()) {
-                    File newData = new File(path.substring(0, path.length() - 3));
-                    copyTask = new CopyTask(
-                            getContext(),
-                            newData.getPath(),
-                            oldData.getPath(),
-                            getString(R.string.import_in_progress),
-                            getString(R.string.import_in_progress_subtitle));
-                    copyTask.execute();
-                    Log.i(LOG_TAG, "Images imported");
-                }
-            } else {
-                Log.i(LOG_TAG, "Invalid database");
-                Toast.makeText(context, R.string.db_invalid, Toast.LENGTH_SHORT).show();
+                Utils.copyFileToDirectory(new File(path), new File(dbFolder, DATABASE_NAME));
+                Log.i(LOG_TAG, "Database imported, importing images");
+                File newData = new File(path.substring(0, path.length() - 3));
+                copyTask = new CopyTask(
+                        getContext(),
+                        newData.getPath(),
+                        oldData.getPath(),
+                        getString(R.string.import_in_progress),
+                        getString(R.string.import_in_progress_subtitle),
+                        CopyTask.Task.COPY);
+                copyTask.execute();
+                Log.i(LOG_TAG, "Images imported");
+            } else if (path != null && path.endsWith(".cdb")) {
+                Log.i(LOG_TAG, "Importing database...");
+                copyTask = new CopyTask(
+                        getContext(),
+                        path,
+                        oldData.getPath(),
+                        getString(R.string.import_in_progress),
+                        getString(R.string.import_in_progress_subtitle),
+                        CopyTask.Task.UNZIP);
+                copyTask.setAction(() -> Utils.copyFileToDirectory(new File(oldData, DATABASE_NAME), new File(dbFolder, DATABASE_NAME)));
+                copyTask.execute();
+                Log.i(LOG_TAG, "Images imported");
             }
         }
     }

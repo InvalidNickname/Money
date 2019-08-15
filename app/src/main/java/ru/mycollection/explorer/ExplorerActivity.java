@@ -62,7 +62,7 @@ public class ExplorerActivity extends BaseActivity implements ExplorerRVAdapter.
         }
         List<ExplorerItem> explorerItems = new ArrayList<>();
         for (File i : current.listFiles()) {
-            if ((i.isDirectory() && !i.getName().startsWith(".")) || (i.isFile() && i.getName().endsWith(".db"))) {
+            if ((i.isDirectory() && !i.getName().startsWith(".")) || (i.isFile() && i.getName().endsWith(".db")) || (i.isFile() && i.getName().endsWith(".cdb"))) {
                 explorerItems.add(new ExplorerItem(i.getAbsolutePath(), i.getName()));
             }
         }
