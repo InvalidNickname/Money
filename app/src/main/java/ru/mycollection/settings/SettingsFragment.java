@@ -210,7 +210,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
                 // создание папки /Exported Databases/, если её не существует
                 if (backupFolder.exists() || backupFolder.mkdirs()) {
                     File currentDB = new File(data, "/data/" + context.getPackageName() + "/databases/" + DATABASE_NAME);
-                    Utils.copyFileToDirectory(currentDB, currentData);
+                    Utils.copyFileToDirectory(currentDB, new File(currentData, DATABASE_NAME));
                     copyTask = new CopyTask(
                             getContext(),
                             currentData.getPath(),

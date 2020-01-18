@@ -9,12 +9,13 @@
     </string-array>
     <string-array name="help_texts">
         <item>
-            When exporting, a copy of the current database is created in the "Exported Databases" folder.
-            Along with the .db database file, images are also exported, their names cannot be changed, since would not be
-            imported. The database file and the folder with images can be renamed as long as they have the same name.
+            When exporting, a copy of the current database (file with .cdb extension) is created in the "Exported Databases" folder.
+            The file is an archive with a database and images, so the export speed is low.
         </item>
         <item>
-            To import the database, select the .db database file on the device. To import images there a folder with
+            To import the new-format database, select the .cdb database file on the device. When importing, the old database
+            will be deleted! \n
+            To import the old-format database, select the .db database file on the device. To import images there a folder with
             images must exist in the same folder as the database. Images folder and database file must have the same name.
             For example, \"124576.db\" and \"124576\". When importing, the old database will be deleted!
         </item>
